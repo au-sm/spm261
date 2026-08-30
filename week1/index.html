@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SPM 261 &middot; Introduction to Sport Management &mdash; Week 1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+
+:root{
+  --bg:#0b1220;
+  --bg2:#0e1728;
+  --surface:#141f38;
+  --surface2:#1a2744;
+  --paper:#f5f1e7;
+  --paper-ink:#1b1710;
+  --ink:#f3f0e8;
+  --muted:rgba(243,240,232,.62);
+  --muted2:rgba(243,240,232,.4);
+  --rule:rgba(243,240,232,.14);
+  --gold:#dba548;
+  --gold-soft:rgba(219,165,72,.16);
+  --blue:#6c93d6;
+  --teal:#4fc3a8;
+  --green:#a3cf5e;
+  --coral:#ec6a5c;
+  --violet:#c88bd8;
+  --sand:#e7dcc2;
+  --font-display: Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua','Times New Roman',serif;
+  --font-body: -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --font-mono: ui-monospace,'SF Mono','Cascadia Code',Menlo,Consolas,monospace;
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --dur: .7s;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.bg-wash{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 900px 600px at 12% -10%, rgba(219,165,72,.10), transparent 60%),
+    radial-gradient(ellipse 1100px 800px at 110% 110%, rgba(108,147,214,.10), transparent 60%),
+    linear-gradient(180deg,var(--bg2),var(--bg) 40%);
+}
+.deck{position:fixed;inset:0;z-index:1;}
+.slide{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;
+  transform:translateY(26px) scale(.985);
+  transition:opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility 0s linear var(--dur);
+  visibility:hidden;
+  pointer-events:none;
+  padding: clamp(24px,4vh,56px) clamp(24px,5vw,96px);
+}
+.slide.active{
+  opacity:1;transform:translateY(0) scale(1);
+  visibility:visible;pointer-events:auto;z-index:2;transition-delay:0s;
+}
+.slide-inner{width:100%;max-width:1360px;max-height:100%;margin:0 auto;display:flex;flex-direction:column;gap:clamp(14px,2vh,22px);overflow:auto;padding-right:2px;zoom:var(--zoom,1);}
+.slide-inner::-webkit-scrollbar{width:6px;height:6px;}
+.slide-inner::-webkit-scrollbar-thumb{background:rgba(219,165,72,.3);border-radius:3px;}
+.slide-inner::-webkit-scrollbar-track{background:transparent;}
+
+/* chrome */
+.chrome-top{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;gap:16px;
+  padding:16px clamp(20px,4vw,48px) 0;
+  pointer-events:none;
+}
+.brand{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+.brand b{color:var(--gold);font-weight:600;}
+.progress-track{flex:1;height:2px;background:var(--rule);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--coral));transition:width .5s var(--ease);}
+.section-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);white-space:nowrap;}
+.counter{font-family:var(--font-mono);font-size:11px;color:var(--muted);white-space:nowrap;min-width:52px;text-align:right;}
+
+.chrome-bottom{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(20px,4vw,48px) 20px;
+  pointer-events:none;
+}
+.navbtn{
+  pointer-events:auto;
+  width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--rule);background:rgba(20,31,56,.7);backdrop-filter:blur(6px);
+  color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background .25s ease, border-color .25s ease, transform .2s ease;
+}
+.navbtn:hover{background:var(--gold-soft);border-color:var(--gold);transform:translateY(-2px);}
+.navbtn:active{transform:translateY(0);}
+.navbtn svg{width:18px;height:18px;}
+.navbtn:disabled{opacity:.25;cursor:default;transform:none;}
+.hint{
+  pointer-events:none;position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted2);opacity:1;transition:opacity 1s ease;z-index:19;
+}
+.hint.hide{opacity:0;}
+.notes-toggle{
+  pointer-events:auto;background:none;border:1px solid var(--rule);border-radius:999px;
+  padding:5px 12px;cursor:pointer;flex-shrink:0;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;color:var(--muted);transition:border-color .2s ease,color .2s ease;
+}
+.notes-toggle:hover{border-color:var(--gold);color:var(--gold);}
+.home-btn{text-decoration:none;display:inline-flex;align-items:center;}
+
+.zoom-controls{pointer-events:auto;display:flex;align-items:center;flex-shrink:0;}
+.zoom-btn{
+  background:none;border:1px solid var(--rule);color:var(--muted);cursor:pointer;
+  font-family:var(--font-mono);font-size:13px;line-height:1;
+  padding:5px 10px;transition:border-color .2s ease,color .2s ease;
+}
+.zoom-btn:hover{border-color:var(--gold);color:var(--gold);}
+.zoom-controls .zoom-btn + .zoom-btn{margin-left:-1px;}
+.zoom-controls .zoom-btn:first-child{border-radius:999px 0 0 999px;}
+.zoom-controls .zoom-btn:last-child{border-radius:0 999px 999px 0;}
+.zoom-reset{min-width:46px;text-align:center;font-size:10px;letter-spacing:.03em;}
+.zoom-btn:disabled{opacity:.3;cursor:default;}
+.zoom-btn:disabled:hover{border-color:var(--rule);color:var(--muted);}
+
+/* reveal primitives */
+.reveal-item{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
+.slide.active .reveal-item.in{opacity:1;transform:translateY(0);}
+
+.kicker{font-family:var(--font-mono);font-size:clamp(10.5px,1vw,12.5px);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0 0 6px;}
+.kicker::before{content:'';display:inline-block;width:22px;height:1px;background:var(--gold);margin-right:10px;vertical-align:middle;}
+
+h1.disp{font-family:var(--font-display);font-weight:400;line-height:1.06;margin:0;color:var(--ink);letter-spacing:-.01em;}
+.title-hero{font-size:clamp(38px,6.6vw,84px);}
+.title-slide{font-size:clamp(25px,3.35vw,42px);}
+.title-slide.long{font-size:clamp(21px,2.5vw,32px);}
+.subtitle{font-family:var(--font-display);font-style:italic;color:var(--muted);font-size:clamp(16px,1.8vw,22px);margin:6px 0 0;}
+.meta-badge{display:inline-block;margin-top:22px;padding:7px 16px;border:1px solid var(--rule);border-radius:999px;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--muted);}
+
+.lede{font-family:var(--font-display);font-style:italic;color:var(--sand);font-size:clamp(16px,1.6vw,20px);margin:0;}
+
+ul.bullets{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;}
+ul.bullets li{
+  font-size:clamp(14.5px,1.3vw,18px);line-height:1.55;color:var(--ink);
+  padding-left:22px;position:relative;
+}
+ul.bullets li::before{content:'';position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--gold);}
+ul.bullets li.q{color:var(--sand);font-style:italic;font-family:var(--font-display);font-size:clamp(16px,1.5vw,21px);}
+ul.bullets li.q::before{background:var(--coral);}
+
+.prompt-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;gap:28px;justify-content:center;height:100%;}
+.statement-text{font-family:var(--font-display);font-style:italic;color:var(--ink);font-size:clamp(22px,3vw,40px);line-height:1.4;max-width:900px;}
+
+.source{font-family:var(--font-mono);font-size:11.5px;color:var(--muted2);margin-top:4px;word-break:break-word;}
+.source::before{content:'Source — ';color:var(--muted);}
+
+/* media / exhibits */
+.media-grid{display:grid;gap:20px;align-items:start;}
+.media-grid.cols-1{grid-template-columns:1fr;}
+.media-grid.cols-2{grid-template-columns:1fr 1fr;}
+.exhibit{position:relative;border-radius:14px;overflow:hidden;}
+.exhibit .kb{overflow:hidden;display:block;border-radius:inherit;max-height:46vh;}
+.exhibit img{display:block;width:100%;height:auto;max-height:46vh;object-fit:contain;opacity:0;transform:scale(1.07);transition:opacity .9s var(--ease), transform 1.3s var(--ease);}
+.slide.active .exhibit.in img{opacity:1;transform:scale(1);}
+.exhibit.frame{background:var(--surface);padding:10px;box-shadow:0 24px 60px -20px rgba(0,0,0,.6);border:1px solid var(--rule);}
+.exhibit.frame img{border-radius:6px;}
+.exhibit.paper{background:var(--paper);padding:16px;box-shadow:0 24px 60px -20px rgba(0,0,0,.55);}
+.exhibit.paper img{border-radius:2px;}
+.exhibit.solo{max-width:760px;margin:0 auto;}
+.exhibit .cap{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.03em;margin-top:10px;padding:0 2px;}
+.exhibit.paper .cap{color:#8a7f63;}
+.exhibit.frame .cap{color:var(--muted);}
+
+@keyframes kenburns{ from{transform:scale(1);} to{transform:scale(1.06);} }
+.slide.active .kb.kb-anim{animation:kenburns 16s ease-out forwards;}
+
+.two-col{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(24px,4vw,64px);align-items:center;}
+.two-col.reverse{grid-template-columns:1fr 1.1fr;}
+
+@media (prefers-reduced-motion: reduce){
+  .slide{transition:opacity .15s linear !important;transform:none !important;}
+  .reveal-item{transition:none !important;opacity:1 !important;transform:none !important;}
+  .exhibit img{transition:none !important;opacity:1 !important;transform:none !important;}
+  .kb.kb-anim{animation:none !important;}
+  table.data tbody tr{transition:none !important;opacity:1 !important;transform:none !important;}
+}
+.reduced .slide{transition:opacity .15s linear !important;transform:none !important;}
+.reduced .reveal-item{transition:none !important;opacity:1 !important;transform:none !important;}
+.reduced .exhibit img{transition:none !important;opacity:1 !important;transform:none !important;}
+.reduced .kb.kb-anim{animation:none !important;}
+.reduced table.data tbody tr{transition:none !important;opacity:1 !important;transform:none !important;}
+
+/* ================= custom slide types ================= */
+
+/* cover */
+.cover-wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,5vw,72px);align-items:center;width:100%;}
+.cover-text .meta-badge{margin-top:26px;}
+.cover-media{display:flex;gap:12px;align-items:stretch;max-width:100%;}
+.cover-hero{flex:1 1 auto;min-width:0;border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--rule);box-shadow:0 30px 80px -24px rgba(0,0,0,.65);}
+.cover-hero img{display:block;width:100%;height:100%;min-height:100%;max-height:52vh;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity 1s var(--ease),transform 1.4s var(--ease);}
+.slide.active .cover-hero.in img{opacity:1;transform:scale(1);}
+.cover-insets{flex:0 0 auto;display:flex;flex-direction:column;gap:10px;justify-content:center;}
+.cover-inset{width:112px;border-radius:10px;overflow:hidden;background:var(--paper);padding:6px;box-shadow:0 18px 44px -16px rgba(0,0,0,.6);opacity:0;transform:translateY(16px) scale(.94);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+.cover-inset.in{opacity:1;transform:translateY(0) scale(1);}
+.cover-inset img{display:block;width:100%;height:auto;border-radius:5px;}
+@media (max-width:880px){.cover-wrap{grid-template-columns:1fr;}.cover-media{flex-direction:column;}.cover-insets{flex-direction:row;}}
+
+/* timeline */
+.timeline{list-style:none;margin:0;padding:0;position:relative;}
+.timeline::before{content:'';position:absolute;left:118px;top:6px;bottom:6px;width:1px;background:var(--rule);}
+.timeline li{position:relative;display:grid;grid-template-columns:108px 1fr;column-gap:20px;align-items:baseline;padding:9px 0;}
+.timeline li .yr{font-family:var(--font-mono);font-size:12px;color:var(--gold);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.timeline li .desc{position:relative;padding-left:22px;font-size:clamp(14.5px,1.25vw,17px);color:var(--ink);line-height:1.5;}
+.timeline li .desc::before{content:'';position:absolute;left:0;top:.55em;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px var(--bg);}
+.tag-pill{display:inline-flex;align-items:center;gap:8px;margin-top:8px;padding:8px 16px;border:1px solid var(--gold);border-radius:999px;font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;color:var(--gold);}
+.tag-pill::before{content:'✦';}
+
+/* team grid */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px;}
+.person-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:16px 14px 18px;}
+.person-photo{width:88px;height:88px;border-radius:50%;overflow:hidden;background:var(--surface2);border:2px solid var(--gold-soft);}
+.person-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+.person-name{font-family:var(--font-display);font-size:16.5px;color:var(--ink);}
+.person-line{font-size:12px;color:var(--muted);line-height:1.4;}
+.person-line.course{color:var(--gold);font-family:var(--font-mono);letter-spacing:.02em;}
+
+/* social */
+.social-list{display:flex;flex-direction:column;gap:16px;}
+.social-row{display:flex;align-items:center;gap:18px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:14px 20px;}
+.social-icon{width:44px;height:44px;border-radius:12px;overflow:hidden;flex-shrink:0;background:#000;}
+.social-icon img{width:100%;height:100%;object-fit:cover;display:block;}
+.social-body{flex:1;min-width:0;}
+.social-label{font-family:var(--font-display);font-size:17px;color:var(--ink);}
+.social-url{font-family:var(--font-mono);font-size:12.5px;color:var(--blue);text-decoration:none;word-break:break-all;}
+.social-url:hover{color:var(--gold);}
+.social-qr{width:56px;height:56px;border-radius:8px;overflow:hidden;background:#fff;padding:4px;flex-shrink:0;}
+.social-qr img{width:100%;height:100%;object-fit:contain;display:block;}
+
+/* agenda */
+.agenda-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px;}
+.agenda-list li{display:flex;align-items:center;gap:20px;}
+.agenda-num{width:40px;height:40px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);font-family:var(--font-mono);font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.agenda-text{font-family:var(--font-display);font-size:clamp(19px,2.2vw,28px);color:var(--ink);}
+
+/* section (divider-style short slides) */
+.section-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;text-align:center;}
+.section-wrap .rule{width:56px;height:1px;background:var(--gold);}
+
+/* goals */
+.goals-row{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:22px;align-items:center;}
+.goal-pill{justify-self:center;padding:12px 26px;border:1px solid var(--rule);border-radius:999px;font-family:var(--font-display);font-style:italic;font-size:clamp(16px,1.8vw,22px);color:var(--sand);background:var(--surface);}
+.goal-pill.theoretical{border-color:var(--blue);color:var(--blue);}
+.goal-pill.practical{border-color:var(--teal);color:var(--teal);}
+.goals-image{border-radius:14px;overflow:hidden;background:var(--surface);border:1px solid var(--rule);box-shadow:0 24px 60px -20px rgba(0,0,0,.55);}
+.goals-image img{display:block;width:100%;height:auto;max-height:38vh;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity 1s var(--ease),transform 1.3s var(--ease);}
+.slide.active .goals-image.in img{opacity:1;transform:scale(1);}
+.goals-statement{margin-top:6px;text-align:center;font-family:var(--font-display);font-size:clamp(17px,2vw,25px);color:var(--ink);border:1px solid var(--rule);border-radius:14px;padding:20px 28px;background:var(--surface);}
+@media (max-width:880px){.goals-row{grid-template-columns:1fr;}}
+
+/* textbook */
+.textbook-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:start;}
+.textbook-card{display:flex;flex-direction:column;align-items:center;gap:10px;position:relative;}
+.textbook-card .cover-box{border-radius:8px;overflow:hidden;box-shadow:0 20px 50px -18px rgba(0,0,0,.6);border:2px solid transparent;}
+.textbook-card.required .cover-box{border-color:var(--gold);}
+.textbook-card img{display:block;width:100%;height:auto;max-height:32vh;object-fit:contain;background:var(--paper);}
+.textbook-card .cap{font-size:12.5px;text-align:center;color:var(--muted);line-height:1.4;max-width:220px;}
+.textbook-card.required .cap{color:var(--gold);}
+.dontbuy-ribbon{position:absolute;top:10px;right:-30px;transform:rotate(35deg);background:var(--coral);color:#fff;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:4px 34px;box-shadow:0 6px 14px rgba(0,0,0,.4);}
+.textbook-note{text-align:center;font-family:var(--font-display);font-style:italic;color:var(--muted);font-size:14.5px;}
+@media (max-width:880px){.textbook-grid{grid-template-columns:1fr;}}
+
+/* handwritten */
+.handwritten-wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);align-items:center;}
+.handwritten-img{border-radius:6px;overflow:hidden;transform:rotate(-1deg);box-shadow:0 28px 70px -20px rgba(0,0,0,.6);border:6px solid #fff;}
+.handwritten-img img{display:block;width:100%;height:auto;max-height:56vh;object-fit:cover;opacity:0;transform:scale(1.06) rotate(0);transition:opacity 1s var(--ease),transform 1.3s var(--ease);}
+.slide.active .handwritten-img.in img{opacity:1;transform:scale(1) rotate(0);}
+ul.checklist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;}
+ul.checklist li{display:flex;align-items:center;gap:12px;font-size:clamp(15px,1.4vw,19px);color:var(--ink);}
+ul.checklist li::before{content:'✓';display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--gold-soft);color:var(--gold);font-size:13px;flex-shrink:0;}
+@media (max-width:880px){.handwritten-wrap{grid-template-columns:1fr;}}
+
+/* table (grading) */
+.table-wrap{background:var(--paper);border-radius:14px;padding:18px 22px;box-shadow:0 24px 60px -20px rgba(0,0,0,.55);max-height:44vh;overflow:auto;}
+table.data{width:100%;border-collapse:collapse;font-family:var(--font-body);color:var(--paper-ink);}
+table.data thead th{
+  text-align:left;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:#6b6350;border-bottom:2px solid #d9cfb5;padding:8px 10px;position:sticky;top:0;background:var(--paper);
+}
+table.data thead th:last-child, table.data tbody td:last-child{text-align:right;}
+table.data tbody td{padding:8px 10px;font-size:14px;border-bottom:1px solid #e7ddc4;}
+table.data tbody tr{opacity:0;transform:translateY(6px);transition:opacity .4s ease,transform .4s ease;}
+table.data tbody tr.in{opacity:1;transform:translateY(0);}
+table.data tfoot td{padding:10px;font-family:var(--font-mono);font-weight:700;font-size:14px;color:#8a5a1c;border-top:2px solid #d9cfb5;}
+table.data tfoot td:last-child{text-align:right;}
+.grade-scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px 14px;}
+.grade-cell{display:flex;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:7px 12px;}
+.grade-cell b{color:var(--gold);}
+@media (max-width:880px){.grade-scale{grid-template-columns:repeat(2,1fr);}}
+
+/* points badge / count-up */
+.points-badge{display:inline-flex;align-items:baseline;gap:5px;font-family:var(--font-display);color:var(--gold);}
+.points-badge .n{font-size:clamp(28px,3vw,42px);line-height:1;}
+.points-badge .u{font-family:var(--font-mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+
+/* assignment */
+.assignment-card{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:clamp(20px,3vw,32px);}
+.assignment-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:6px;}
+.assignment-title{font-family:var(--font-display);font-size:clamp(22px,2.6vw,32px);color:var(--ink);margin:0;}
+.assignment-sub{font-family:var(--font-display);font-style:italic;color:var(--sand);font-size:15px;margin:2px 0 14px;}
+.assignment-card ul.bullets{margin-top:10px;}
+.assignment-footnote{margin-top:14px;font-family:var(--font-display);font-style:italic;color:var(--muted);font-size:14px;}
+
+/* policy */
+.policy-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);}
+.policy-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0 0 14px;}
+@media (max-width:880px){.policy-grid{grid-template-columns:1fr;}}
+
+/* bonus */
+.bonus-list{display:flex;flex-direction:column;gap:14px;}
+.bonus-row{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:16px 22px;flex-wrap:wrap;}
+.bonus-info{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.bonus-label{font-family:var(--font-display);font-size:17px;color:var(--ink);}
+.bonus-url{font-family:var(--font-mono);font-size:12.5px;color:var(--blue);text-decoration:none;word-break:break-all;}
+.bonus-url:hover{color:var(--gold);}
+.bonus-points{font-family:var(--font-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:5px 14px;white-space:nowrap;}
+
+/* video prompt */
+.video-wrap{display:grid;grid-template-columns:1fr 1.4fr;gap:clamp(24px,4vw,56px);align-items:center;}
+.video-face{border-radius:14px;overflow:hidden;background:var(--surface);border:1px solid var(--rule);box-shadow:0 24px 60px -20px rgba(0,0,0,.55);}
+.video-face img{display:block;width:100%;height:auto;max-height:34vh;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity 1s var(--ease),transform 1.3s var(--ease);}
+.slide.active .video-face.in img{opacity:1;transform:scale(1);}
+.video-card{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:22px 26px;display:flex;flex-direction:column;gap:14px;}
+.video-play-row{display:flex;align-items:center;gap:14px;}
+.play-btn{width:46px;height:46px;border-radius:50%;background:var(--coral);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.play-btn svg{width:16px;height:16px;fill:#fff;}
+.video-caption{font-family:var(--font-display);font-size:19px;color:var(--ink);}
+.video-url{font-family:var(--font-mono);font-size:12.5px;color:var(--blue);text-decoration:none;word-break:break-all;}
+.video-url:hover{color:var(--gold);}
+.bio-stats{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.bio-stats li{font-size:14.5px;color:var(--ink);padding-left:18px;position:relative;}
+.bio-stats li::before{content:'';position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--teal);}
+.video-links{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
+.video-extra{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;margin-top:6px;}
+@media (max-width:880px){.video-wrap,.video-extra{grid-template-columns:1fr;}}
+
+/* closing */
+.closing-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:18px;text-align:center;}
+.closing-wrap .rule{width:64px;height:1px;background:var(--gold);}
+
+/* notes panel */
+.notes-panel{
+  position:fixed;top:0;right:0;height:100%;width:min(420px,86vw);
+  background:rgba(10,16,30,.97);backdrop-filter:blur(10px);
+  border-left:1px solid var(--rule);z-index:15;
+  transform:translateX(100%);transition:transform .45s var(--ease);
+  padding:80px 28px 28px;display:flex;flex-direction:column;gap:14px;
+}
+.notes-panel.open{transform:translateX(0);}
+.notes-panel h3{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0;}
+.notes-panel p{font-family:var(--font-display);font-size:16px;line-height:1.6;color:var(--ink);white-space:pre-wrap;}
+.notes-panel .close-notes{position:absolute;top:24px;right:24px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;}
+.notes-empty{color:var(--muted2);font-style:italic;font-family:var(--font-display);}
+
+.table-wrap::-webkit-scrollbar, .notes-panel::-webkit-scrollbar{width:8px;}
+.table-wrap::-webkit-scrollbar-thumb, .notes-panel::-webkit-scrollbar-thumb{background:rgba(219,165,72,.35);border-radius:4px;}
+
+@media (max-width: 880px){
+  .media-grid.cols-2{grid-template-columns:1fr;}
+  .two-col, .two-col.reverse{grid-template-columns:1fr;}
+}
+
+</style>
+</head>
+<body>
+<div class="bg-wash"></div>
+
+<div class="chrome-top">
+  <a class="notes-toggle home-btn" href="../" title="Back to course home">&larr; Home</a>
+  <div class="brand"><b>SPM 261</b> &middot; Introduction to Sport Management &middot; Week 1</div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="section-label" id="sectionLabel"></div>
+  <div class="counter" id="counter"></div>
+  <button class="notes-toggle" id="notesToggle" title="Toggle speaker notes (N)">Notes &middot; N</button>
+  <div class="zoom-controls" role="group" aria-label="Zoom controls">
+    <button class="zoom-btn" id="zoomOutBtn" title="Zoom out (&minus;)" aria-label="Zoom out">&minus;</button>
+    <button class="zoom-btn zoom-reset" id="zoomResetBtn" title="Reset zoom (0)" aria-label="Reset zoom">100%</button>
+    <button class="zoom-btn" id="zoomInBtn" title="Zoom in (+)" aria-label="Zoom in">+</button>
+  </div>
+</div>
+
+<main class="deck" id="deck"></main>
+
+<div class="chrome-bottom">
+  <button class="navbtn" id="prevBtn" aria-label="Previous slide">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" aria-label="Next slide">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<div class="hint" id="hint">Click, scroll wheel, or press &rarr; to continue &middot; N for notes</div>
+
+<aside class="notes-panel" id="notesPanel">
+  <button class="close-notes" id="closeNotes" aria-label="Close notes">&times;</button>
+  <div id="notesBody"><h3>Speaker Notes</h3><p class="notes-empty">No speaker notes for this slide.</p></div>
+</aside>
+
+<script type="application/json" id="slide-data">
+[
+{"type":"cover","kicker":"SPM 261 · Sport Management · Arcadia University","title":"Intrduction to Sport Management (SPM 261)","subtitle":"Sport Management · Arcadia University","hero":{"src":"assets/cover-hero.png","w":750,"h":500},"insets":[{"src":"assets/cover-logos.png","w":420,"h":315},{"src":"assets/cover-olympics.png","w":595,"h":335}]},
+{"type":"timeline","title":"Dr. Jun Kim","items":[["2013","Ph.D. in Sport Management, Florida State University"],["2013–2015","Assistant Professor, State University of New York at Brockport"],["2015–2019","Assistant Professor, Arcadia University"],["2018","Lecturer, Columbia University"],["2019–2024","Associate Professor, Arcadia University"],["2021–2023","Adjunct, Temple University"],["2025–present","Professor, Arcadia University"]],"tag":"Research Interest: AI & Sports Analytics"},
+{"type":"stat-list","title":"Arcadia Sport Management","lede":"Major (BA, BS) and Minor [since 2015]","bullets":["60-65 majors, 10-15 minors","Graduates— Kambi, Phillies, Buccaneers, Johns Hopkins Women’s Lacrosse operations, TD Bank, Union, Sesame Place, Trenton Thunder, Albright College Athletics, Monmouth University Athletics, Red Bulls, Phoenix Mercury, SEI Investments, Towson University Athletics, etc.","Graduates cont.— Northwestern Law School, Drexel Sport Management Graduate Program, Temple Graduate School & Seton Hall University MBA, Delaware Law School, Villanova Law School, La Salle Graduate School, etc.","Internships— Phillies, Flyers, Union, Eagles, Blue Coats, Redskins, Orioles, Penn athletics, Princeton athletics, Maestroe Sports & Entertainment, Trenton Thunder, and many other places","Two practicums prior to senior internship","Sport Management Club"]},
+{"type":"team-grid","title":"Arcadia Sport Management","subtitle":"Adjunct Faculty Members","people":[{"img":"assets/faculty-valerio.jpg","name":"Joe Valerio","lines":["Former Kansas City Chiefs Offensive Lineman"],"course":"SPM361 Leadership and Mgmt in Sport"},{"img":"assets/faculty-simon.jpg","name":"Ryan Simon","lines":["Director, Ticket services @ Phillies"],"course":"SPM331 Sport Economics"},{"img":"assets/faculty-meli.jpg","name":"Larry Meli","lines":["President, Delaware Blue Coats"],"course":"SPM380 Sport Budgeting and Finance"},{"img":"assets/faculty-akins.jpg","name":"Larry Akins","lines":["Lawyer & Writer"],"course":"SPM230 Sport Law and Ethics"},{"img":"assets/faculty-steinman.png","name":"Sara Steinman","lines":["Assistant Executive Director for Championships, Ivy League"],"course":"BA347 Sport Marketing & SPM267 Event Management"}]},
+{"type":"social","title":"Arcadia Sport Management cont.","lede":"Student-run social media sites:","links":[{"icon":"assets/icon-instagram.jpg","label":"Instagram","url":"https://www.instagram.com/arcadia.sm2015","qr":"assets/qr-instagram.png"},{"icon":"assets/icon-x-twitter.png","label":"X (Twitter)","url":"https://twitter.com/arcadia_sm2015","qr":"assets/qr-twitter.png"}]},
+{"type":"stat-list","title":"Arcadia Sport Management cont.","lede":"Minor opportunities:","bullets":["Business admin","Accounting","Media Communication","Pre-PT","Data analytics (new)"]},
+{"type":"agenda","title":"Today…","items":["Student Survey","Syllabus review","Quiz #1"]},
+{"type":"section","title":"Student Survey","subtitle":"5 minutes to complete"},
+{"type":"section","title":"Syllabus Review","subtitle":"Let’s go through the syllabus"},
+{"type":"media","title":"Introduction to Sport Management","images":[{"src":"assets/worldcup.jpg","w":1100,"h":733,"frame":"frame"}]},
+{"type":"goals","title":"Goals","theoretical":"Theoretical","practical":"Practical","image":{"src":"assets/goals-balance.png","w":1500,"h":1000},"statement":"Career Opportunity & organizational and managerial foundations of sport management"},
+{"type":"textbook","title":"Textbook & Readings","required":{"src":"assets/textbook-required.jpg","w":433,"h":557,"caption":"Required — Principles and Practice of Sport Management, 5th Edition (Masteralexis, Barr & Hums)"},"reading":{"src":"assets/reading-sbj.png","w":406,"h":540,"caption":"Example supplemental reading — Street & Smith’s SportsBusiness Journal"},"dontbuy":{"src":"assets/textbook-dontbuy.png","w":180,"h":244,"caption":"Contemporary Sport Management, 5th Edition — not used this term"},"note":"Supplemental readings will be posted on the course website."},
+{"type":"stat-list","title":"Important Policies","bullets":["Students are NOT allowed to wear airpods, headphones, or earbuds during the class meeting.","You cannot come to class with a hood or other headwear covering your ears.","You are welcome to bring light snacks, drinks, coffee, etc.","Late assignment submissions are NOT accepted under any circumstances.","No extra work is permitted to boost your final grade.","Students are responsible for catching up with all missed work from absences.","All students are expected to take their own notes during class. Each student will be required to scan his or her handwritten notes and then submit the scanned documents via Canvas."]},
+{"type":"handwritten","title":"Handwritten Note","image":{"src":"assets/handwritten-note.png","w":636,"h":717},"checklist":["Date, name, & topic","Lecture highlights","Key Takeaways","Questions if any","Upload to Canvas (using the app)"]},
+{"type":"grading","title":"Course Requirements","table":{"headers":["Course Evaluation","Points"],"rows":[["Career Planning Portfolio","5"],["YouTube Interview Project","10"],["Sports Technology Presentation","10"],["Sports Betting Contest","5"],["Quizzes {10× 1 point}","10"],["Class Participation (handwritten note)","20"],["Exam 1","20"],["Exam 2","20"]],"total":"100"},"scale":[["A","94 and above"],["A-","93-90"],["B+","89-87"],["B","86-84"],["B-","83-80"],["C+","79-77"],["C","76-74"],["C-","73-70"],["D","69-60"],["F","59 and below"]]},
+{"type":"assignment","title":"Course Requirements","heading":"Sports Technology Presentation","points":"5","items":["Due by Oct 08","5-minute presentation— AI, VR, AR, etc.","Proposing your own ideas","Important to use references (news articles)","Individual project","Your presentation date will be determined randomly: Oct 29, Nov 03, Nov, Nov 05, & Nov 10"]},
+{"type":"assignment","title":"Course Requirements","heading":"Career planning portfolio","points":"10","items":["Statement of five-year career plan— Due by Oct 01","Resume— Due by Oct 22"],"footnote":"*sample assignment will be shared."},
+{"type":"assignment","title":"Course Requirements","heading":"YouTube Interview Project","points":"10","subheading":"Publishing an episode [5 points], Written [3 points], presentation [2 points]","items":["Group project (2-3 in a group)","Selecting your group members and an interviewee by Sep 24","1 min progress presentation on Oct 27","Publishing your edited video by Nov 17","Written due by Dec 10","Presentation Dates: Nov 19, Dec 01, Dec 03, & Dec 08","Sample project — https://www.youtube.com/watch?v=Nff0iLjtWng"]},
+{"type":"assignment","title":"Course Requirements","heading":"Sports Betting Contest","points":"5","items":["Each student will wager on NFL and MLB games","Possibly one Eagles and one Phillies game","Will calculate your total profit","Rules will be determined"]},
+{"type":"assignment","title":"Course Requirements","heading":"Exams & Quizzes","items":["2 exams (20 points x 2 = 40 points)","10 quizzes (1 point x 10 = 10 points)","11 quizzes will be given, and ten best scores will be used.","The quizzes will be unannounced and administered at the instructor’s discretion","The format of quiz includes a multiple choice, short answer, and true/false question."]},
+{"type":"policy","title":"Course Policies","groups":[{"label":"Attendance","items":["(1) Leaving class meeting and not returning will have 10 points deduction.","(2) Two unexcused absence [no penalty]","(3) Each additional unexcused absence will result in 3 points deduction.","(4) Each additional unexcused absence will result in no participation point (1 point per class meeting)."]},{"label":"Assignment","items":["Use APA guidelines (7th edition)","Honor Code (Paper and presentation slide submission through the Plagiarism Checker)","Late submission— There will be no credit granted to any assignment that is not submitted on the due date"]}]},
+{"type":"section","title":"Use word document for all your written assignments"},
+{"type":"section","title":"Quiz #1","subtitle":"5 minutes"},
+{"type":"bonus","title":"Bonus points","lede":"Follow us on social media","links":[{"label":"Instagram","url":"https://www.instagram.com/arcadia.sm2015","points":"2 points"},{"label":"X (Twitter)","url":"https://twitter.com/arcadia_sm2015","points":"2 points"}]},
+{"type":"prompt","statement":"Fun = Informative > Critical Perspective"},
+{"type":"video-prompt","title":"I consume sports (e.g., NBA) because…","image":{"src":"assets/javale-mcgee.png","w":287,"h":216},"video":{"url":"https://www.youtube.com/watch?v=0qLf3em1uIU&t=203s","label":"JaVale McGee"}},
+{"type":"video-prompt","title":"I consume sports (e.g., NBA) because… cont.","image":{"src":"assets/javale-mcgee.png","w":287,"h":216},"bio":{"name":"JaVale McGee","stats":["Net worth $30 million","Salary (2021) $5 million","Age 38","NBA draft 2008 (R1, #18)","3x NBA Championship","Olympic Gold Medal (2020 Olympics)"],"links":[{"label":"JaVale McGee’s Top 10 Career Plays","url":"https://www.youtube.com/watch?v=sjIHb3l10YQ&t=10s"},{"label":"Net worth source — mediareferee.com","url":"https://www.mediareferee.com/2021/08/05/javale-mcgee-net-worth/"}]},"table_image":{"src":"assets/javale-salary-table.png","w":319,"h":518,"caption":"JaVale McGee career salary by season"}},
+{"type":"closing","title":"Questions?"}
+]
+</script>
+<script>
+
+(function(){
+  const SLIDES = JSON.parse(document.getElementById('slide-data').textContent);
+  const deck = document.getElementById('deck');
+  const progressFill = document.getElementById('progressFill');
+  const counterEl = document.getElementById('counter');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesBody = document.getElementById('notesBody');
+  const notesToggle = document.getElementById('notesToggle');
+  const zoomInBtn = document.getElementById('zoomInBtn');
+  const zoomOutBtn = document.getElementById('zoomOutBtn');
+  const zoomResetBtn = document.getElementById('zoomResetBtn');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(prefersReduced) document.documentElement.classList.add('reduced');
+
+  const SECTIONS = [
+    {from:0,to:0,label:'Opening'},
+    {from:1,to:6,label:'Meet Sport Management'},
+    {from:7,to:9,label:'Today’s Agenda'},
+    {from:10,to:13,label:'Foundations & Materials'},
+    {from:14,to:20,label:'Grading & Requirements'},
+    {from:21,to:23,label:'Policies & Housekeeping'},
+    {from:24,to:26,label:'Sport Consumption Discussion'},
+    {from:27,to:27,label:'Closing'}
+  ];
+  function sectionFor(i){
+    for(const s of SECTIONS){ if(i>=s.from && i<=s.to) return s.label; }
+    return '';
+  }
+
+  function el(tag, cls, html){
+    const e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(html !== undefined) e.innerHTML = html;
+    return e;
+  }
+  function revealItem(node, delayMs){
+    node.classList.add('reveal-item');
+    node.style.transitionDelay = (delayMs||0)+'ms';
+    return node;
+  }
+  function isQuestion(text){ return /\?\s*$/.test(text.trim()); }
+  function escapeHTML(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function linkify(text){
+    // turn bare URLs into clickable links, escaping the rest
+    const parts = String(text).split(/(https?:\/\/[^\s]+)/g);
+    return parts.map(p=>{
+      if(/^https?:\/\//.test(p)){
+        const clean = p.replace(/[.,;]+$/,'');
+        return '<a href="'+clean+'" target="_blank" rel="noopener" style="color:var(--blue);">'+escapeHTML(clean)+'</a>';
+      }
+      return escapeHTML(p);
+    }).join('');
+  }
+  function titleEl(text, delay){
+    const cls = 'disp title-slide'+(text.length>52?' long':'')+' reveal-item';
+    const h = el('h1',cls, escapeHTML(text));
+    revealItem(h, delay||0);
+    return h;
+  }
+  function buildKicker(text){ return el('p','kicker reveal-item', escapeHTML(text)); }
+
+  function buildExhibit(img, delay, extraClass){
+    const wrap = el('div','exhibit '+(img.frame||'paper')+(extraClass?' '+extraClass:''));
+    wrap.style.transitionDelay = (delay||0)+'ms';
+    const kb = el('div','kb');
+    const im = document.createElement('img');
+    im.src = img.src; im.loading='lazy'; im.alt = img.caption || '';
+    if(img.w && img.h) im.style.aspectRatio = img.w+' / '+img.h;
+    kb.appendChild(im);
+    wrap.appendChild(kb);
+    if(img.caption){ wrap.appendChild(el('div','cap', escapeHTML(img.caption))); }
+    return wrap;
+  }
+
+  function buildBullets(list){
+    const ul = el('ul','bullets');
+    list.forEach((t,i)=>{
+      const li = el('li', isQuestion(t)?'q':'');
+      li.innerHTML = linkify(t);
+      revealItem(li, 90*i);
+      ul.appendChild(li);
+    });
+    return ul;
+  }
+  function buildSource(text){
+    return el('p','source reveal-item', escapeHTML(text));
+  }
+
+  function animateCountUps(container){
+    const nums = container.querySelectorAll('.points-badge .n[data-target]');
+    nums.forEach(n=>{
+      const target = parseFloat(n.dataset.target);
+      if(prefersReduced || isNaN(target)){ n.textContent = n.dataset.target; return; }
+      const dur = 900; const start = performance.now();
+      function frame(t){
+        const p = Math.max(0,Math.min(1,(t-start)/dur));
+        const eased = 1-Math.pow(1-p,3);
+        n.textContent = Math.round(target*eased).toString();
+        if(p<1) requestAnimationFrame(frame); else n.textContent = n.dataset.target;
+      }
+      requestAnimationFrame(frame);
+      setTimeout(()=>{ n.textContent = n.dataset.target; }, dur+80);
+    });
+  }
+
+  // ---------- slide type builders ----------
+  function build(slide, idx){
+    const s = el('section','slide');
+    s.dataset.index = idx;
+    let inner;
+
+    switch(slide.type){
+
+      case 'cover': {
+        inner = el('div','slide-inner');
+        const wrap = el('div','cover-wrap');
+        const textCol = el('div','cover-text');
+        if(slide.kicker) textCol.appendChild(buildKicker(slide.kicker));
+        const h = el('h1','disp title-hero reveal-item', escapeHTML(slide.title));
+        revealItem(h,120); textCol.appendChild(h);
+        if(slide.subtitle){ const sub = el('p','subtitle reveal-item', escapeHTML(slide.subtitle)); revealItem(sub,260); textCol.appendChild(sub); }
+        wrap.appendChild(textCol);
+        const mediaCol = el('div','cover-media');
+        const hero = el('div','cover-hero'); hero.style.transitionDelay='120ms';
+        const heroImg = document.createElement('img'); heroImg.src = slide.hero.src; heroImg.loading='lazy';
+        heroImg.style.aspectRatio = slide.hero.w+' / '+slide.hero.h;
+        hero.appendChild(heroImg);
+        mediaCol.appendChild(hero);
+        if(slide.insets && slide.insets.length){
+          const insets = el('div','cover-insets');
+          slide.insets.forEach((im,i)=>{
+            const box = el('div','cover-inset'); box.style.transitionDelay=(500+i*160)+'ms';
+            const bi = document.createElement('img'); bi.src=im.src; bi.loading='lazy';
+            box.appendChild(bi);
+            insets.appendChild(box);
+          });
+          mediaCol.appendChild(insets);
+          s._insets = insets;
+        }
+        wrap.appendChild(mediaCol);
+        inner.appendChild(wrap);
+        s._coverHero = hero;
+        break;
+      }
+
+      case 'timeline': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,60));
+        const ul = el('ul','timeline');
+        slide.items.forEach((row,i)=>{
+          const li = el('li','');
+          li.appendChild(el('div','yr',escapeHTML(row[0])));
+          li.appendChild(el('div','desc',escapeHTML(row[1])));
+          revealItem(li,70*i);
+          ul.appendChild(li);
+        });
+        inner.appendChild(ul);
+        if(slide.tag){ const tag = el('div','tag-pill reveal-item', escapeHTML(slide.tag)); revealItem(tag,70*slide.items.length+120); inner.appendChild(tag); }
+        break;
+      }
+
+      case 'stat-list': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,60));
+        if(slide.lede){ const l = el('p','lede reveal-item', escapeHTML(slide.lede)); revealItem(l,140); inner.appendChild(l); }
+        if(slide.bullets) inner.appendChild(buildBullets(slide.bullets));
+        break;
+      }
+
+      case 'team-grid': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,50));
+        if(slide.subtitle){ const sub = el('p','subtitle reveal-item', escapeHTML(slide.subtitle)); revealItem(sub,160); inner.appendChild(sub); }
+        const grid = el('div','team-grid');
+        slide.people.forEach((p,i)=>{
+          const card = el('div','person-card reveal-item'); revealItem(card,220+i*100);
+          const photo = el('div','person-photo');
+          const img = document.createElement('img'); img.src=p.img; img.loading='lazy'; img.alt=p.name;
+          photo.appendChild(img); card.appendChild(photo);
+          card.appendChild(el('div','person-name', escapeHTML(p.name)));
+          (p.lines||[]).forEach(t=> card.appendChild(el('div','person-line', escapeHTML(t))));
+          if(p.course) card.appendChild(el('div','person-line course', escapeHTML(p.course)));
+          grid.appendChild(card);
+        });
+        inner.appendChild(grid);
+        break;
+      }
+
+      case 'social': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,50));
+        if(slide.lede){ const l = el('p','lede reveal-item', escapeHTML(slide.lede)); revealItem(l,140); inner.appendChild(l); }
+        const list = el('div','social-list');
+        slide.links.forEach((lnk,i)=>{
+          const row = el('div','social-row reveal-item'); revealItem(row,220+i*140);
+          const icon = el('div','social-icon');
+          const ii = document.createElement('img'); ii.src=lnk.icon; ii.loading='lazy'; icon.appendChild(ii);
+          row.appendChild(icon);
+          const body = el('div','social-body');
+          body.appendChild(el('div','social-label', escapeHTML(lnk.label)));
+          const a = document.createElement('a'); a.className='social-url'; a.href=lnk.url; a.target='_blank'; a.rel='noopener'; a.textContent=lnk.url;
+          body.appendChild(a);
+          row.appendChild(body);
+          if(lnk.qr){
+            const qr = el('div','social-qr');
+            const qi = document.createElement('img'); qi.src=lnk.qr; qi.loading='lazy'; qr.appendChild(qi);
+            row.appendChild(qr);
+          }
+          list.appendChild(row);
+        });
+        inner.appendChild(list);
+        break;
+      }
+
+      case 'agenda': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,60));
+        const ul = el('ul','agenda-list');
+        slide.items.forEach((t,i)=>{
+          const li = el('li','');
+          li.appendChild(el('div','agenda-num', String(i+1)));
+          li.appendChild(el('div','agenda-text', escapeHTML(t)));
+          revealItem(li,120*i);
+          ul.appendChild(li);
+        });
+        inner.appendChild(ul);
+        break;
+      }
+
+      case 'section': {
+        inner = el('div','slide-inner section-wrap');
+        const rule = el('div','rule reveal-item'); revealItem(rule,20);
+        inner.appendChild(rule);
+        const h = el('h1','disp title-hero reveal-item', escapeHTML(slide.title));
+        revealItem(h,100); inner.appendChild(h);
+        if(slide.subtitle){ const sub = el('p','subtitle reveal-item', escapeHTML(slide.subtitle)); revealItem(sub,260); inner.appendChild(sub); }
+        const rule2 = el('div','rule reveal-item'); revealItem(rule2,340);
+        inner.appendChild(rule2);
+        break;
+      }
+
+      case 'media': {
+        inner = el('div','slide-inner');
+        if(slide.title){ inner.appendChild(titleEl(slide.title,50)); }
+        if(slide.bullets) inner.appendChild(buildBullets(slide.bullets));
+        if(slide.images && slide.images.length){
+          const grid = el('div','media-grid '+(slide.images.length>1?'cols-2':'cols-1'));
+          slide.images.forEach((im,i)=> grid.appendChild(buildExhibit(im, 200+i*160)));
+          inner.appendChild(grid);
+        }
+        if(slide.source) inner.appendChild(buildSource(slide.source));
+        break;
+      }
+
+      case 'goals': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,50));
+        const row = el('div','goals-row reveal-item'); revealItem(row,180);
+        const leftPill = el('div','goal-pill theoretical', escapeHTML(slide.theoretical));
+        const img = el('div','goals-image'); img.style.transitionDelay='260ms';
+        const imEl = document.createElement('img'); imEl.src=slide.image.src; imEl.loading='lazy';
+        imEl.style.aspectRatio = slide.image.w+' / '+slide.image.h;
+        img.appendChild(imEl);
+        const rightPill = el('div','goal-pill practical', escapeHTML(slide.practical));
+        row.appendChild(leftPill); row.appendChild(img); row.appendChild(rightPill);
+        inner.appendChild(row);
+        s._goalsImg = img;
+        if(slide.statement){ const st = el('div','goals-statement reveal-item', escapeHTML(slide.statement)); revealItem(st,420); inner.appendChild(st); }
+        break;
+      }
+
+      case 'textbook': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,50));
+        const grid = el('div','textbook-grid');
+        const mk = (data, cls, delay, ribbon)=>{
+          const card = el('div','textbook-card'+(cls?' '+cls:'')+' reveal-item'); revealItem(card,delay);
+          if(ribbon){ card.appendChild(el('div','dontbuy-ribbon', escapeHTML(ribbon))); }
+          const box = el('div','cover-box');
+          const im = document.createElement('img'); im.src=data.src; im.loading='lazy';
+          im.style.aspectRatio = data.w+' / '+data.h;
+          box.appendChild(im);
+          card.appendChild(box);
+          card.appendChild(el('div','cap', escapeHTML(data.caption)));
+          return card;
+        };
+        grid.appendChild(mk(slide.required,'required',200));
+        grid.appendChild(mk(slide.reading,'',320));
+        grid.appendChild(mk(slide.dontbuy,'',440,'Don’t buy'));
+        inner.appendChild(grid);
+        if(slide.note){ const n = el('p','textbook-note reveal-item', escapeHTML(slide.note)); revealItem(n,600); inner.appendChild(n); }
+        break;
+      }
+
+      case 'handwritten': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,50));
+        const wrap = el('div','handwritten-wrap');
+        const left = el('div','');
+        const ul = el('ul','checklist');
+        slide.checklist.forEach((t,i)=>{
+          const li = el('li','', escapeHTML(t));
+          revealItem(li,150+90*i);
+          ul.appendChild(li);
+        });
+        left.appendChild(ul);
+        const imgWrap = el('div','handwritten-img'); imgWrap.style.transitionDelay='220ms';
+        const im = document.createElement('img'); im.src=slide.image.src; im.loading='lazy';
+        im.style.aspectRatio = slide.image.w+' / '+slide.image.h;
+        imgWrap.appendChild(im);
+        wrap.appendChild(left); wrap.appendChild(imgWrap);
+        inner.appendChild(wrap);
+        s._hwImg = imgWrap;
+        break;
+      }
+
+      case 'grading': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,40));
+        const tw = el('div','table-wrap reveal-item'); revealItem(tw,180);
+        const table = el('table','data');
+        const thead = el('thead','');
+        const htr = el('tr','');
+        slide.table.headers.forEach(hd=> htr.appendChild(el('th','',escapeHTML(hd))));
+        thead.appendChild(htr); table.appendChild(thead);
+        const tbody = el('tbody','');
+        slide.table.rows.forEach((row,i)=>{
+          const tr = el('tr','');
+          tr.style.transitionDelay = (i*40)+'ms';
+          tr.appendChild(el('td','',escapeHTML(row[0])));
+          tr.appendChild(el('td','',escapeHTML(row[1])));
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        const tfoot = el('tfoot','');
+        const ftr = el('tr','');
+        ftr.appendChild(el('td','','Total'));
+        ftr.appendChild(el('td','',escapeHTML(slide.table.total)));
+        tfoot.appendChild(ftr); table.appendChild(tfoot);
+        tw.appendChild(table);
+        inner.appendChild(tw);
+        s._tableRows = tbody.querySelectorAll('tr');
+        if(slide.scale){
+          const sg = el('div','grade-scale reveal-item'); revealItem(sg,420);
+          slide.scale.forEach(row=>{
+            const cell = el('div','grade-cell');
+            cell.appendChild(el('b','',escapeHTML(row[0])));
+            cell.appendChild(el('span','',escapeHTML(row[1])));
+            sg.appendChild(cell);
+          });
+          inner.appendChild(sg);
+        }
+        break;
+      }
+
+      case 'assignment': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,40));
+        const card = el('div','assignment-card reveal-item'); revealItem(card,180);
+        const head = el('div','assignment-head');
+        head.appendChild(el('h2','assignment-title', escapeHTML(slide.heading)));
+        if(slide.points){
+          const badge = el('div','points-badge');
+          const n = el('span','n','0'); n.dataset.target = slide.points;
+          badge.appendChild(n);
+          badge.appendChild(el('span','u', slide.points==='1' ? 'point' : 'points'));
+          head.appendChild(badge);
+        }
+        card.appendChild(head);
+        if(slide.subheading){ card.appendChild(el('p','assignment-sub', escapeHTML(slide.subheading))); }
+        card.appendChild(buildBullets(slide.items));
+        if(slide.footnote){ card.appendChild(el('p','assignment-footnote', escapeHTML(slide.footnote))); }
+        inner.appendChild(card);
+        s._points = true;
+        break;
+      }
+
+      case 'policy': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,40));
+        const grid = el('div','policy-grid');
+        slide.groups.forEach((g,gi)=>{
+          const col = el('div','policy-col reveal-item'); revealItem(col,180+gi*160);
+          col.appendChild(el('h3','', escapeHTML(g.label)));
+          col.appendChild(buildBullets(g.items));
+          grid.appendChild(col);
+        });
+        inner.appendChild(grid);
+        break;
+      }
+
+      case 'bonus': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,50));
+        if(slide.lede){ const l = el('p','lede reveal-item', escapeHTML(slide.lede)); revealItem(l,150); inner.appendChild(l); }
+        const list = el('div','bonus-list');
+        slide.links.forEach((lnk,i)=>{
+          const row = el('div','bonus-row reveal-item'); revealItem(row,240+i*140);
+          const info = el('div','bonus-info');
+          info.appendChild(el('div','bonus-label', escapeHTML(lnk.label)));
+          const a = document.createElement('a'); a.className='bonus-url'; a.href=lnk.url; a.target='_blank'; a.rel='noopener'; a.textContent=lnk.url;
+          info.appendChild(a);
+          row.appendChild(info);
+          row.appendChild(el('div','bonus-points', escapeHTML(lnk.points)));
+          list.appendChild(row);
+        });
+        inner.appendChild(list);
+        break;
+      }
+
+      case 'prompt': {
+        inner = el('div','slide-inner prompt-wrap');
+        if(slide.title){ inner.appendChild(titleEl(slide.title,60)); }
+        if(slide.statement){ const p = el('p','statement-text reveal-item', escapeHTML(slide.statement)); revealItem(p,120); inner.appendChild(p); }
+        break;
+      }
+
+      case 'video-prompt': {
+        inner = el('div','slide-inner');
+        inner.appendChild(titleEl(slide.title,40));
+        const wrap = el('div','video-wrap');
+        const face = el('div','video-face'); face.style.transitionDelay='180ms';
+        const fi = document.createElement('img'); fi.src=slide.image.src; fi.loading='lazy';
+        fi.style.aspectRatio = slide.image.w+' / '+slide.image.h;
+        face.appendChild(fi);
+        wrap.appendChild(face);
+
+        const right = el('div','');
+        if(slide.video){
+          const vc = el('div','video-card reveal-item'); revealItem(vc,280);
+          const prow = el('div','video-play-row');
+          const pb = el('div','play-btn'); pb.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+          prow.appendChild(pb);
+          prow.appendChild(el('div','video-caption', escapeHTML(slide.video.label)));
+          vc.appendChild(prow);
+          const a = document.createElement('a'); a.className='video-url'; a.href=slide.video.url; a.target='_blank'; a.rel='noopener'; a.textContent=slide.video.url;
+          vc.appendChild(a);
+          right.appendChild(vc);
+        }
+        if(slide.bio){
+          const bc = el('div','video-card reveal-item'); revealItem(bc,280);
+          bc.appendChild(el('div','video-caption', escapeHTML(slide.bio.name)));
+          const stats = el('ul','bio-stats');
+          slide.bio.stats.forEach(t=> stats.appendChild(el('li','',escapeHTML(t))));
+          bc.appendChild(stats);
+          const links = el('div','video-links');
+          slide.bio.links.forEach(lnk=>{
+            const a = document.createElement('a'); a.className='video-url'; a.href=lnk.url; a.target='_blank'; a.rel='noopener'; a.textContent = lnk.label;
+            links.appendChild(a);
+          });
+          bc.appendChild(links);
+          right.appendChild(bc);
+        }
+        wrap.appendChild(right);
+        inner.appendChild(wrap);
+
+        if(slide.table_image){
+          const extra = el('div','video-extra');
+          extra.appendChild(buildExhibit(slide.table_image, 420));
+          inner.appendChild(extra);
+        }
+        s._videoFace = face;
+        break;
+      }
+
+      case 'closing': {
+        inner = el('div','slide-inner closing-wrap');
+        const rule = el('div','rule reveal-item'); revealItem(rule,40);
+        const h = el('h1','disp title-hero reveal-item', escapeHTML(slide.title));
+        revealItem(h,80);
+        const rule2 = el('div','rule reveal-item'); revealItem(rule2,340);
+        inner.appendChild(rule);
+        inner.appendChild(h);
+        inner.appendChild(rule2);
+        break;
+      }
+
+      default: inner = el('div','slide-inner');
+    }
+    s.appendChild(inner);
+    return s;
+  }
+
+  const slideEls = SLIDES.map((s,i)=> build(s,i));
+  slideEls.forEach(e=> deck.appendChild(e));
+
+  let current = -1;
+  let notesOpen = false;
+
+  function activate(idx){
+    current = idx;
+    slideEls.forEach((e,i)=>{
+      if(i===idx){
+        e.classList.add('active');
+      } else {
+        e.classList.remove('active');
+        e.querySelectorAll('.reveal-item').forEach(r=> r.classList.remove('in'));
+        if(e._tableRows) e._tableRows.forEach(r=> r.classList.remove('in'));
+        e.querySelectorAll('.exhibit').forEach(x=> x.classList.remove('in'));
+        e.querySelectorAll('.kb').forEach(k=> k.classList.remove('kb-anim'));
+        if(e._coverHero){ e._coverHero.classList.remove('in'); }
+        if(e._insets){ e._insets.querySelectorAll('.cover-inset').forEach(x=>x.classList.remove('in')); }
+        if(e._goalsImg){ e._goalsImg.classList.remove('in'); }
+        if(e._hwImg){ e._hwImg.classList.remove('in'); }
+        if(e._videoFace){ e._videoFace.classList.remove('in'); }
+        if(e._points){
+          e.querySelectorAll('.points-badge .n').forEach(n=>{ n.textContent='0'; });
+        }
+      }
+    });
+    const activeEl = slideEls[idx];
+    requestAnimationFrame(()=>{
+      activeEl.querySelectorAll('.reveal-item').forEach(r=> r.classList.add('in'));
+      activeEl.querySelectorAll('.exhibit').forEach(x=> x.classList.add('in'));
+      activeEl.querySelectorAll('.kb').forEach(k=> k.classList.add('kb-anim'));
+      if(activeEl._coverHero){ activeEl._coverHero.classList.add('in'); }
+      if(activeEl._insets){ activeEl._insets.querySelectorAll('.cover-inset').forEach(x=>x.classList.add('in')); }
+      if(activeEl._goalsImg){ activeEl._goalsImg.classList.add('in'); }
+      if(activeEl._hwImg){ activeEl._hwImg.classList.add('in'); }
+      if(activeEl._videoFace){ activeEl._videoFace.classList.add('in'); }
+      if(activeEl._tableRows) activeEl._tableRows.forEach(r=> r.classList.add('in'));
+      animateCountUps(activeEl);
+    });
+
+    progressFill.style.width = ((idx)/(SLIDES.length-1)*100).toFixed(2)+'%';
+    counterEl.textContent = String(idx+1).padStart(2,'0')+' / '+SLIDES.length;
+    sectionLabel.textContent = sectionFor(idx);
+    prevBtn.disabled = idx===0;
+    nextBtn.disabled = idx===SLIDES.length-1;
+
+    const notesText = SLIDES[idx].notes;
+    if(notesText){
+      notesBody.innerHTML = '<h3>Speaker Notes</h3><p></p>';
+      notesBody.querySelector('p').textContent = notesText;
+      notesToggle.style.opacity = 1;
+    } else {
+      notesBody.innerHTML = '<h3>Speaker Notes</h3><p class="notes-empty">No speaker notes for this slide.</p>';
+      notesToggle.style.opacity = .45;
+    }
+
+    location.hash = 's'+(idx+1);
+  }
+
+  function next(){ if(current < SLIDES.length-1) activate(current+1); hideHint(); }
+  function prev(){ if(current > 0) activate(current-1); hideHint(); }
+
+  let hintHidden = false;
+  function hideHint(){ if(!hintHidden){ hint.classList.add('hide'); hintHidden = true; } }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  deck.addEventListener('click', (e)=>{
+    if(e.target.closest('.table-wrap')) return;
+    if(e.target.closest('a')) return;
+    next();
+  });
+
+  window.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight' || e.key===' ' || e.key==='PageDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft' || e.key==='PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='ArrowDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='Home'){ e.preventDefault(); activate(0); }
+    else if(e.key==='End'){ e.preventDefault(); activate(SLIDES.length-1); }
+    else if(e.key==='n' || e.key==='N'){ toggleNotes(); }
+    else if(e.key==='Escape'){ if(notesOpen) toggleNotes(); }
+    else if(e.key==='+' || e.key==='='){ e.preventDefault(); zoomIn(); }
+    else if(e.key==='-' || e.key==='_'){ e.preventDefault(); zoomOut(); }
+    else if(e.key==='0'){ e.preventDefault(); zoomReset(); }
+  });
+
+  const ZOOM_MIN = 0.75, ZOOM_MAX = 2, ZOOM_STEP = 0.1;
+  let zoomLevel = 1;
+  try{
+    const saved = parseFloat(localStorage.getItem('spm261wk1_zoom'));
+    if(!isNaN(saved) && saved>=ZOOM_MIN && saved<=ZOOM_MAX) zoomLevel = saved;
+  }catch(err){}
+  function applyZoom(){
+    document.documentElement.style.setProperty('--zoom', zoomLevel.toFixed(2));
+    zoomResetBtn.textContent = Math.round(zoomLevel*100)+'%';
+    zoomOutBtn.disabled = zoomLevel<=ZOOM_MIN;
+    zoomInBtn.disabled = zoomLevel>=ZOOM_MAX;
+    try{ localStorage.setItem('spm261wk1_zoom', zoomLevel); }catch(err){}
+  }
+  function zoomIn(){ zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel+ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomOut(){ zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel-ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomReset(){ zoomLevel = 1; applyZoom(); }
+  zoomInBtn.addEventListener('click', (e)=>{ e.stopPropagation(); zoomIn(); });
+  zoomOutBtn.addEventListener('click', (e)=>{ e.stopPropagation(); zoomOut(); });
+  zoomResetBtn.addEventListener('click', (e)=>{ e.stopPropagation(); zoomReset(); });
+  applyZoom();
+
+  function toggleNotes(){
+    notesOpen = !notesOpen;
+    notesPanel.classList.toggle('open', notesOpen);
+  }
+  notesToggle.addEventListener('click', toggleNotes);
+  document.getElementById('closeNotes').addEventListener('click', toggleNotes);
+
+  setTimeout(hideHint, 5000);
+
+  let startIdx = 0;
+  const m = location.hash.match(/s(\d+)/);
+  if(m){ const n = parseInt(m[1],10)-1; if(n>=0 && n<SLIDES.length) startIdx = n; }
+  activate(startIdx);
+})();
+
+</script>
+</body>
+</html>
