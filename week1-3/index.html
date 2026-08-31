@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SPM 261 &middot; Unique Aspects of the Sport (Product)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+
+:root{
+  --bg:#0b1220;
+  --bg2:#0e1728;
+  --surface:#141f38;
+  --surface2:#1a2744;
+  --paper:#f5f1e7;
+  --paper-ink:#1b1710;
+  --ink:#f3f0e8;
+  --muted:rgba(243,240,232,.62);
+  --muted2:rgba(243,240,232,.4);
+  --rule:rgba(243,240,232,.14);
+  --gold:#dba548;
+  --gold-soft:rgba(219,165,72,.16);
+  --blue:#6c93d6;
+  --teal:#4fc3a8;
+  --green:#a3cf5e;
+  --coral:#ec6a5c;
+  --violet:#c88bd8;
+  --sand:#e7dcc2;
+  --font-display: Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua','Times New Roman',serif;
+  --font-body: -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --font-mono: ui-monospace,'SF Mono','Cascadia Code',Menlo,Consolas,monospace;
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --dur: .7s;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.bg-wash{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 900px 600px at 12% -10%, rgba(219,165,72,.10), transparent 60%),
+    radial-gradient(ellipse 1100px 800px at 110% 110%, rgba(108,147,214,.10), transparent 60%),
+    linear-gradient(180deg,var(--bg2),var(--bg) 40%);
+}
+.deck{position:fixed;inset:0;z-index:1;}
+.slide{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;
+  transform:translateY(26px) scale(.985);
+  transition:opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility 0s linear var(--dur);
+  visibility:hidden;
+  pointer-events:none;
+  padding: clamp(24px,4vh,56px) clamp(24px,5vw,96px);
+}
+.slide.active{
+  opacity:1;transform:translateY(0) scale(1);
+  visibility:visible;pointer-events:auto;z-index:2;transition-delay:0s;
+}
+.slide-inner{width:100%;max-width:1360px;max-height:100%;margin:0 auto;display:flex;flex-direction:column;gap:clamp(12px,1.7vh,18px);overflow:auto;padding-right:2px;zoom:var(--zoom,1);}
+.slide-inner::-webkit-scrollbar{width:6px;height:6px;}
+.slide-inner::-webkit-scrollbar-thumb{background:rgba(219,165,72,.3);border-radius:3px;}
+.slide-inner::-webkit-scrollbar-track{background:transparent;}
+
+/* chrome */
+.chrome-top{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;gap:16px;
+  padding:16px clamp(20px,4vw,48px) 0;
+  pointer-events:none;
+}
+.brand{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+.brand b{color:var(--gold);font-weight:600;}
+.progress-track{flex:1;height:2px;background:var(--rule);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--coral));transition:width .5s var(--ease);}
+.section-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);white-space:nowrap;}
+.counter{font-family:var(--font-mono);font-size:11px;color:var(--muted);white-space:nowrap;min-width:52px;text-align:right;}
+
+.chrome-bottom{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(20px,4vw,48px) 20px;
+  pointer-events:none;
+}
+.navbtn{
+  pointer-events:auto;
+  width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--rule);background:rgba(20,31,56,.7);backdrop-filter:blur(6px);
+  color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background .25s ease, border-color .25s ease, transform .2s ease;
+}
+.navbtn:hover{background:var(--gold-soft);border-color:var(--gold);transform:translateY(-2px);}
+.navbtn:active{transform:translateY(0);}
+.navbtn svg{width:18px;height:18px;}
+.navbtn:disabled{opacity:.25;cursor:default;transform:none;}
+.hint{
+  pointer-events:none;position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted2);opacity:1;transition:opacity 1s ease;z-index:19;
+}
+.hint.hide{opacity:0;}
+.notes-toggle{
+  pointer-events:auto;background:none;border:1px solid var(--rule);border-radius:999px;
+  padding:5px 12px;cursor:pointer;flex-shrink:0;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;color:var(--muted);transition:border-color .2s ease,color .2s ease;
+}
+.notes-toggle:hover{border-color:var(--gold);color:var(--gold);}
+.home-btn{text-decoration:none;display:inline-flex;align-items:center;}
+
+.zoom-controls{pointer-events:auto;display:flex;align-items:center;flex-shrink:0;}
+.zoom-btn{
+  background:none;border:1px solid var(--rule);color:var(--muted);cursor:pointer;
+  font-family:var(--font-mono);font-size:13px;line-height:1;
+  padding:5px 10px;transition:border-color .2s ease,color .2s ease;
+}
+.zoom-btn:hover{border-color:var(--gold);color:var(--gold);}
+.zoom-controls .zoom-btn + .zoom-btn{margin-left:-1px;}
+.zoom-controls .zoom-btn:first-child{border-radius:999px 0 0 999px;}
+.zoom-controls .zoom-btn:last-child{border-radius:0 999px 999px 0;}
+.zoom-reset{min-width:46px;text-align:center;font-size:10px;letter-spacing:.03em;}
+.zoom-btn:disabled{opacity:.3;cursor:default;}
+.zoom-btn:disabled:hover{border-color:var(--rule);color:var(--muted);}
+
+/* reveal primitives */
+.reveal-item{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
+.slide.active .reveal-item.in{opacity:1;transform:translateY(0);}
+
+.kicker{font-family:var(--font-mono);font-size:clamp(10.5px,1vw,12.5px);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0 0 6px;}
+.kicker::before{content:'';display:inline-block;width:22px;height:1px;background:var(--gold);margin-right:10px;vertical-align:middle;}
+
+h1.disp{font-family:var(--font-display);font-weight:400;line-height:1.06;margin:0;color:var(--ink);letter-spacing:-.01em;}
+.title-hero{font-size:clamp(34px,5.6vw,68px);}
+.title-slide{font-size:clamp(23px,3vw,38px);}
+.title-slide.long{font-size:clamp(19px,2.3vw,29px);}
+.subtitle{font-family:var(--font-display);font-style:italic;color:var(--muted);font-size:clamp(15px,1.7vw,20px);margin:6px 0 0;}
+
+.lede{font-family:var(--font-display);font-style:italic;color:var(--sand);font-size:clamp(15px,1.5vw,19px);margin:0;}
+
+/* media / exhibits */
+.media-grid{display:grid;gap:18px;align-items:start;}
+.media-grid.cols-1{grid-template-columns:1fr;}
+.media-grid.cols-2{grid-template-columns:1fr 1fr;}
+.media-grid.cols-3{grid-template-columns:repeat(3,1fr);}
+.exhibit{position:relative;border-radius:14px;overflow:hidden;}
+.exhibit .kb{overflow:hidden;display:block;border-radius:inherit;max-height:44vh;}
+.exhibit img{display:block;width:100%;height:auto;max-height:44vh;object-fit:contain;opacity:0;transform:scale(1.07);transition:opacity .9s var(--ease), transform 1.3s var(--ease);}
+.slide.active .exhibit.in img{opacity:1;transform:scale(1);}
+.exhibit.frame{background:var(--surface);padding:9px;box-shadow:0 24px 60px -20px rgba(0,0,0,.6);border:1px solid var(--rule);}
+.exhibit.frame img{border-radius:6px;}
+.exhibit.paper{background:var(--paper);padding:14px;box-shadow:0 24px 60px -20px rgba(0,0,0,.55);}
+.exhibit.paper img{border-radius:2px;}
+.exhibit.solo{max-width:720px;margin:0 auto;}
+.exhibit .cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.02em;margin-top:9px;padding:0 2px;line-height:1.4;}
+.exhibit.paper .cap{color:#8a7f63;}
+.exhibit.frame .cap{color:var(--muted);}
+
+@keyframes kenburns{ from{transform:scale(1);} to{transform:scale(1.06);} }
+.slide.active .kb.kb-anim{animation:kenburns 16s ease-out forwards;}
+
+@media (prefers-reduced-motion: reduce){
+  .slide{transition:opacity .15s linear !important;transform:none !important;}
+  .reveal-item{transition:none !important;opacity:1 !important;transform:none !important;}
+  .exhibit img{transition:none !important;opacity:1 !important;transform:none !important;}
+  .kb.kb-anim{animation:none !important;}
+  .guess-num, .answer-num{transition:none !important;opacity:1 !important;transform:none !important;}
+}
+.reduced .slide{transition:opacity .15s linear !important;transform:none !important;}
+.reduced .reveal-item{transition:none !important;opacity:1 !important;transform:none !important;}
+.reduced .exhibit img{transition:none !important;opacity:1 !important;transform:none !important;}
+.reduced .kb.kb-anim{animation:none !important;}
+.reduced .guess-num, .reduced .answer-num{transition:none !important;opacity:1 !important;transform:none !important;}
+
+/* notes panel */
+.notes-panel{
+  position:fixed;top:0;right:0;height:100%;width:min(420px,86vw);
+  background:rgba(10,16,30,.97);backdrop-filter:blur(10px);
+  border-left:1px solid var(--rule);z-index:15;
+  transform:translateX(100%);transition:transform .45s var(--ease);
+  padding:80px 28px 28px;display:flex;flex-direction:column;gap:14px;
+}
+.notes-panel.open{transform:translateX(0);}
+.notes-panel h3{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0;}
+.notes-panel p{font-family:var(--font-display);font-size:16px;line-height:1.6;color:var(--ink);white-space:pre-wrap;}
+.notes-panel .close-notes{position:absolute;top:24px;right:24px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;}
+.notes-empty{color:var(--muted2);font-style:italic;font-family:var(--font-display);}
+.notes-panel::-webkit-scrollbar{width:8px;}
+.notes-panel::-webkit-scrollbar-thumb{background:rgba(219,165,72,.35);border-radius:4px;}
+
+/* closing */
+.closing-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:18px;text-align:center;}
+.closing-wrap .rule{width:64px;height:1px;background:var(--gold);}
+.closing-logo{width:180px;opacity:0;filter:invert(1);transition:opacity 1s var(--ease);margin-top:6px;}
+.slide.active .closing-logo.in{opacity:.55;}
+
+/* ================= guess / answer slide pair ================= */
+
+.guess-wrap, .answer-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:clamp(14px,2.4vh,26px);text-align:center;position:relative;}
+
+.aspect-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);color:var(--gold);line-height:1;
+  font-size:clamp(48px,7vw,96px);
+  opacity:0;transform:scale(.7);transition:opacity .6s var(--ease),transform .6s var(--ease);
+}
+.slide.active .aspect-badge.in{opacity:1;transform:scale(1);}
+.aspect-badge .of{font-family:var(--font-mono);font-size:clamp(11px,1vw,13px);color:var(--muted2);letter-spacing:.1em;vertical-align:middle;margin-left:10px;text-transform:uppercase;}
+
+.guess-prompt{font-family:var(--font-mono);font-size:clamp(10.5px,1vw,12.5px);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0;}
+.guess-prompt::before{content:'';display:inline-block;width:22px;height:1px;background:var(--muted2);margin-right:10px;vertical-align:middle;}
+.guess-prompt::after{content:'';display:inline-block;width:22px;height:1px;background:var(--muted2);margin-left:10px;vertical-align:middle;}
+
+.answer-tag{font-family:var(--font-mono);font-size:clamp(10.5px,1vw,12.5px);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0;}
+.answer-tag::before{content:'';display:inline-block;width:22px;height:1px;background:var(--gold);margin-right:10px;vertical-align:middle;}
+
+.guess-media{display:flex;gap:clamp(10px,2vw,20px);justify-content:center;flex-wrap:wrap;margin-top:4px;}
+.guess-media .exhibit{max-width:560px;flex:1 1 260px;}
+.guess-media .exhibit .kb{max-height:52vh;}
+.guess-media .exhibit img{max-height:52vh;}
+.guess-media.single .exhibit{max-width:680px;flex:0 1 680px;}
+
+.answer-concept{font-size:clamp(24px,3.6vw,44px);max-width:900px;}
+
+.thumb-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:2px;opacity:.85;}
+.thumb-row .exhibit{max-width:220px;flex:0 1 200px;}
+.thumb-row .exhibit .kb{max-height:20vh;}
+.thumb-row .exhibit img{max-height:20vh;}
+
+.fact-callout{
+  font-family:var(--font-mono);font-size:clamp(12px,1.1vw,14px);color:var(--sand);
+  border:1px solid var(--gold);background:var(--gold-soft);border-radius:999px;
+  padding:9px 20px;max-width:640px;line-height:1.5;
+}
+
+.guess-stat{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  border:1px solid var(--gold);background:var(--gold-soft);border-radius:16px;
+  padding:18px 26px;flex:0 0 auto;align-self:center;
+}
+.guess-stat .num{font-family:var(--font-display);font-size:clamp(36px,5vw,56px);color:var(--gold);line-height:1;}
+.guess-stat .lbl{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--sand);opacity:.75;}
+
+@media (max-width: 880px){
+  .media-grid.cols-2, .media-grid.cols-3{grid-template-columns:1fr;}
+  .guess-media .exhibit, .guess-media.single .exhibit{max-width:100%;flex-basis:100%;}
+}
+
+</style>
+</head>
+<body>
+<div class="bg-wash"></div>
+
+<div class="chrome-top">
+  <a class="notes-toggle home-btn" href="../" title="Back to course home">&larr; Home</a>
+  <div class="brand"><b>SPM 261</b> &middot; Unique Aspects of the Sport (Product)</div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="section-label" id="sectionLabel"></div>
+  <div class="counter" id="counter"></div>
+  <button class="notes-toggle" id="notesToggle" title="Toggle speaker notes (N)">Notes &middot; N</button>
+  <div class="zoom-controls" role="group" aria-label="Zoom controls">
+    <button class="zoom-btn" id="zoomOutBtn" title="Zoom out (&minus;)" aria-label="Zoom out">&minus;</button>
+    <button class="zoom-btn zoom-reset" id="zoomResetBtn" title="Reset zoom (0)" aria-label="Reset zoom">100%</button>
+    <button class="zoom-btn" id="zoomInBtn" title="Zoom in (+)" aria-label="Zoom in">+</button>
+  </div>
+</div>
+
+<main class="deck" id="deck"></main>
+
+<div class="chrome-bottom">
+  <button class="navbtn" id="prevBtn" aria-label="Previous slide">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" aria-label="Next slide">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<div class="hint" id="hint">Click, scroll wheel, or press &rarr; to continue &middot; N for notes</div>
+
+<aside class="notes-panel" id="notesPanel">
+  <button class="close-notes" id="closeNotes" aria-label="Close notes">&times;</button>
+  <div id="notesBody"><h3>Speaker Notes</h3><p class="notes-empty">No speaker notes for this slide.</p></div>
+</aside>
+
+<script type="application/json" id="slide-data">
+[
+{"type":"photo-guess","num":1,"images":[{"src":"assets/aspect1-compete-cooperate-a.png","w":1024,"h":768,"alt":"Discussion photo 1a"},{"src":"assets/aspect1-compete-cooperate-b.png","w":275,"h":183,"alt":"Discussion photo 1b — rival New York teams sharing a market"}]},
+{"type":"answer-reveal","num":1,"concept":"Sport organization must compete and cooperate.","images":[{"src":"assets/aspect1-compete-cooperate-a.png","w":1024,"h":768,"alt":"Two teams facing off in competition"},{"src":"assets/aspect1-compete-cooperate-b.png","w":275,"h":183,"alt":"Mets and Yankees logos — rival New York teams that also cooperate through the league"}]},
+
+{"type":"photo-guess","num":2,"images":[{"src":"assets/aspect2-experts-a.jpg","w":960,"h":601,"alt":"Discussion photo 2a"},{"src":"assets/aspect2-experts-b.jpg","w":640,"h":480,"alt":"Discussion photo 2b"}]},
+{"type":"answer-reveal","num":2,"concept":"Sport consumers are experts.","images":[{"src":"assets/aspect2-experts-a.jpg","w":960,"h":601,"alt":"Sport fans closely following team decisions"},{"src":"assets/aspect2-experts-b.jpg","w":640,"h":480,"alt":"A fan engaged in detailed sport commentary"}],"notes":"Managerial decisions such as player acquisition and strategies in sport do not go unnoticed and the sport consumer considers himself/herself an expert on running the team. \nDell computers rarely communicate detailed design and technological information and rarely have radio talk shows devoted to company operations. "},
+
+{"type":"photo-guess","num":3,"images":[{"src":"assets/aspect3-supply-demand.jpg","w":500,"h":375,"alt":"Discussion photo 3"}]},
+{"type":"answer-reveal","num":3,"concept":"Supply and demand fluctuates.","images":[{"src":"assets/aspect3-supply-demand.jpg","w":500,"h":375,"alt":"A sport activity affected by environmental/seasonal conditions"}],"notes":"Sport participation opportunities can be determined by the environmental factors such as climate. "},
+
+{"type":"photo-guess","num":4,"images":[{"src":"assets/aspect4-intangible.jpg","w":275,"h":275,"alt":"Discussion photo 4"}]},
+{"type":"answer-reveal","num":4,"concept":"Sport is an intangible product.","images":[{"src":"assets/aspect4-intangible.jpg","w":275,"h":275,"alt":"A driver distracted while multitasking, illustrating an intangible experience"}]},
+
+{"type":"photo-guess","num":5,"images":[{"src":"assets/aspect5-produced-consumed.jpg","w":594,"h":439,"alt":"Discussion photo 5"}]},
+{"type":"answer-reveal","num":5,"concept":"Sports are produced and consumed at the same time.","images":[{"src":"assets/aspect5-produced-consumed.jpg","w":594,"h":439,"alt":"A live sport event being played and watched simultaneously"}],"notes":"Sports are produced and consumed at the same time. "},
+
+{"type":"photo-guess","num":6,"images":[{"src":"assets/aspect6-social-facilitation.jpg","w":400,"h":266,"alt":"Discussion photo 6"}],"stat":"2%"},
+{"type":"answer-reveal","num":6,"concept":"Social facilitation via sport","images":[{"src":"assets/aspect6-social-facilitation.jpg","w":400,"h":266,"alt":"A packed stadium of fans watching together"}],"stat":"Less than 2% of spectators attend games by themselves.","notes":"Sport is consumed in the presence of others. Less than 2% of spectators attend games by themselves. "},
+
+{"type":"photo-guess","num":7,"images":[{"src":"assets/aspect7-outcome-uncertainty-a.jpg","w":745,"h":487,"alt":"Discussion photo 7a"},{"src":"assets/aspect7-outcome-uncertainty-b.jpg","w":1100,"h":825,"alt":"Discussion photo 7b"},{"src":"assets/aspect7-outcome-uncertainty-c.jpg","w":480,"h":800,"alt":"Discussion photo 7c"}]},
+{"type":"answer-reveal","num":7,"concept":"Inconsistent nature of the product (outcome uncertainty).","images":[{"src":"assets/aspect7-outcome-uncertainty-a.jpg","w":745,"h":487,"alt":"A close, uncertain game outcome"},{"src":"assets/aspect7-outcome-uncertainty-b.jpg","w":1100,"h":825,"alt":"A dramatic, unpredictable moment in competition"},{"src":"assets/aspect7-outcome-uncertainty-c.jpg","w":480,"h":800,"alt":"An athlete in an unpredictable competitive moment"}]},
+
+{"type":"photo-guess","num":8,"images":[{"src":"assets/aspect8-lack-of-control-a.jpg","w":700,"h":511,"alt":"Discussion photo 8a"},{"src":"assets/aspect8-lack-of-control-b.jpg","w":1035,"h":616,"alt":"Discussion photo 8b"},{"src":"assets/aspect8-lack-of-control-c.png","w":300,"h":300,"alt":"Discussion photo 8c"}]},
+{"type":"answer-reveal","num":8,"concept":"Lack of control over the core product.","images":[{"src":"assets/aspect8-lack-of-control-a.jpg","w":700,"h":511,"alt":"A play outside any single team's control"},{"src":"assets/aspect8-lack-of-control-b.jpg","w":1035,"h":616,"alt":"League officiating and rules governing the game"},{"src":"assets/aspect8-lack-of-control-c.png","w":300,"h":300,"alt":"A technician working on control systems, symbolizing external control"}],"notes":"Sport managers and coaches can trade, the league control rules and regulations, and athletes get hurt.  \n"},
+
+{"type":"photo-guess","num":9,"images":[{"src":"assets/aspect9-product-extensions-a.jpg","w":600,"h":426,"alt":"Discussion photo 9a"},{"src":"assets/aspect9-product-extensions-b.jpg","w":550,"h":550,"alt":"Discussion photo 9b"}]},
+{"type":"answer-reveal","num":9,"concept":"Reliance on product extensions.","images":[{"src":"assets/aspect9-product-extensions-a.jpg","w":600,"h":426,"alt":"A halftime show or pre-game promotion"},{"src":"assets/aspect9-product-extensions-b.jpg","w":550,"h":550,"alt":"A game-day promotional activity"}],"notes":"Halftime show, pre-game promotion, music and various activities. \nMuch of the sport experience involves elements not related to the core product. \n"},
+
+{"type":"photo-guess","num":10,"images":[{"src":"assets/aspect10-consumer-industrial-a.jpg","w":400,"h":267,"alt":"Discussion photo 10a"},{"src":"assets/aspect10-consumer-industrial-b.jpg","w":615,"h":409,"alt":"Discussion photo 10b"}]},
+{"type":"answer-reveal","num":10,"concept":"Consumer vs. industrial nature of sport","images":[{"src":"assets/aspect10-consumer-industrial-a.jpg","w":400,"h":267,"alt":"A fan purchasing sport as a consumer product"},{"src":"assets/aspect10-consumer-industrial-b.jpg","w":615,"h":409,"alt":"A business using sport sponsorship as an industrial product"}],"notes":"Sport is both a consumer product and an industrial product. "},
+
+{"type":"closing","title":"Questions?","logo":"assets/arcadia-wordmark.png"}
+]
+</script>
+<script>
+
+(function(){
+  const SLIDES = JSON.parse(document.getElementById('slide-data').textContent);
+  const deck = document.getElementById('deck');
+  const progressFill = document.getElementById('progressFill');
+  const counterEl = document.getElementById('counter');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesBody = document.getElementById('notesBody');
+  const notesToggle = document.getElementById('notesToggle');
+  const zoomInBtn = document.getElementById('zoomInBtn');
+  const zoomOutBtn = document.getElementById('zoomOutBtn');
+  const zoomResetBtn = document.getElementById('zoomResetBtn');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(prefersReduced) document.documentElement.classList.add('reduced');
+
+  // build section ranges dynamically: each aspect = 2 slides (guess+answer), last slide = closing
+  const SECTIONS = [];
+  SLIDES.forEach((s,i)=>{
+    if(s.type==='closing'){ SECTIONS.push({from:i,to:i,label:'Closing'}); return; }
+    const label = 'Aspect '+s.num;
+    const last = SECTIONS[SECTIONS.length-1];
+    if(last && last.label===label){ last.to = i; } else { SECTIONS.push({from:i,to:i,label:label}); }
+  });
+  function sectionFor(i){
+    for(const s of SECTIONS){ if(i>=s.from && i<=s.to) return s.label; }
+    return '';
+  }
+
+  function el(tag, cls, html){
+    const e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(html !== undefined) e.innerHTML = html;
+    return e;
+  }
+  function revealItem(node, delayMs){
+    node.classList.add('reveal-item');
+    node.style.transitionDelay = (delayMs||0)+'ms';
+    return node;
+  }
+  function escapeHTML(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function titleEl(text, delay){
+    const cls = 'disp title-slide'+(text.length>52?' long':'')+' reveal-item';
+    const h = el('h1',cls, escapeHTML(text));
+    revealItem(h, delay||0);
+    return h;
+  }
+
+  function buildExhibit(img, delay, extraClass){
+    const wrap = el('div','exhibit '+(img.frame||'paper')+(extraClass?' '+extraClass:''));
+    wrap.style.transitionDelay = (delay||0)+'ms';
+    const kb = el('div','kb');
+    const im = document.createElement('img');
+    im.src = img.src; im.loading='lazy'; im.alt = img.alt || img.caption || '';
+    if(img.w && img.h) im.style.aspectRatio = img.w+' / '+img.h;
+    kb.appendChild(im);
+    wrap.appendChild(kb);
+    if(img.caption){ wrap.appendChild(el('div','cap', escapeHTML(img.caption))); }
+    return wrap;
+  }
+
+  // ---------- slide type builders ----------
+  function build(slide, idx){
+    const s = el('section','slide');
+    s.dataset.index = idx;
+    let inner;
+
+    switch(slide.type){
+
+      case 'photo-guess': {
+        inner = el('div','slide-inner guess-wrap');
+        const kicker = el('p','kicker reveal-item','Unique Aspects of the Sport (Product)');
+        revealItem(kicker,0);
+        inner.appendChild(kicker);
+
+        const badge = el('div','aspect-badge', String(slide.num).padStart(2,'0')+'<span class="of">of 10</span>');
+        inner.appendChild(badge);
+        s._badges = [badge];
+
+        const prompt = el('p','guess-prompt reveal-item','Guess the concept');
+        revealItem(prompt,120);
+        inner.appendChild(prompt);
+
+        const n = slide.images.length;
+        const grid = el('div','guess-media'+(n===1?' single':''));
+        slide.images.forEach((im,i)=> grid.appendChild(buildExhibit(im, 220+i*160, 'solo')));
+        if(slide.stat){
+          const chip = el('div','guess-stat reveal-item','<span class="num">'+escapeHTML(slide.stat)+'</span><span class="lbl">of spectators</span>');
+          revealItem(chip, 220+n*160);
+          grid.appendChild(chip);
+        }
+        inner.appendChild(grid);
+        break;
+      }
+
+      case 'answer-reveal': {
+        inner = el('div','slide-inner answer-wrap');
+        const kicker = el('p','kicker reveal-item','Unique Aspects of the Sport (Product)');
+        revealItem(kicker,0);
+        inner.appendChild(kicker);
+
+        const badge = el('div','aspect-badge', String(slide.num).padStart(2,'0')+'<span class="of">of 10</span>');
+        inner.appendChild(badge);
+        s._badges = [badge];
+
+        const tag = el('p','answer-tag reveal-item','Answer');
+        revealItem(tag,100);
+        inner.appendChild(tag);
+
+        const h = el('h1','disp title-hero answer-concept reveal-item', escapeHTML(slide.concept));
+        revealItem(h,220);
+        inner.appendChild(h);
+
+        if(slide.stat){
+          const fact = el('div','fact-callout reveal-item', escapeHTML(slide.stat));
+          revealItem(fact,420);
+          inner.appendChild(fact);
+        }
+
+        if(slide.images && slide.images.length){
+          const row = el('div','thumb-row');
+          slide.images.forEach((im,i)=> row.appendChild(buildExhibit(im, 520+i*120, 'solo')));
+          inner.appendChild(row);
+        }
+        break;
+      }
+
+      case 'closing': {
+        inner = el('div','slide-inner closing-wrap');
+        const rule = el('div','rule reveal-item'); revealItem(rule,40);
+        const h = el('h1','disp title-hero reveal-item', escapeHTML(slide.title));
+        revealItem(h,80);
+        const rule2 = el('div','rule reveal-item'); revealItem(rule2,300);
+        inner.appendChild(rule);
+        inner.appendChild(h);
+        inner.appendChild(rule2);
+        if(slide.logo){
+          const wrap = el('div','');
+          const li = document.createElement('img'); li.className='closing-logo'; li.src=slide.logo; li.loading='lazy';
+          wrap.appendChild(li);
+          inner.appendChild(wrap);
+          s._closingLogo = li;
+        }
+        break;
+      }
+
+      default: inner = el('div','slide-inner');
+    }
+    s.appendChild(inner);
+    return s;
+  }
+
+  const slideEls = SLIDES.map((s,i)=> build(s,i));
+  slideEls.forEach(e=> deck.appendChild(e));
+
+  let current = -1;
+  let notesOpen = false;
+
+  function activate(idx){
+    current = idx;
+    slideEls.forEach((e,i)=>{
+      if(i===idx){
+        e.classList.add('active');
+      } else {
+        e.classList.remove('active');
+        e.querySelectorAll('.reveal-item').forEach(r=> r.classList.remove('in'));
+        e.querySelectorAll('.exhibit').forEach(x=> x.classList.remove('in'));
+        e.querySelectorAll('.kb').forEach(k=> k.classList.remove('kb-anim'));
+        if(e._badges) e._badges.forEach(b=> b.classList.remove('in'));
+        if(e._closingLogo) e._closingLogo.classList.remove('in');
+      }
+    });
+    const activeEl = slideEls[idx];
+    requestAnimationFrame(()=>{
+      activeEl.querySelectorAll('.reveal-item').forEach(r=> r.classList.add('in'));
+      activeEl.querySelectorAll('.exhibit').forEach(x=> x.classList.add('in'));
+      activeEl.querySelectorAll('.kb').forEach(k=> k.classList.add('kb-anim'));
+      if(activeEl._badges) activeEl._badges.forEach(b=> b.classList.add('in'));
+      if(activeEl._closingLogo) activeEl._closingLogo.classList.add('in');
+    });
+
+    progressFill.style.width = ((idx)/(SLIDES.length-1)*100).toFixed(2)+'%';
+    counterEl.textContent = String(idx+1).padStart(2,'0')+' / '+SLIDES.length;
+    sectionLabel.textContent = sectionFor(idx);
+    prevBtn.disabled = idx===0;
+    nextBtn.disabled = idx===SLIDES.length-1;
+
+    const notesText = SLIDES[idx].notes;
+    if(notesText){
+      notesBody.innerHTML = '<h3>Speaker Notes</h3><p></p>';
+      notesBody.querySelector('p').textContent = notesText;
+      notesToggle.style.opacity = 1;
+    } else {
+      notesBody.innerHTML = '<h3>Speaker Notes</h3><p class="notes-empty">No speaker notes for this slide.</p>';
+      notesToggle.style.opacity = .45;
+    }
+
+    location.hash = 's'+(idx+1);
+  }
+
+  function next(){ if(current < SLIDES.length-1) activate(current+1); hideHint(); }
+  function prev(){ if(current > 0) activate(current-1); hideHint(); }
+
+  let hintHidden = false;
+  function hideHint(){ if(!hintHidden){ hint.classList.add('hide'); hintHidden = true; } }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  deck.addEventListener('click', (e)=>{
+    if(e.target.closest('a')) return;
+    next();
+  });
+
+  let wheelLock = false;
+  deck.addEventListener('wheel', (e)=>{
+    if(wheelLock) return;
+    if(Math.abs(e.deltaY) < 12) return;
+    wheelLock = true;
+    if(e.deltaY > 0) next(); else prev();
+    setTimeout(()=>{ wheelLock = false; }, 700);
+  }, {passive:true});
+
+  window.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight' || e.key===' ' || e.key==='PageDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft' || e.key==='PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='ArrowDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='Home'){ e.preventDefault(); activate(0); }
+    else if(e.key==='End'){ e.preventDefault(); activate(SLIDES.length-1); }
+    else if(e.key==='n' || e.key==='N'){ toggleNotes(); }
+    else if(e.key==='Escape'){ if(notesOpen) toggleNotes(); }
+    else if(e.key==='+' || e.key==='='){ e.preventDefault(); zoomIn(); }
+    else if(e.key==='-' || e.key==='_'){ e.preventDefault(); zoomOut(); }
+    else if(e.key==='0'){ e.preventDefault(); zoomReset(); }
+  });
+
+  const ZOOM_MIN = 0.75, ZOOM_MAX = 2, ZOOM_STEP = 0.1;
+  let zoomLevel = 1;
+  try{
+    const saved = parseFloat(localStorage.getItem('spm261wk1c_zoom'));
+    if(!isNaN(saved) && saved>=ZOOM_MIN && saved<=ZOOM_MAX) zoomLevel = saved;
+  }catch(err){}
+  function applyZoom(){
+    document.documentElement.style.setProperty('--zoom', zoomLevel.toFixed(2));
+    zoomResetBtn.textContent = Math.round(zoomLevel*100)+'%';
+    zoomOutBtn.disabled = zoomLevel<=ZOOM_MIN;
+    zoomInBtn.disabled = zoomLevel>=ZOOM_MAX;
+    try{ localStorage.setItem('spm261wk1c_zoom', zoomLevel); }catch(err){}
+  }
+  function zoomIn(){ zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel+ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomOut(){ zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel-ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomReset(){ zoomLevel = 1; applyZoom(); }
+  zoomInBtn.addEventListener('click', (e)=>{ e.stopPropagation(); zoomIn(); });
+  zoomOutBtn.addEventListener('click', (e)=>{ e.stopPropagation(); zoomOut(); });
+  zoomResetBtn.addEventListener('click', (e)=>{ e.stopPropagation(); zoomReset(); });
+  applyZoom();
+
+  function toggleNotes(){
+    notesOpen = !notesOpen;
+    notesPanel.classList.toggle('open', notesOpen);
+  }
+  notesToggle.addEventListener('click', toggleNotes);
+  document.getElementById('closeNotes').addEventListener('click', toggleNotes);
+
+  setTimeout(hideHint, 5000);
+
+  let startIdx = 0;
+  const m = location.hash.match(/s(\d+)/);
+  if(m){ const n = parseInt(m[1],10)-1; if(n>=0 && n<SLIDES.length) startIdx = n; }
+  activate(startIdx);
+})();
+
+</script>
+</body>
+</html>
