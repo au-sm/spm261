@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPM 261 — Assignment Feedback</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f2f0e5; --paper-2:#eae6d6; --surface:#fbfaf3;
+    --ink:#202b21; --muted:#5c6b5c; --rule:#d6d0ba;
+    --gold:#a97a25; --gold-soft:rgba(169,122,37,.12);
+    --shadow:rgba(32,43,33,.10);
+    --font-display:'Fraunces',Georgia,'Times New Roman',serif;
+    --font-body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--font-body); font-size:15px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gold-soft);}
+  h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0;}
+
+  .wrap{max-width:800px;margin:0 auto;padding:40px 22px 90px;}
+
+  header.top{margin-bottom:28px;}
+  .kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  header.top h1{font-size:clamp(26px,4vw,36px);}
+  .sub{color:var(--muted);margin-top:8px;font-size:15px;max-width:60ch;}
+
+  .card{
+    background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    padding:22px 24px;margin-bottom:18px;box-shadow:0 1px 2px var(--shadow);
+  }
+  .card h2{font-size:19px;margin-bottom:4px;}
+  .points-badge{
+    display:inline-block;font-family:var(--font-mono);font-size:12px;color:var(--gold);
+    background:var(--gold-soft);border-radius:999px;padding:3px 11px;margin-left:10px;vertical-align:middle;
+  }
+  details.instructions{margin-top:12px;}
+  details.instructions summary{cursor:pointer;font-family:var(--font-mono);font-size:12px;color:var(--muted);letter-spacing:.03em;text-transform:uppercase;padding:4px 0;}
+  details.instructions[open] summary{margin-bottom:8px;}
+  .instr-body{white-space:pre-wrap;font-size:14px;line-height:1.65;color:var(--ink);}
+
+  table.rubric{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px;}
+  table.rubric th{text-align:left;font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--rule);}
+  table.rubric td{padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:top;}
+  table.rubric td.pts{font-family:var(--font-mono);white-space:nowrap;color:var(--gold);font-weight:600;}
+  table.rubric tr:last-child td{border-bottom:none;}
+  .rubric-note{font-size:12.5px;color:var(--muted);margin-top:10px;font-style:italic;}
+
+  .submit-card{
+    background:var(--paper-2);border:1px solid var(--rule);border-radius:14px;
+    padding:22px 24px;margin:32px 0 18px;
+  }
+  .submit-card h2{font-size:20px;margin-bottom:6px;}
+  .submit-card p.note{color:var(--muted);font-size:13.5px;margin:8px 0 18px;line-height:1.6;}
+  .form-embed{width:100%;border-radius:10px;overflow:hidden;border:1px solid var(--rule);background:var(--surface);}
+  .form-embed iframe{display:block;width:100%;height:1100px;border:none;}
+
+  .feedback-note{
+    display:flex;gap:12px;align-items:flex-start;background:var(--gold-soft);
+    border:1px solid var(--rule);border-radius:10px;padding:14px 16px;margin-top:18px;font-size:13.5px;line-height:1.55;color:var(--ink);
+  }
+  .feedback-note .icon{font-size:18px;line-height:1;}
+
+  footer.site{margin-top:44px;text-align:center;}
+  footer.site a{color:var(--muted);font-family:var(--font-mono);font-size:12px;text-decoration:none;border-bottom:1px solid var(--rule);}
+  footer.site a:hover{color:var(--ink);border-color:var(--muted);}
+
+  @media (max-width:560px){
+    table.rubric{display:block;overflow-x:auto;}
+    .form-embed iframe{height:1400px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="kicker">SPM 261 · Sport Management</div>
+    <h1>Assignment Feedback</h1>
+    <p class="sub">Review the instructions and rubric below, then submit your file. You'll receive personalized AI feedback and an expected score by email — a helpful estimate to improve your work before final grading, not your official grade.</p>
+  </header>
+
+  <div class="card">
+    <h2>Career Planning Portfolio <span class="points-badge">5 pts</span></h2>
+    <details class="instructions">
+      <summary>Assignment instructions</summary>
+      <div class="instr-body">This assignment will force students to think critically about their careers and develop a plan to achieve their individual goals. Students submit a portfolio including:
+
+Statement of Five-Year Career Plan (no more than 2 pages) — worth 2.5 points
+- Discuss your future career plan clearly
+- Your first year is counted from the year you graduate from Arcadia University (e.g., Class of 2026 → first year in the plan is 2026)
+- Include a graph or table showing your career plan year by year, with explanation (steps to success)
+
+Resume (1 page) — worth 2.5 points
+- Should be up to date</div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>Rubric — Career Planning Portfolio</h2>
+    <table class="rubric">
+      <thead><tr><th>Category</th><th>Pts</th><th>Criteria</th></tr></thead>
+      <tbody>
+        <tr>
+          <td rowspan="4"><b>Statement of Five-Year Career Plan</b><br><span style="color:var(--muted);font-size:11.5px;">max 2.5 pts</span></td>
+          <td class="pts">2.5</td>
+          <td>Career plan is clearly and specifically articulated year-by-year. First year correctly matches graduation year from Arcadia University. Includes a well-developed graph or table with a clear explanation of the steps to success. Stays within the 2-page limit.</td>
+        </tr>
+        <tr><td class="pts">2.0</td><td>Plan is present and mostly clear but lacks specificity in some years. Graph/table is present but underdeveloped or has a thin explanation. Minor issues with first-year logic or length.</td></tr>
+        <tr><td class="pts">1.0</td><td>Plan is vague or generic with unclear connection between steps and goals. Graph/table is missing or very weak. Or the submission significantly exceeds the 2-page limit.</td></tr>
+        <tr><td class="pts">0</td><td>No coherent career plan submitted, or the graph/table and explanation are entirely missing.</td></tr>
+        <tr>
+          <td rowspan="4"><b>Resume</b><br><span style="color:var(--muted);font-size:11.5px;">max 2.5 pts</span></td>
+          <td class="pts">2.5</td>
+          <td>Current and professional. Clearly organized (contact info, education, experience, skills). Free of typos and formatting errors. Appropriately concise, about 1 page.</td>
+        </tr>
+        <tr><td class="pts">2.0</td><td>Mostly professional and current, with minor formatting inconsistencies, small errors, or length slightly off from 1 page.</td></tr>
+        <tr><td class="pts">1.0</td><td>Significant gaps — missing key sections, noticeably outdated content, multiple errors, or formatting that hurts readability.</td></tr>
+        <tr><td class="pts">0</td><td>No resume submitted, or the document is not usable as a resume.</td></tr>
+      </tbody>
+    </table>
+    <p class="rubric-note">This rubric was drafted to match the assignment's stated point values, since the original instructions didn't include a detailed rubric.</p>
+  </div>
+
+  <div class="card">
+    <h2>Sports Technology Presentation <span class="points-badge">10 pts</span></h2>
+    <details class="instructions">
+      <summary>Assignment instructions</summary>
+      <div class="instr-body">Each student will give a 5-minute presentation to the class. This is an individual project, and students are expected to present how technology (like AI, virtual reality, augmented reality, metaverse, etc.) will change sports and business of sports in the next 10 years.
+
+Your presentation should include:
+- Title Page
+- Your Idea
+- Rationale (e.g., why you think it's a good idea)
+- Expected outcome/impact (i.e., financial, safety, improvement, etc.)
+- References (cite sources used)
+
+Formatting rules:
+- No more than 5 slides (not including your title page)
+- Don't have more than 3 sentences in each slide
+- Failure to adhere to formatting guidelines results in the minimum points for the assignment.
+
+Use references (news or scholarly articles) to support your ideas. Present your own ideas — insight and creativity are the main focus of evaluation.</div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>Rubric — Sports Technology Presentation</h2>
+    <table class="rubric">
+      <thead><tr><th>Category</th><th>Pts</th><th>Criteria</th></tr></thead>
+      <tbody>
+        <tr>
+          <td rowspan="4"><b>Content</b><br><span style="color:var(--muted);font-size:11.5px;">max 5 pts</span></td>
+          <td class="pts">5</td>
+          <td>Insightful, thoroughly researched, well-supported with credible sources. Rationale and expected outcomes are clear and persuasive.</td>
+        </tr>
+        <tr><td class="pts">4</td><td>Covers all required elements but lacks depth in rationale or expected outcomes. Support from sources present but not well integrated.</td></tr>
+        <tr><td class="pts">2</td><td>Addresses the topic but missing key elements like rationale or expected outcomes. Limited or weak support from sources.</td></tr>
+        <tr><td class="pts">0</td><td>Content is incomplete or off-topic, with no clear connection to the required elements.</td></tr>
+        <tr>
+          <td rowspan="2"><b>Adherence to Format</b><br><span style="color:var(--muted);font-size:11.5px;">max 2 pts</span></td>
+          <td class="pts">2</td>
+          <td>Strictly adheres to format: exactly 5 slides (excluding title page), no more than 3 sentences per slide.</td>
+        </tr>
+        <tr><td class="pts">0</td><td>Fails to meet format requirements (more than 5 slides, more than 3 sentences per slide, or missing title page).</td></tr>
+        <tr>
+          <td rowspan="3"><b>Professionalism &amp; Presentation Style</b><br><span style="color:var(--muted);font-size:11.5px;">max 3 pts</span></td>
+          <td class="pts">3</td>
+          <td>Delivered professionally, with clear and concise speaking, effective slide design, and well-prepared for questions.</td>
+        </tr>
+        <tr><td class="pts">1</td><td>Mostly professional but minor issues in delivery (slight nervousness, minor slide design flaws).</td></tr>
+        <tr><td class="pts">0</td><td>Lacks professionalism (reading from slides, unprepared for questions, poor slide design).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="submit-card">
+    <h2>Submit your work</h2>
+    <p class="note">Select the assignment and upload your file below. You'll need to be signed into your Arcadia Google account to upload.</p>
+    <div class="form-embed">
+      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeXC67E17ePMgPz4AhqMPgSx_3ck47u_hv8bLU4ZTN8dnx25A/viewform?embedded=true" title="Assignment submission form">Loading…</iframe>
+    </div>
+    <div class="feedback-note">
+      <span class="icon">✉️</span>
+      <span>Feedback and an expected score will be sent privately to the email address you're signed in with when you submit — not posted anywhere public.</span>
+    </div>
+  </div>
+
+  <footer class="site">
+    <a href="../" target="_top">&larr; Back to SPM 261</a>
+  </footer>
+</div>
+</body>
+</html>
