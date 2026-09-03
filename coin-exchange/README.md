@@ -10,10 +10,13 @@ grant coins, sell, and remove.
 
 ## How it stays automatic
 
-- The class index is recomputed from the **real live Bitcoin price** every time the
-  page loads (`backend.gs` fetches Coinbase's public spot price).
-- The **first visit each day** records that day's close, which builds the chart.
-- No cron job, no artifact version to re-publish, no daily step.
+- **One update per day.** The first time anyone opens either page after midnight
+  (Apps Script project timezone), the backend reads Bitcoin's real price from
+  Coinbase and locks in that day's close. The index does not move again until the
+  next day. Coins held move with each daily close.
+- No cron job, no artifact version to re-publish, no daily step for you.
+- Optional: run the `seed()` function in `backend.gs` once to put the three
+  test-week days (Aug 30 / 31 / Sep 1) back on the chart.
 
 ## Files
 

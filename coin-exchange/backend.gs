@@ -38,8 +38,20 @@ function handle_(section, body){
     var st = loadState_(section);
     var btc = fetchBtc_();
     if (!st.startPrice) st.startPrice = btc;                 // first ever call seeds the baseline
-    var index = round2_(100 * btc / st.startPrice);
-    recordDailyClose_(st, index);
+
+    // ONE update per day: the first request after midnight (script timezone) locks in
+    // that day's close from the live price. It does not move again until tomorrow.
+    var today = todayISO_();
+    var last = st.history[st.history.length - 1];
+    if (!last || last.date < today) {
+      var closeIndex = round2_(100 * btc / st.startPrice);
+      var prev = last ? last.index : 100;
+      st.history.push({ date: today, index: closeIndex, pct: round2_((closeIndex - prev) / prev * 100), btc: round2_(btc) });
+      last = st.history[st.history.length - 1];
+      if (st.history.length > 400) st.history = st.history.slice(-400);
+    }
+    var index = last.index;                                  // today's locked close
+    var closeBtc = last.btc || btc;
 
     if (body && body.action) {
       if (body.action === 'ping') {
@@ -53,8 +65,8 @@ function handle_(section, body){
     saveState_(section, st);
     return {
       ok: true, section: section,
-      btc: btc, startPrice: round2_(st.startPrice), index: index,
-      history: st.history, students: st.students, serverDate: todayISO_()
+      btc: closeBtc, liveBtc: btc, startPrice: round2_(st.startPrice), index: index,
+      history: st.history, students: st.students, serverDate: today
     };
   } finally {
     lock.releaseLock();
@@ -86,13 +98,29 @@ function applyAction_(st, action, p, index){
   }
 }
 
-function recordDailyClose_(st, index){
-  var today = todayISO_();
-  var last = st.history[st.history.length - 1];
-  if (last && last.date === today) { last.index = index; return; }   // keep today's point fresh
-  var prev = last ? last.index : 100;
-  st.history.push({ date: today, index: index, pct: round2_((index - prev) / prev * 100) });
-  if (st.history.length > 400) st.history = st.history.slice(-400);
+/**
+ * Run this ONCE from the editor (pick "seed" in the function dropdown, click Run)
+ * to carry the three test-week days onto the chart and re-anchor the baseline so
+ * today's first close continues smoothly from ~101.05 instead of snapping to 100.
+ * Safe to skip entirely if you'd rather start fresh. It refuses to run on a
+ * section that has already accumulated its own daily closes.
+ */
+function seed(){
+  var H = [
+    { date: '2026-08-30', index: 101,    pct: 1 },
+    { date: '2026-08-31', index: 100.54, pct: -0.46 },
+    { date: '2026-09-01', index: 101.05, pct: 0.51 }
+  ];
+  var anchor = round2_(fetchBtc_() / 1.0105);
+  ['01', '02'].forEach(function(sec){
+    var st = loadState_(sec);
+    var ownDays = (st.history || []).filter(function(h){ return h.date > '2026-09-01'; });
+    if (ownDays.length > 1) return;                 // already running for real — leave it alone
+    st.startPrice = anchor;
+    st.history = H.map(function(x){ return { date: x.date, index: x.index, pct: x.pct }; });
+    if (!Array.isArray(st.students)) st.students = [];
+    saveState_(sec, st);
+  });
 }
 
 function fetchBtc_(){

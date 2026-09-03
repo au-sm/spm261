@@ -180,7 +180,7 @@
             '<span class="delta-pill '+overallCls+'">'+(overallPct>0?'+':'')+overallPct.toFixed(1)+'% overall</span>' +
           '</div>' +
           '<span class="btc-line">BTC '+fmtUSD(market.btc)+' &middot; baseline '+fmtUSD(market.startPrice)+'</span>' +
-          '<span class="market-updated">'+(lastDate?('Last daily close: '+fmtWhen(lastDate)+' &middot; '):'')+'tracks the live Bitcoin price</span>' +
+          '<span class="market-updated">'+(lastDate?('Last daily close: '+fmtWhen(lastDate)+' &middot; '):'')+'updates once a day</span>' +
         '</div></div>' +
         buildChart(history) +
         buildHistoryList(history) +
@@ -194,7 +194,7 @@
           '</form>') : '') +
         '</div>' + rosterSection +
       '</section>' +
-      '<p class="foot-note">Every coin is granted at <strong>2 points</strong>. The class index moves with Bitcoin’s real price, and every coin still held moves with it. ' +
+      '<p class="foot-note">Every coin is granted at <strong>2 points</strong>. Once a day the class index is set from Bitcoin’s real price, and every coin still held moves with it. ' +
       'Sell any time to lock in that coin’s current value as banked points; hold it and it keeps riding the market.</p>' +
     '</div>';
   }
