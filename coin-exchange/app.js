@@ -7,7 +7,7 @@
   var LABEL   = window.SECTION_LABEL || ("SPM261." + SECTION);
   var API     = window.API_BASE;
   var PW_KEY  = "cce_pw_" + SECTION;
-  var LEVERAGE = 10;   // coin value swings 10x Bitcoin's move since the grant. Keep in sync with backend.gs.
+  var LEVERAGE = 10;   // default; the backend sends the live value (Script Property "LEVERAGE") in every response.
 
   var appEl = document.getElementById("app");
   var state = null;          // {market:{index,history,btc,startPrice}, students:[...]}
@@ -195,7 +195,7 @@
           '</form>') : '') +
         '</div>' + rosterSection +
       '</section>' +
-      '<p class="foot-note">Every coin is granted at <strong>2 points</strong>. Its value swings at <strong>10&times;</strong> Bitcoin’s move since you got the coin — a 3% BTC day is a 30% swing on the coin (value never drops below 0). ' +
+      '<p class="foot-note">Every coin is granted at <strong>2 points</strong>. Its value swings at <strong>'+LEVERAGE+'&times;</strong> Bitcoin’s move since you got the coin — a 3% BTC day is a '+(3*LEVERAGE)+'% swing on the coin (value never drops below 0). ' +
       'Past days are locked at their close; today tracks Bitcoin live. Sell any time to bank the coin’s current value; hold it and it keeps riding the market.</p>' +
     '</div>';
   }
@@ -214,6 +214,7 @@
   }
 
   function toStateShape(res){
+    if(res && Number(res.leverage) > 0) LEVERAGE = Number(res.leverage);
     return {
       market:{ index:res.index, btc:res.btc, startPrice:res.startPrice, history:res.history||[] },
       students:res.students||[]

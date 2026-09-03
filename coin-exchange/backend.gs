@@ -19,7 +19,10 @@
 
 var BTC_URL = 'https://api.coinbase.com/v2/prices/BTC-USD/spot';
 var PROPS = PropertiesService.getScriptProperties();
-var LEVERAGE = 10;   // coin value swings 10x Bitcoin's move since the grant. Keep in sync with app.js.
+
+// Coin value swings LEVERAGE x Bitcoin's move since the grant.
+// Set a Script Property "LEVERAGE" to retune it live (no code change, no redeploy).
+function leverage_(){ var v = Number(PROPS.getProperty('LEVERAGE')); return v > 0 ? v : 10; }
 
 function doGet(e){
   var section = (e && e.parameter && e.parameter.section) || '01';
@@ -72,7 +75,7 @@ function handle_(section, body){
 
     saveState_(section, st);
     return {
-      ok: true, section: section,
+      ok: true, section: section, leverage: leverage_(),
       btc: closeBtc, liveBtc: btc, startPrice: round2_(st.startPrice), index: index,
       history: st.history, students: st.students, serverDate: today
     };
@@ -95,7 +98,7 @@ function applyAction_(st, action, p, index){
     if (s2) {
       var i = s2.coins.map(function(c){ return c.id; }).indexOf(p.coinId);
       if (i > -1) {
-        var val = Math.max(0, 2 * (1 + LEVERAGE * (index / s2.coins[i].entryIndex - 1)));
+        var val = Math.max(0, 2 * (1 + leverage_() * (index / s2.coins[i].entryIndex - 1)));
         s2.banked = round2_(s2.banked + val);
         s2.coins.splice(i, 1);
       }
