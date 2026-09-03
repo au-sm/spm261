@@ -8,12 +8,15 @@ Live pages:
 Students just open the link and watch. You sign in with a password to add students,
 grant coins, sell, and remove.
 
-## How it stays automatic
+## How it works
 
-- **One update per day.** The first time anyone opens either page after midnight
-  (Apps Script project timezone), the backend reads Bitcoin's real price from
-  Coinbase and locks in that day's close. The index does not move again until the
-  next day. Coins held move with each daily close.
+- **Today tracks Bitcoin live; past days are locked.** Each request re-reads
+  Bitcoin's real price (Coinbase spot) and updates today's point. The moment the
+  page is first opened on the next day, yesterday's point freezes for good — so
+  the chart is one settled value per past day, with today still moving.
+- **10x leverage on coins.** A coin is worth `2 * (1 + 10 * (move since grant))`,
+  floored at 0. A 3% Bitcoin move since the grant = a 30% swing on the coin.
+  Change the `LEVERAGE` constant (top of both `app.js` and `backend.gs`) to retune.
 - No cron job, no artifact version to re-publish, no daily step for you.
 - Optional: run the `seed()` function in `backend.gs` once to put the three
   test-week days (Aug 30 / 31 / Sep 1) back on the chart.

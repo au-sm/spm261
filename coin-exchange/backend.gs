@@ -19,6 +19,7 @@
 
 var BTC_URL = 'https://api.coinbase.com/v2/prices/BTC-USD/spot';
 var PROPS = PropertiesService.getScriptProperties();
+var LEVERAGE = 10;   // coin value swings 10x Bitcoin's move since the grant. Keep in sync with app.js.
 
 function doGet(e){
   var section = (e && e.parameter && e.parameter.section) || '01';
@@ -39,18 +40,25 @@ function handle_(section, body){
     var btc = fetchBtc_();
     if (!st.startPrice) st.startPrice = btc;                 // first ever call seeds the baseline
 
-    // ONE update per day: the first request after midnight (script timezone) locks in
-    // that day's close from the live price. It does not move again until tomorrow.
+    // Today's point tracks the live BTC price on every request. Every PAST day is
+    // frozen at its closing value and never changes. Today's point "closes" (freezes
+    // for good) the first time the page is opened on the following day.
     var today = todayISO_();
-    var last = st.history[st.history.length - 1];
-    if (!last || last.date < today) {
-      var closeIndex = round2_(100 * btc / st.startPrice);
-      var prev = last ? last.index : 100;
-      st.history.push({ date: today, index: closeIndex, pct: round2_((closeIndex - prev) / prev * 100), btc: round2_(btc) });
+    var liveIndex = round2_(100 * btc / st.startPrice);
+    var n = st.history.length;
+    var last = n ? st.history[n - 1] : null;
+    if (last && last.date === today) {
+      var prevClose = n >= 2 ? st.history[n - 2].index : 100;
+      last.index = liveIndex;
+      last.pct = round2_((liveIndex - prevClose) / prevClose * 100);
+      last.btc = round2_(btc);
+    } else {
+      var prior = last ? last.index : 100;
+      st.history.push({ date: today, index: liveIndex, pct: round2_((liveIndex - prior) / prior * 100), btc: round2_(btc) });
       last = st.history[st.history.length - 1];
       if (st.history.length > 400) st.history = st.history.slice(-400);
     }
-    var index = last.index;                                  // today's locked close
+    var index = last.index;                                  // today's live value
     var closeBtc = last.btc || btc;
 
     if (body && body.action) {
@@ -87,7 +95,7 @@ function applyAction_(st, action, p, index){
     if (s2) {
       var i = s2.coins.map(function(c){ return c.id; }).indexOf(p.coinId);
       if (i > -1) {
-        var val = 2 * (index / s2.coins[i].entryIndex);
+        var val = Math.max(0, 2 * (1 + LEVERAGE * (index / s2.coins[i].entryIndex - 1)));
         s2.banked = round2_(s2.banked + val);
         s2.coins.splice(i, 1);
       }

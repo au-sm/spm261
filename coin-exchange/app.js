@@ -7,6 +7,7 @@
   var LABEL   = window.SECTION_LABEL || ("SPM261." + SECTION);
   var API     = window.API_BASE;
   var PW_KEY  = "cce_pw_" + SECTION;
+  var LEVERAGE = 10;   // coin value swings 10x Bitcoin's move since the grant. Keep in sync with backend.gs.
 
   var appEl = document.getElementById("app");
   var state = null;          // {market:{index,history,btc,startPrice}, students:[...]}
@@ -28,8 +29,8 @@
     try{ return new Date(iso + (iso.length===10?'T12:00:00':'')).toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
     catch(e){ return ''; }
   }
-  function coinValue(coin,idx){ return 2 * (idx / coin.entryIndex); }
-  function coinDeltaPct(coin,idx){ return ((idx - coin.entryIndex) / coin.entryIndex) * 100; }
+  function coinValue(coin,idx){ return Math.max(0, 2 * (1 + LEVERAGE * (idx / coin.entryIndex - 1))); }
+  function coinDeltaPct(coin,idx){ return LEVERAGE * ((idx - coin.entryIndex) / coin.entryIndex) * 100; }
   function studentHeldValue(st,idx){ return st.coins.reduce(function(s,c){ return s + coinValue(c,idx); },0); }
 
   function buildChart(history){
@@ -102,8 +103,8 @@
     var points = [{date:coin.grantedAt,index:coin.entryIndex}];
     marketHistory.forEach(function(h){ if(h.date > coin.grantedAt) points.push({date:h.date,index:h.index}); });
     var rows = points.map(function(p,i){
-      var val = 2*(p.index/coin.entryIndex);
-      var pct = ((p.index - coin.entryIndex)/coin.entryIndex)*100;
+      var val = Math.max(0, 2 * (1 + LEVERAGE * (p.index/coin.entryIndex - 1)));
+      var pct = LEVERAGE * ((p.index - coin.entryIndex)/coin.entryIndex)*100;
       var cls = pct>0.05?'up':(pct<-0.05?'down':'flat');
       var sign = pct>0?'+':'';
       var label = i===0 ? (fmtWhen(p.date)+' (granted)') : fmtWhen(p.date);
@@ -147,7 +148,7 @@
 
   function buildAppHTML(st,writable){
     var market = st.market, students = st.students, history = market.history;
-    var lastDate = history.length ? history[history.length-1].date : null;
+    var closedDate = history.length >= 2 ? history[history.length-2].date : null;
     var overallPct = (market.index - 100);
     var overallCls = overallPct>0.05?'up':(overallPct<-0.05?'down':'flat');
 
@@ -180,7 +181,7 @@
             '<span class="delta-pill '+overallCls+'">'+(overallPct>0?'+':'')+overallPct.toFixed(1)+'% overall</span>' +
           '</div>' +
           '<span class="btc-line">BTC '+fmtUSD(market.btc)+' &middot; baseline '+fmtUSD(market.startPrice)+'</span>' +
-          '<span class="market-updated">'+(lastDate?('Last daily close: '+fmtWhen(lastDate)+' &middot; '):'')+'updates once a day</span>' +
+          '<span class="market-updated">'+(closedDate?('Closed through '+fmtWhen(closedDate)+' &middot; '):'')+'today tracks Bitcoin live</span>' +
         '</div></div>' +
         buildChart(history) +
         buildHistoryList(history) +
@@ -194,8 +195,8 @@
           '</form>') : '') +
         '</div>' + rosterSection +
       '</section>' +
-      '<p class="foot-note">Every coin is granted at <strong>2 points</strong>. Once a day the class index is set from Bitcoin’s real price, and every coin still held moves with it. ' +
-      'Sell any time to lock in that coin’s current value as banked points; hold it and it keeps riding the market.</p>' +
+      '<p class="foot-note">Every coin is granted at <strong>2 points</strong>. Its value swings at <strong>10&times;</strong> Bitcoin’s move since you got the coin — a 3% BTC day is a 30% swing on the coin (value never drops below 0). ' +
+      'Past days are locked at their close; today tracks Bitcoin live. Sell any time to bank the coin’s current value; hold it and it keeps riding the market.</p>' +
     '</div>';
   }
 
