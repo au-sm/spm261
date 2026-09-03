@@ -13,16 +13,14 @@
  *     Deploy, authorize, copy the Web app URL (ends in /exec).
  *  4. Put that URL in coin-exchange/config.js and push.
  *
- * No triggers, no cron. The market index is recomputed from the live BTC price on
- * every request; the first request each day records that day's close for the chart.
+ * No triggers, no cron. Today's point tracks the live BTC price on every request;
+ * every past day is frozen at its close. To change the leverage, edit the LEVERAGE
+ * number below, Save, and redeploy (Manage deployments -> edit -> New version).
  */
 
 var BTC_URL = 'https://api.coinbase.com/v2/prices/BTC-USD/spot';
 var PROPS = PropertiesService.getScriptProperties();
-
-// Coin value swings LEVERAGE x Bitcoin's move since the grant.
-// Set a Script Property "LEVERAGE" to retune it live (no code change, no redeploy).
-function leverage_(){ var v = Number(PROPS.getProperty('LEVERAGE')); return v > 0 ? v : 10; }
+var LEVERAGE = 10;   // coin value swings this many x Bitcoin's move since the grant. Keep in sync with app.js.
 
 function doGet(e){
   var section = (e && e.parameter && e.parameter.section) || '01';
@@ -75,7 +73,7 @@ function handle_(section, body){
 
     saveState_(section, st);
     return {
-      ok: true, section: section, leverage: leverage_(),
+      ok: true, section: section, leverage: LEVERAGE,
       btc: closeBtc, liveBtc: btc, startPrice: round2_(st.startPrice), index: index,
       history: st.history, students: st.students, serverDate: today
     };
@@ -98,7 +96,7 @@ function applyAction_(st, action, p, index){
     if (s2) {
       var i = s2.coins.map(function(c){ return c.id; }).indexOf(p.coinId);
       if (i > -1) {
-        var val = Math.max(0, 2 * (1 + leverage_() * (index / s2.coins[i].entryIndex - 1)));
+        var val = Math.max(0, 2 * (1 + LEVERAGE * (index / s2.coins[i].entryIndex - 1)));
         s2.banked = round2_(s2.banked + val);
         s2.coins.splice(i, 1);
       }
