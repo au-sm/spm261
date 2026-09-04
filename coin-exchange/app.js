@@ -196,8 +196,8 @@
           '</form>') : '') +
         '</div>' + rosterSection +
       '</section>' +
-      '<p class="foot-note">Each coin starts at the <strong>bonus points you choose</strong> when you grant it (default 2). Its value then swings at <strong>'+LEVERAGE+'&times;</strong> Bitcoin’s move since you got the coin — a 3% BTC day is a '+(3*LEVERAGE)+'% swing on the coin (value never drops below 0). ' +
-      'Past days are locked at their close; today tracks Bitcoin live. Sell any time to bank the coin’s current value; hold it and it keeps riding the market.</p>' +
+      '<p class="foot-note">Each coin you are given starts at a set number of points. From then on it rides Bitcoin: your coin’s value swings <strong>'+LEVERAGE+'&times;</strong> Bitcoin’s move since you got it, so a 3% Bitcoin day moves your coin '+(3*LEVERAGE)+'% (it never drops below 0). ' +
+      'Past days are locked at their closing value; today’s value tracks Bitcoin live. When a coin is sold, its current value is banked for you; a coin you keep holding stays in the market.</p>' +
     '</div>';
   }
 
