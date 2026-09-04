@@ -89,14 +89,21 @@ function applyAction_(st, action, p, index){
 
   } else if (action === 'grantCoin') {
     var s = find_(st.students, p.studentId);
-    if (s) s.coins.push({ id: uid_(), entryIndex: index, grantedAt: todayISO_() });
+    if (s) {
+      var base = Number(p.points);
+      if (!(base > 0)) base = 2;            // default bonus is 2 points
+      if (base > 1000) base = 1000;         // sanity cap
+      base = round2_(base);
+      s.coins.push({ id: uid_(), entryIndex: index, base: base, grantedAt: todayISO_() });
+    }
 
   } else if (action === 'sell') {
     var s2 = find_(st.students, p.studentId);
     if (s2) {
       var i = s2.coins.map(function(c){ return c.id; }).indexOf(p.coinId);
       if (i > -1) {
-        var val = Math.max(0, 2 * (1 + LEVERAGE * (index / s2.coins[i].entryIndex - 1)));
+        var cbase = Number(s2.coins[i].base) > 0 ? Number(s2.coins[i].base) : 2;
+        var val = Math.max(0, cbase * (1 + LEVERAGE * (index / s2.coins[i].entryIndex - 1)));
         s2.banked = round2_(s2.banked + val);
         s2.coins.splice(i, 1);
       }

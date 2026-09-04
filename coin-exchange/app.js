@@ -29,7 +29,8 @@
     try{ return new Date(iso + (iso.length===10?'T12:00:00':'')).toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
     catch(e){ return ''; }
   }
-  function coinValue(coin,idx){ return Math.max(0, 2 * (1 + LEVERAGE * (idx / coin.entryIndex - 1))); }
+  function coinBase(coin){ var b = Number(coin && coin.base); return b > 0 ? b : 2; }
+  function coinValue(coin,idx){ return Math.max(0, coinBase(coin) * (1 + LEVERAGE * (idx / coin.entryIndex - 1))); }
   function coinDeltaPct(coin,idx){ return LEVERAGE * ((idx - coin.entryIndex) / coin.entryIndex) * 100; }
   function studentHeldValue(st,idx){ return st.coins.reduce(function(s,c){ return s + coinValue(c,idx); },0); }
 
@@ -103,7 +104,7 @@
     var points = [{date:coin.grantedAt,index:coin.entryIndex}];
     marketHistory.forEach(function(h){ if(h.date > coin.grantedAt) points.push({date:h.date,index:h.index}); });
     var rows = points.map(function(p,i){
-      var val = Math.max(0, 2 * (1 + LEVERAGE * (p.index/coin.entryIndex - 1)));
+      var val = Math.max(0, coinBase(coin) * (1 + LEVERAGE * (p.index/coin.entryIndex - 1)));
       var pct = LEVERAGE * ((p.index - coin.entryIndex)/coin.entryIndex)*100;
       var cls = pct>0.05?'up':(pct<-0.05?'down':'flat');
       var sign = pct>0?'+':'';
@@ -120,7 +121,7 @@
     var cls = pct>0.05?'up':(pct<-0.05?'down':'flat');
     var sign = pct>0?'+':'';
     return '<div class="coin-row">' +
-      '<span class="coin-basis">granted '+fmtWhen(coin.grantedAt)+'</span>' +
+      '<span class="coin-basis">granted '+fmtWhen(coin.grantedAt)+' &middot; '+fmtPts(coinBase(coin))+' base</span>' +
       '<span class="coin-value num">'+fmtPts(val)+' pts</span>' +
       '<span class="delta-pill '+cls+'">'+sign+pct.toFixed(1)+'%</span>' +
       '<button type="button" class="btn-ghost btn-small coin-hist-btn">History</button>' +
@@ -195,7 +196,7 @@
           '</form>') : '') +
         '</div>' + rosterSection +
       '</section>' +
-      '<p class="foot-note">Every coin is granted at <strong>2 points</strong>. Its value swings at <strong>'+LEVERAGE+'&times;</strong> Bitcoin’s move since you got the coin — a 3% BTC day is a '+(3*LEVERAGE)+'% swing on the coin (value never drops below 0). ' +
+      '<p class="foot-note">Each coin starts at the <strong>bonus points you choose</strong> when you grant it (default 2). Its value then swings at <strong>'+LEVERAGE+'&times;</strong> Bitcoin’s move since you got the coin — a 3% BTC day is a '+(3*LEVERAGE)+'% swing on the coin (value never drops below 0). ' +
       'Past days are locked at their close; today tracks Bitcoin live. Sell any time to bank the coin’s current value; hold it and it keeps riding the market.</p>' +
     '</div>';
   }
@@ -289,7 +290,14 @@
     });
 
     document.querySelectorAll('.grant-btn').forEach(function(btn){
-      btn.addEventListener('click', function(){ doAction('grantCoin', {studentId:btn.getAttribute('data-student')}); });
+      btn.addEventListener('click', function(){
+        var raw = window.prompt('Bonus points for this coin (its starting value before the market moves it):', '2');
+        if(raw === null) return;
+        var pts = parseFloat(String(raw).trim());
+        if(!(pts > 0)){ showToast('Enter a positive number of points.'); return; }
+        if(pts > 1000){ showToast('That is above the 1000-point cap.'); return; }
+        doAction('grantCoin', {studentId:btn.getAttribute('data-student'), points:pts});
+      });
     });
 
     document.querySelectorAll('.sell-btn').forEach(function(btn){

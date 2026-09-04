@@ -14,11 +14,15 @@ grant coins, sell, and remove.
   Bitcoin's real price (Coinbase spot) and updates today's point. The moment the
   page is first opened on the next day, yesterday's point freezes for good — so
   the chart is one settled value per past day, with today still moving.
-- **10x leverage on coins.** A coin is worth `2 * (1 + L * (move since grant))`,
-  floored at 0, where `L` defaults to 10 — a 3% Bitcoin move since the grant = a
-  30% swing on the coin. To retune, add/edit a Script Property named `LEVERAGE`
-  (e.g. `15`). Takes effect immediately, no code change or redeploy; the pages
-  read it from the backend.
+- **Choose the bonus points per coin.** When you click "+ Grant coin" you're
+  asked how many points that coin is worth (its base value). Leave it at 2 or
+  type any positive number up to 1000. Older coins with no stored base still
+  count as 2.
+- **10x leverage on coins.** A coin is worth `base * (1 + L * (move since grant))`,
+  floored at 0, where `base` is what you entered at grant time and `L` defaults
+  to 10 — a 3% Bitcoin move since the grant = a 30% swing on the coin. To retune
+  the leverage, edit the `LEVERAGE` value in `backend.gs`, save, and redeploy a
+  new version.
 - No cron job, no artifact version to re-publish, no daily step for you.
 - Optional: run the `seed()` function in `backend.gs` once to put the three
   test-week days (Aug 30 / 31 / Sep 1) back on the chart.
