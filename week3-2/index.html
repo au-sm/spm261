@@ -128,6 +128,15 @@ a{color:inherit;}
   padding:4.2vh 4.5vw 0;
   pointer-events:none;
 }
+.home-link,.pdf-link-fixed{
+  position:fixed;top:1.6vh;z-index:60;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-faint);text-decoration:none;
+  transition:color .2s ease;
+}
+.home-link{left:4.5vw;}
+.pdf-link-fixed{right:4.5vw;}
+.home-link:hover,.pdf-link-fixed:hover{color:var(--ink);}
 .eyebrow{
   font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
   color:var(--ink-dim);
@@ -509,7 +518,7 @@ a{color:inherit;}
    ============================================================ */
 @media print{
   html,body{overflow:visible !important;height:auto !important;background:var(--bg);}
-  .ambient,.progress-rail,.dots,.navbtn,.click-zone,.notes-panel,.kbd-hint{display:none !important;}
+  .ambient,.progress-rail,.dots,.navbtn,.click-zone,.notes-panel,.kbd-hint,.home-link,.pdf-link-fixed{display:none !important;}
   .deck{position:static !important;}
   .slide{
     position:relative !important;
@@ -535,6 +544,9 @@ a{color:inherit;}
 <body>
 
 <div class="ambient" aria-hidden="true"></div>
+
+<a class="home-link" href="../" title="Back to course home">&larr; Home</a>
+<a class="pdf-link-fixed" href="SPM261_Week3-2_Slides.pdf" download title="Download this deck as a PDF">PDF &darr;</a>
 
 <div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
 
