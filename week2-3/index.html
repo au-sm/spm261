@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SPM 261 &middot; Week 2-3 &mdash; Virtual Reality in Sports</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+
+:root{
+  --bg:#0a0e10;
+  --bg2:#0d1315;
+  --surface:#131a1d;
+  --surface2:#192226;
+  --ink:#eef6f4;
+  --muted:rgba(238,246,244,.62);
+  --muted2:rgba(238,246,244,.40);
+  --line:rgba(238,246,244,.14);
+
+  --cyan:#57d9cc;      /* VR */
+  --cyan-soft:rgba(87,217,204,.16);
+  --violet:#a48cf0;    /* AR */
+  --violet-soft:rgba(164,140,240,.16);
+  --rose:#e0819e;      /* MR */
+  --rose-soft:rgba(224,129,158,.16);
+  --amber:#e3a75c;     /* Prologue / legacy tech */
+  --amber-soft:rgba(227,167,92,.16);
+
+  --accent-live: var(--cyan);
+  --accent-live-soft: var(--cyan-soft);
+
+  --font-display: 'Helvetica Neue', Helvetica, Arial, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --dur: .7s;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);
+  overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  transition:background .6s ease;
+}
+.bg-wash{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(1200px 700px at 12% -8%, color-mix(in srgb, var(--accent-live) 10%, transparent), transparent 60%),
+    radial-gradient(900px 720px at 105% 108%, color-mix(in srgb, var(--accent-live) 7%, transparent), transparent 62%),
+    linear-gradient(180deg,var(--bg2),var(--bg) 45%);
+  transition:background 1s ease;
+}
+.bg-grid{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:
+    linear-gradient(rgba(238,246,244,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(238,246,244,.035) 1px, transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(1000px 620px at 50% 20%, black, transparent 75%);
+}
+.deck{position:fixed;inset:0;z-index:1;}
+.slide{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(22px);
+  transition:opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility 0s linear var(--dur);
+  visibility:hidden;pointer-events:none;
+  padding: clamp(64px,9vh,96px) clamp(28px,6vw,104px) clamp(40px,6vh,64px);
+}
+.slide.active{opacity:1;transform:translateY(0);visibility:visible;pointer-events:auto;z-index:2;transition-delay:0s;}
+.slide-inner{position:relative;width:100%;max-width:1280px;max-height:100%;margin:0 auto;display:flex;flex-direction:column;gap:clamp(14px,2vh,22px);overflow:auto;padding:2px 4px 2px 0;zoom:var(--zoom,1);}
+.slide-inner::-webkit-scrollbar{width:6px;}
+.slide-inner::-webkit-scrollbar-thumb{background:color-mix(in srgb, var(--accent-live) 40%, transparent);border-radius:3px;}
+.slide-inner::-webkit-scrollbar-track{background:transparent;}
+
+.page-num{
+  position:fixed;right:clamp(20px,4vw,54px);bottom:clamp(14px,3vh,28px);
+  font-family:var(--font-display);font-weight:700;font-size:clamp(64px,11vw,150px);line-height:1;
+  color:rgba(238,246,244,.04);pointer-events:none;z-index:0;user-select:none;letter-spacing:-.03em;
+}
+
+/* chrome */
+.chrome-top{
+  position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:22px;
+  padding:20px clamp(20px,4vw,48px) 0;pointer-events:none;
+}
+.brand{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2);white-space:nowrap;}
+.brand b{color:var(--accent-live);font-weight:600;transition:color .6s ease;}
+.progress-track{flex:1;height:1px;background:var(--line);position:relative;}
+.progress-fill{position:absolute;top:-1.5px;left:0;height:4px;width:0%;background:var(--accent-live);transition:width .5s var(--ease), background .6s ease;}
+.progress-fill::after{content:'';position:absolute;right:-3px;top:-2px;width:8px;height:8px;border-radius:50%;background:var(--accent-live);box-shadow:0 0 10px 2px var(--accent-live-soft);transition:background .6s ease;}
+.section-label{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-live);white-space:nowrap;transition:color .6s ease;}
+.counter{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);white-space:nowrap;min-width:52px;text-align:right;}
+
+.chrome-bottom{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(20px,4vw,48px) 22px;pointer-events:none;
+}
+.navbtn{
+  pointer-events:auto;width:38px;height:38px;border-radius:50%;
+  border:1px solid var(--line);background:rgba(10,14,16,.6);backdrop-filter:blur(6px);
+  color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background .25s ease, border-color .25s ease, transform .2s ease;
+}
+.navbtn:hover{background:var(--accent-live-soft);border-color:var(--accent-live);transform:translateY(-2px);}
+.navbtn:active{transform:translateY(0);}
+.navbtn svg{width:16px;height:16px;}
+.navbtn:disabled{opacity:.22;cursor:default;transform:none;}
+.hint{
+  pointer-events:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted2);opacity:1;transition:opacity 1s ease;z-index:19;
+}
+.hint.hide{opacity:0;}
+.textlink{
+  pointer-events:auto;background:none;border:none;cursor:pointer;flex-shrink:0;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--muted);padding:4px 0;position:relative;transition:color .2s ease;text-decoration:none;
+}
+.textlink::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--accent-live);transform:scaleX(0);transform-origin:left;transition:transform .25s ease, background .6s ease;}
+.textlink:hover{color:var(--ink);}
+.textlink:hover::after{transform:scaleX(1);}
+
+.zoom-controls{pointer-events:auto;display:flex;align-items:center;gap:2px;flex-shrink:0;font-family:var(--font-mono);}
+.zoom-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;line-height:1;padding:4px 6px;transition:color .2s ease;}
+.zoom-btn:hover{color:var(--accent-live);}
+.zoom-reset{min-width:40px;text-align:center;font-size:10px;color:var(--muted2);}
+.zoom-btn:disabled{opacity:.3;cursor:default;}
+
+/* reveal primitives */
+.reveal-item{opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
+.slide.active .reveal-item.in{opacity:1;transform:translateY(0);}
+
+.kicker{font-family:var(--font-mono);font-size:clamp(10px,.95vw,12px);letter-spacing:.18em;text-transform:uppercase;color:var(--accent-live);margin:0 0 10px;display:flex;align-items:center;gap:10px;transition:color .6s ease;}
+.kicker::before{content:'';display:inline-block;width:26px;height:1px;background:var(--accent-live);transition:background .6s ease;}
+
+h1.disp{font-family:var(--font-display);font-weight:700;line-height:1.02;margin:0;color:var(--ink);letter-spacing:-.02em;}
+.title-hero{font-size:clamp(44px,7.6vw,102px);}
+.title-slide{font-size:clamp(28px,3.6vw,46px);}
+.title-slide.long{font-size:clamp(22px,2.7vw,32px);}
+.subtitle{font-family:var(--font-body);font-weight:400;color:var(--muted);font-size:clamp(15px,1.6vw,19px);margin:10px 0 0;max-width:640px;line-height:1.5;}
+.meta-badge{margin-top:26px;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.09em;color:var(--muted2);text-transform:uppercase;}
+
+ul.bullets{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:13px;max-width:760px;}
+ul.bullets li{font-size:clamp(15px,1.3vw,18.5px);line-height:1.55;color:var(--ink);padding-left:24px;position:relative;}
+ul.bullets li::before{content:'';position:absolute;left:0;top:.62em;width:7px;height:7px;background:var(--accent-live);transition:background .6s ease;}
+ul.bullets li.q{color:var(--ink);font-style:italic;}
+ul.bullets li.q::before{background:var(--muted);}
+
+.source-list{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
+.source{font-family:var(--font-mono);font-size:11px;color:var(--muted2);margin:0;word-break:break-word;}
+.source::before{content:'Source \2014  ';color:var(--muted);}
+.source a, .bullets a, .notes-panel a{color:var(--accent-live);text-decoration:none;border-bottom:1px solid color-mix(in srgb, var(--accent-live) 45%, transparent);transition:color .6s ease,border-color .6s ease;}
+.source a:hover, .bullets a:hover{color:var(--ink);}
+
+/* watch card (video link w/ extracted poster) */
+.watch-card{
+  display:flex;align-items:center;gap:16px;max-width:560px;text-decoration:none;
+  padding:12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);
+  transition:border-color .25s ease, transform .2s ease, background .6s ease;
+}
+.watch-card:hover{border-color:var(--accent-live);transform:translateY(-2px);}
+.watch-thumb{position:relative;flex:none;width:120px;aspect-ratio:16/9;border-radius:4px;overflow:hidden;background:#000;}
+.watch-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.watch-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.28);}
+.watch-play svg{width:26px;height:26px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));}
+.watch-body{min-width:0;}
+.watch-eyebrow{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-live);margin-bottom:4px;}
+.watch-title{font-size:14px;color:var(--ink);line-height:1.35;font-weight:600;}
+.watch-url{font-family:var(--font-mono);font-size:10.5px;color:var(--muted2);margin-top:4px;word-break:break-all;}
+
+/* link chip row for bare links (no poster art available) */
+.link-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:2px;}
+.link-chip{
+  display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:10.5px;color:var(--muted);
+  border:1px solid var(--line);border-radius:999px;padding:6px 13px 6px 11px;text-decoration:none;
+  transition:border-color .2s ease,color .2s ease;max-width:100%;
+}
+.link-chip span.u{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.link-chip:hover{border-color:var(--accent-live);color:var(--ink);}
+.link-chip svg{width:10px;height:10px;flex:none;stroke:var(--accent-live);}
+
+/* images — reticle frame, no mat, per house style */
+.frame{position:relative;border-radius:3px;overflow:hidden;background:var(--surface);}
+.frame img{
+  display:block;width:100%;height:auto;
+  opacity:0;transform:scale(1.05);transition:opacity .9s var(--ease), transform 1.3s var(--ease);
+  border-radius:3px;
+}
+.frame.contain{display:flex;align-items:center;justify-content:center;background:transparent;}
+.frame.contain img{object-fit:contain;width:auto;height:auto;max-width:100%;max-height:100%;}
+.slide.active .frame.in img{opacity:1;transform:scale(1);}
+.corner{position:absolute;width:16px;height:16px;opacity:0;transition:opacity .5s var(--ease) .15s;pointer-events:none;}
+.slide.active .frame.in .corner{opacity:.85;}
+.corner.tl{top:-6px;left:-6px;border-top:2px solid var(--accent-live);border-left:2px solid var(--accent-live);}
+.corner.tr{top:-6px;right:-6px;border-top:2px solid var(--accent-live);border-right:2px solid var(--accent-live);}
+.corner.bl{bottom:-6px;left:-6px;border-bottom:2px solid var(--accent-live);border-left:2px solid var(--accent-live);}
+.corner.br{bottom:-6px;right:-6px;border-bottom:2px solid var(--accent-live);border-right:2px solid var(--accent-live);}
+.corner{transition:opacity .5s var(--ease) .15s, border-color .6s ease;}
+.cutline{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.02em;color:var(--muted2);margin-top:10px;padding-left:9px;border-left:2px solid var(--accent-live);transition:border-color .6s ease;}
+
+/* layout: media stack (default single image) */
+.media-body{display:flex;flex-direction:column;gap:20px;}
+.media-body > .media-figure{max-height:40vh;display:flex;justify-content:flex-start;}
+.media-body > .media-figure .frame{max-height:40vh;}
+.media-body > .media-figure .frame img{max-height:40vh;width:auto;max-width:100%;}
+
+/* layout: split */
+.split-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(28px,4.5vw,72px);align-items:center;}
+.split-grid.reverse{grid-template-columns:1fr 1.1fr;}
+.split-grid.reverse .split-text{order:2;}
+.split-grid.reverse .split-media{order:1;}
+.split-media .frame{max-height:min(50vh,460px);display:flex;}
+.split-media .frame img{max-height:min(50vh,460px);}
+
+/* layout: banner (full-bleed) */
+.banner-slide{padding:0 !important;}
+.banner-wrap{position:relative;width:100%;height:100%;overflow:hidden;}
+.banner-wrap img{width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity 1.1s var(--ease),transform 1.6s var(--ease);}
+.slide.active .banner-wrap.in img{opacity:1;transform:scale(1);}
+.banner-scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(8,10,11,.92) 18%,rgba(8,10,11,.55) 46%,rgba(8,10,11,.15) 72%);}
+.banner-scrim.center{background:linear-gradient(0deg,rgba(8,10,11,.92) 0%,rgba(8,10,11,.4) 46%,rgba(8,10,11,.15) 72%);}
+.banner-text{position:absolute;left:clamp(28px,6vw,104px);top:50%;transform:translateY(-50%);max-width:640px;}
+
+/* diptych / grid */
+.dip{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.dip .frame{height:min(42vh,400px);}
+.dip .frame img{height:100%;}
+.dip.contain-all .frame{background:transparent;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media (max-width:880px){ .grid3{grid-template-columns:1fr 1fr;} .dip{grid-template-columns:1fr;} }
+.grid3 .frame{height:min(30vh,270px);}
+.grid3 .frame img{height:100%;}
+
+/* badge (small corner logo, text dominant) */
+.badge-logo{position:absolute;top:0;right:0;width:clamp(48px,6vw,74px);opacity:0;transition:opacity .8s var(--ease);}
+.badge-logo img{width:100%;display:block;}
+.slide.active .badge-logo.in{opacity:.95;}
+
+/* stat display */
+.stat-row{display:flex;flex-wrap:wrap;gap:clamp(30px,5vw,72px);margin:6px 0 4px;}
+.stat{display:flex;flex-direction:column;gap:9px;max-width:320px;}
+.stat-rule{width:30px;height:2px;background:var(--accent-live);transition:background .6s ease;}
+.stat-num{font-family:var(--font-display);font-weight:700;font-size:clamp(40px,5.4vw,74px);color:var(--ink);line-height:1;white-space:nowrap;letter-spacing:-.02em;}
+.stat-num .u{font-size:.4em;font-family:var(--font-mono);font-weight:400;color:var(--accent-live);margin-left:3px;transition:color .6s ease;}
+.stat-label{font-size:13px;color:var(--muted);line-height:1.45;}
+
+/* case-file (year cards) */
+.case-year{font-family:var(--font-display);font-weight:700;font-size:clamp(70px,11vw,168px);line-height:.86;letter-spacing:-.03em;color:var(--accent-live);opacity:.92;transition:color .6s ease;}
+
+/* definition / statement */
+.statement-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;gap:0;}
+.statement-text{font-family:var(--font-display);font-weight:700;font-size:clamp(34px,6vw,84px);letter-spacing:-.02em;line-height:1.08;max-width:920px;}
+.def-body{font-family:var(--font-body);font-weight:400;font-style:normal;color:var(--ink);font-size:clamp(19px,2.1vw,27px);line-height:1.5;max-width:760px;}
+
+/* divider */
+.divider-wrap{position:relative;display:flex;flex-direction:column;justify-content:center;height:100%;max-width:960px;}
+.divider-num{position:absolute;right:-6px;top:50%;transform:translateY(-50%);font-family:var(--font-display);font-weight:700;font-size:clamp(160px,22vw,340px);line-height:1;color:color-mix(in srgb, var(--accent-live) 8%, transparent);user-select:none;pointer-events:none;transition:color .6s ease;}
+.divider-wrap .subtitle{margin-top:16px;font-size:clamp(16px,1.7vw,21px);}
+.divider-title{font-size:clamp(32px,4.6vw,60px);}
+
+/* exhibit */
+.exhibit-wrap{display:flex;flex-direction:column;align-items:center;gap:18px;}
+.exhibit-wrap .frame{max-height:56vh;}
+.exhibit-wrap .frame img{max-height:56vh;}
+
+/* closing */
+.closing-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;text-align:center;}
+.closing-wrap .rule{width:56px;height:1px;background:var(--accent-live);transition:background .6s ease;}
+.closing-wrap .subtitle{margin-top:0;}
+
+/* notes panel */
+.notes-panel{
+  position:fixed;top:0;right:0;height:100%;width:min(420px,86vw);background:rgba(9,12,13,.97);backdrop-filter:blur(10px);
+  border-left:1px solid var(--line);z-index:15;transform:translateX(100%);transition:transform .45s var(--ease);
+  padding:80px 28px 28px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;
+}
+.notes-panel.open{transform:translateX(0);}
+.notes-panel h3{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-live);margin:0;transition:color .6s ease;}
+.notes-panel p{font-family:var(--font-body);font-size:15.5px;line-height:1.6;color:var(--ink);white-space:pre-wrap;}
+.notes-panel .close-notes{position:absolute;top:24px;right:24px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;}
+.notes-empty{color:var(--muted2);font-style:italic;}
+.notes-panel::-webkit-scrollbar{width:8px;}
+.notes-panel::-webkit-scrollbar-thumb{background:color-mix(in srgb, var(--accent-live) 35%, transparent);border-radius:4px;}
+
+@media (max-width: 880px){
+  .split-grid,.split-grid.reverse{grid-template-columns:1fr;}
+  .split-grid.reverse .split-text{order:1;} .split-grid.reverse .split-media{order:2;}
+  .stat-row{gap:24px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .slide{transition:opacity .15s linear !important;transform:none !important;}
+  .reveal-item{transition:none !important;opacity:1 !important;transform:none !important;}
+  .frame img,.banner-wrap img{transition:none !important;opacity:1 !important;transform:none !important;}
+  .corner{transition:none !important;opacity:.85 !important;}
+  .badge-logo{transition:none !important;opacity:.95 !important;}
+}
+.reduced .slide{transition:opacity .15s linear !important;transform:none !important;}
+.reduced .reveal-item{transition:none !important;opacity:1 !important;transform:none !important;}
+.reduced .frame img,.reduced .banner-wrap img{transition:none !important;opacity:1 !important;transform:none !important;}
+.reduced .corner{transition:none !important;opacity:.85 !important;}
+.reduced .badge-logo{transition:none !important;opacity:.95 !important;}
+
+@media print{
+  body{overflow:visible !important;background:var(--bg);}
+  .chrome-top,.chrome-bottom,.hint,.notes-panel,.page-num{display:none !important;}
+  .bg-grid{display:none;}
+  .deck{position:static;}
+  .slide{
+    position:relative !important;inset:auto !important;opacity:1 !important;visibility:visible !important;
+    transform:none !important;transition:none !important;pointer-events:none !important;
+    width:100vw;height:100vh;page-break-after:always;break-after:page;padding:64px 96px !important;
+  }
+  .banner-slide{padding:0 !important;}
+  .reveal-item{opacity:1 !important;transform:none !important;}
+  .frame img,.banner-wrap img{opacity:1 !important;transform:none !important;}
+  .corner{opacity:.85 !important;}
+  .badge-logo{opacity:.95 !important;}
+}
+
+</style>
+</head>
+<body>
+<div class="bg-wash" id="bgWash"></div>
+<div class="bg-grid"></div>
+
+<div class="chrome-top">
+  <a class="textlink home-btn" href="../" title="Back to course home">&larr; Home</a>
+  <div class="brand"><b>SPM 261</b> &middot; Virtual Reality in Sports &middot; Week 2-3</div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="section-label" id="sectionLabel"></div>
+  <div class="counter" id="counter"></div>
+  <a class="textlink home-btn" id="pdfDownload" href="SPM261_Week2-3_Slides.pdf" download title="Download this deck as a PDF">Download PDF</a>
+  <button class="textlink" id="notesToggle" title="Toggle speaker notes (N)">Notes &middot; N</button>
+  <div class="zoom-controls" role="group" aria-label="Zoom controls">
+    <button class="zoom-btn" id="zoomOutBtn" title="Zoom out (&minus;)" aria-label="Zoom out">&minus;</button>
+    <button class="zoom-btn zoom-reset" id="zoomResetBtn" title="Reset zoom (0)" aria-label="Reset zoom">100%</button>
+    <button class="zoom-btn" id="zoomInBtn" title="Zoom in (+)" aria-label="Zoom in">+</button>
+  </div>
+</div>
+
+<main class="deck" id="deck"></main>
+<div class="page-num" id="pageNum"></div>
+
+<div class="chrome-bottom">
+  <button class="navbtn" id="prevBtn" aria-label="Previous slide">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" aria-label="Next slide">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<div class="hint" id="hint">Click, scroll, or press &rarr; to continue &middot; N for notes</div>
+
+<aside class="notes-panel" id="notesPanel">
+  <button class="close-notes" id="closeNotes" aria-label="Close notes">&times;</button>
+  <div id="notesBody"><h3>Speaker Notes</h3><p class="notes-empty">No speaker notes for this slide.</p></div>
+</aside>
+
+<script type="application/json" id="slide-data">
+[
+{"type":"title","title":"Virtual Reality in Sports","subtitle":"SPM261 Introduction to Sport Management","images":[{"src":"assets/s0_p0.jpg","fit":"contain"},{"src":"assets/s0_p1.jpg","fit":"cover"}]},
+
+{"type":"statement","text":"Technology matters"},
+
+{"type":"definition","label":"Definition","title":"Google Glass","body":"Google Glass — smart glasses that are wearable and voice-activated.","video":{"poster":"assets/s2_video_poster.jpeg","title":"Breaking down language barriers with augmented reality | Google","url":"https://www.youtube.com/watch?v=lj0bFX9HXeE"},"notesLinks":["https://www.youtube.com/watch?v=lj0bFX9HXeE"]},
+
+{"type":"case","year":"2013","label":"Case File","title":"WNBA","images":[{"src":"assets/s3_p2.png","fit":"contain","caption":"Candace Parker (@Candace_Parker) — Jun 8, 2013"},{"src":"assets/s3_p3.jpg","fit":"cover"}],"links":["https://www.youtube.com/watch?v=P_rVJ4pHcKY&t=4s"],"notesLinks":["https://www.youtube.com/watch?v=P_rVJ4pHcKY&t=4s"]},
+
+{"type":"case","year":"2023","label":"Case File","title":"MLB","video":{"poster":"assets/s4_video_poster.jpeg","title":"The best of UMP CAM in the 2023 Division Series!","url":"https://www.youtube.com/watch?v=zr573JSCf8k"},"notesLinks":["https://www.youtube.com/watch?v=zr573JSCf8k"]},
+
+{"type":"announcement","label":"Case File","title":"Google Glasses Discontinued","banner":{"src":"assets/s5_p4.png","fit":"contain"},"images":[{"src":"assets/s5_p5.jpg","fit":"cover"},{"src":"assets/s5_p6.png","fit":"contain"}],"links":["https://www.youtube.com/watch?v=P_rVJ4pHcKY&t=4s"],"notesLinks":["https://www.youtube.com/watch?v=P_rVJ4pHcKY&t=4s"]},
+
+{"type":"divider","section":"vr","num":"01","kicker":"Section 01","title":"How is virtual reality (VR) changing sports?"},
+
+{"type":"media","layout":"single","kicker":"VR in Sports","title":"Players Training","bullets":["Players training"],"images":[{"src":"assets/s8_p10.jpg","fit":"cover"}],"links":["https://www.youtube.com/watch?v=k1Od7G3CQp8","https://www.youtube.com/watch?v=0XKxvKEFBps"]},
+
+{"type":"media","layout":"badge","kicker":"VR in Sports","title":"Players Training","badge":"assets/s9_p11.png","images":[{"src":"assets/s9_p12.jpg","fit":"contain"}],"links":["https://www.youtube.com/watch?v=nkkhFpvAx5c&t=100s"]},
+
+{"type":"media","layout":"dip","kicker":"VR in Sports","title":"Marketing","subtitle":"Season-ticket renewal strategy","bullets":["Game & practice footage","Message from a star player (urging fans to renew tickets)"],"images":[{"src":"assets/s10_p13.jpg","fit":"contain"},{"src":"assets/s10_p14.jpg","fit":"contain"}]},
+
+{"type":"media","layout":"split","kicker":"VR in Sports","title":"Live Sports Viewing Experience","bullets":["Facebook signed a multiyear deal with the NBA.","Oculus — an official marketing and VR headset partner of the NBA, WNBA, and G League.","Subscription Fee ~","NBA Railcam Footage ‘Oculus Front Row View’","Oculus Go + NextVR"],"stat":{"value":"2","prefix":"$","suffix":"B","label":"Oculus was bought by Facebook for $2 billion in 2014"},"images":[{"src":"assets/s11_p15.jpg","fit":"contain"},{"src":"assets/s11_p16.jpg","fit":"contain"},{"src":"assets/s11_p17.png","fit":"contain"}],"links":["https://www.roadtovr.com/facebook-signs-multiyear-deal-nba-making-oculus-official-vr-marketing-partner/","https://vimeo.com/443411421","https://www.youtube.com/watch?v=ThzzWIbxFcM"]},
+
+{"type":"stat-banner","kicker":"VR in Sports","title":"Live Sports Viewing Experience","image":{"src":"assets/s12_p18.jpg","fit":"cover"},"stats":[{"value":"5","label":"8K cameras used in the broadcast — including two at each basket and one on the scorer’s table"},{"value":"52","label":"live NBA games fans could watch in VR during the 23–24 season, alongside WNBA, G League and 2K League coverage on the Xtadium app and Meta Horizon Worlds"}],"links":["https://ftw.usatoday.com/2023/04/nba-virtual-reality-broadcast-meta-quest-oculus-headset","https://www.nba.com/news/2024-25-nba-vr-schedule"]},
+
+{"type":"divider","section":"ar","num":"02","kicker":"Section 02","title":"How is augmented reality (AR) changing sports?"},
+
+{"type":"media","layout":"grid3","kicker":"AR in Sports","title":"More Spectator Focused","images":[{"src":"assets/s14_p19.jpg","fit":"contain"},{"src":"assets/s14_p20.jpg","fit":"contain"},{"src":"assets/s14_p21.jpg","fit":"contain"}],"links":["https://www.youtube.com/watch?time_continue=226&v=1Oqm6eO6deU"]},
+
+{"type":"media","layout":"split","kicker":"AR in Sports","title":"AR Showcase","bullets":["iPhone & iPad (ARKit)","At Bat app — mlb.com/apps/atbat","Changed of spectatorship?"],"images":[{"src":"assets/s15_p22.jpg","fit":"contain"}],"links":["https://vimeo.com/271494416"]},
+
+{"type":"media","layout":"split-reverse","kicker":"AR in Sports","title":"AR for Ticket Sales?","subtitle":"ex. Super Bowl","images":[{"src":"assets/s16_p23.png","fit":"contain"}],"links":["https://www.sporttechie.com/stubhub-augmented-reality-super-bowl-ticket-buyers/","https://www.youtube.com/watch?v=xxDTzcdUdAo"]},
+
+{"type":"divider","section":"mr","num":"03","kicker":"Section 03","title":"How is mixed reality (MR) changing sports?"},
+
+{"type":"media","layout":"split","kicker":"MR Uses in Sports","title":"Virtual Items in Real-World Space","bullets":["MR — virtual items appear in real-world space","MR for coaching?"],"images":[{"src":"assets/s18_p24.jpg","fit":"cover"}],"links":["https://www.youtube.com/watch?v=x-wn4rGDkSw","https://www.youtube.com/watch?v=_XhgfnwVTts"],"notes":"AR — usually not anchored in space"},
+
+{"type":"media","layout":"split-reverse","kicker":"MR Uses in Sports","title":"NFL and Snapchat Use AR to Kick Off 2023 Football Season","images":[{"src":"assets/s19_p25.png","fit":"contain"}],"links":["https://www.snapchat.com/add/nfl?web_client_id=5264ccb8-ffb1-4ef5-a817-98af1acdfae3"]},
+
+{"type":"exhibit","kicker":"Exhibit","image":{"src":"assets/s20_p26.png","fit":"contain"},"links":["https://www.lightmaker.com/technology-changing-live-sports-viewing-experience/"]},
+
+{"type":"closing","title":"Questions?","subtitle":"SPM 261 · Virtual Reality in Sports · Week 2-3"}
+]
+</script>
+<script>
+(function(){
+  const SLIDES = JSON.parse(document.getElementById('slide-data').textContent);
+  const deck = document.getElementById('deck');
+  const progressFill = document.getElementById('progressFill');
+  const counterEl = document.getElementById('counter');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const pageNum = document.getElementById('pageNum');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesBody = document.getElementById('notesBody');
+  const notesToggle = document.getElementById('notesToggle');
+  const zoomInBtn = document.getElementById('zoomInBtn');
+  const zoomOutBtn = document.getElementById('zoomOutBtn');
+  const zoomResetBtn = document.getElementById('zoomResetBtn');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(prefersReduced) document.documentElement.classList.add('reduced');
+
+  const ACCENTS = {
+    prologue: {c:'--cyan', s:'--cyan-soft', label:'Prologue · Google Glass'}, // placeholder unused
+  };
+  // section accent lookup by explicit key
+  const ACCENT_MAP = {
+    intro:  {main:'#eef6f4', soft:'rgba(238,246,244,.16)', label:'Opening'},
+    glass:  {main:'#e3a75c', soft:'rgba(227,167,92,.16)', label:'Prologue · Google Glass'},
+    vr:     {main:'#57d9cc', soft:'rgba(87,217,204,.16)', label:'Virtual Reality'},
+    ar:     {main:'#a48cf0', soft:'rgba(164,140,240,.16)', label:'Augmented Reality'},
+    mr:     {main:'#e0819e', soft:'rgba(224,129,158,.16)', label:'Mixed Reality'},
+    close:  {main:'#57d9cc', soft:'rgba(87,217,204,.16)', label:'Closing'}
+  };
+  // assign a section key per slide index
+  const SECTION_BY_INDEX = [
+    'intro','intro','glass','glass','glass','glass',
+    'vr','vr','vr','vr','vr','vr',
+    'ar','ar','ar','ar',
+    'mr','mr','mr','mr',
+    'close'
+  ];
+
+  function applyAccent(idx){
+    const key = SECTION_BY_INDEX[idx] || 'intro';
+    const a = ACCENT_MAP[key];
+    document.documentElement.style.setProperty('--accent-live', a.main);
+    document.documentElement.style.setProperty('--accent-live-soft', a.soft);
+    sectionLabel.textContent = a.label;
+  }
+
+  function el(tag, cls, html){
+    const e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(html !== undefined) e.innerHTML = html;
+    return e;
+  }
+  function revealItem(node, delayMs){ node.classList.add('reveal-item'); node.style.transitionDelay=(delayMs||0)+'ms'; return node; }
+  function escapeHTML(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function isQuestion(text){ return /\?\s*$/.test(text.trim()); }
+
+  function shortUrl(u){
+    try{
+      const url = new URL(u);
+      let s = url.hostname.replace(/^www\./,'') + url.pathname;
+      if(s.length>34) s = s.slice(0,34)+'…';
+      return s;
+    }catch(e){ return u; }
+  }
+
+  function buildKicker(text, delay){ const k = el('p','kicker reveal-item', escapeHTML(text)); revealItem(k, delay||0); return k; }
+  function titleEl(text, delay, cls){
+    const c = 'disp title-slide'+(text.length>58?' long':'')+' reveal-item'+(cls?(' '+cls):'');
+    const h = el('h1',c, escapeHTML(text));
+    revealItem(h, delay||0);
+    return h;
+  }
+  function buildBullets(list, baseDelay){
+    const ul = el('ul','bullets');
+    list.forEach((t,i)=>{
+      const li = el('li', isQuestion(t)?'q':'', escapeHTML(t));
+      revealItem(li, (baseDelay||0)+90*i);
+      ul.appendChild(li);
+    });
+    return ul;
+  }
+  function linkChipRow(links, baseDelay){
+    const row = el('div','link-row reveal-item'); revealItem(row, baseDelay||0);
+    links.forEach(u=>{
+      const a = document.createElement('a');
+      a.href = u; a.target='_blank'; a.rel='noopener'; a.className='link-chip';
+      a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="M8 5l8 7-8 7"/></svg><span class="u">'+escapeHTML(shortUrl(u))+'</span>';
+      row.appendChild(a);
+    });
+    return row;
+  }
+  function watchCard(video, delay){
+    const a = document.createElement('a');
+    a.href = video.url; a.target='_blank'; a.rel='noopener'; a.className='watch-card reveal-item';
+    revealItem(a, delay||0);
+    const thumb = el('div','watch-thumb');
+    if(video.poster){ const im=document.createElement('img'); im.src=video.poster; im.loading='lazy'; im.alt=''; thumb.appendChild(im); }
+    const play = el('div','watch-play','<svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>');
+    thumb.appendChild(play);
+    a.appendChild(thumb);
+    const body = el('div','watch-body');
+    body.appendChild(el('div','watch-eyebrow','Watch'));
+    body.appendChild(el('div','watch-title', escapeHTML(video.title)));
+    body.appendChild(el('div','watch-url', escapeHTML(shortUrl(video.url))));
+    a.appendChild(body);
+    return a;
+  }
+  function frameFig(img, opts){
+    opts = opts||{};
+    const wrap = el('div','');
+    const fr = el('div','frame'+(img.fit==='contain'?' contain':''));
+    if(opts.delay!=null) fr.style.transitionDelay = opts.delay+'ms';
+    const im = document.createElement('img'); im.src = img.src; im.loading='lazy'; im.alt = img.caption||'';
+    fr.appendChild(im);
+    ['tl','tr','bl','br'].forEach(c=> fr.appendChild(el('span','corner '+c)));
+    wrap.appendChild(fr);
+    if(img.caption) wrap.appendChild(el('div','cutline', escapeHTML(img.caption)));
+    return {wrap, fr};
+  }
+  function buildStats(stats, baseDelay){
+    const row = el('div','stat-row');
+    stats.forEach((s,i)=>{
+      const st = el('div','stat reveal-item'); revealItem(st, (baseDelay||0)+i*140);
+      st.appendChild(el('div','stat-rule'));
+      const num = el('div','stat-num');
+      num.dataset.target = s.value; num.dataset.prefix = s.prefix||''; num.dataset.suffix = s.suffix||'';
+      num.textContent = (s.prefix||'')+'0'+(s.suffix||'');
+      st.appendChild(num);
+      st.appendChild(el('div','stat-label', escapeHTML(s.label)));
+      row.appendChild(st);
+    });
+    return row;
+  }
+
+  function build(slide, idx){
+    const s = el('section','slide');
+    s.dataset.index = idx;
+    const inner = el('div','slide-inner');
+
+    switch(slide.type){
+      case 'title': {
+        s.classList.add('banner-slide');
+        const bw = el('div','banner-wrap');
+        const grid = el('div','');
+        grid.style.cssText='position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;';
+        slide.images.forEach(img=>{
+          const cell = document.createElement('div'); cell.style.cssText='position:relative;overflow:hidden;';
+          const im = document.createElement('img'); im.src=img.src; im.style.cssText='width:100%;height:100%;object-fit:'+(img.fit==='contain'?'cover':'cover')+';opacity:0;transform:scale(1.1);transition:opacity 1.2s var(--ease),transform 1.8s var(--ease);';
+          cell.appendChild(im); grid.appendChild(cell);
+        });
+        bw.appendChild(grid);
+        const scrim = el('div','banner-scrim center');
+        bw.appendChild(scrim);
+        const txt = el('div','banner-text');
+        const k = buildKicker('SPM 261 · Week 2-3',80); txt.appendChild(k);
+        const h = el('h1','disp title-hero reveal-item', escapeHTML(slide.title)); revealItem(h,200); txt.appendChild(h);
+        if(slide.subtitle){ const sub = el('p','subtitle reveal-item', escapeHTML(slide.subtitle)); revealItem(sub,360); txt.appendChild(sub); }
+        bw.appendChild(txt);
+        s.appendChild(bw);
+        // mark images-in on activation via class on bw
+        s.dataset.bannerImgs = '1';
+        s._bannerEl = bw;
+        return s;
+      }
+      case 'statement': {
+        const w = el('div','statement-wrap');
+        const h = el('div','statement-text disp reveal-item', escapeHTML(slide.text)); revealItem(h,120);
+        w.appendChild(h);
+        inner.appendChild(w);
+        inner.style.justifyContent='center';
+        break;
+      }
+      case 'definition': {
+        if(slide.label) inner.appendChild(buildKicker(slide.label,0));
+        inner.appendChild(titleEl(slide.title,60));
+        const body = el('p','def-body reveal-item', escapeHTML(slide.body)); revealItem(body,180);
+        inner.appendChild(body);
+        if(slide.video) inner.appendChild(watchCard(slide.video, 300));
+        break;
+      }
+      case 'case': {
+        const grid = el('div',''); grid.style.cssText='display:grid;grid-template-columns:auto 1fr;gap:clamp(24px,4vw,56px);align-items:center;';
+        const left = el('div','');
+        const yr = el('div','case-year reveal-item', escapeHTML(slide.year)); revealItem(yr,40);
+        left.appendChild(yr);
+        const lbl = el('div','kicker reveal-item', escapeHTML(slide.label)); revealItem(lbl,140);
+        lbl.style.marginTop='8px';
+        left.appendChild(lbl);
+        left.appendChild(titleEl(slide.title,180));
+        grid.appendChild(left);
+        const right = el('div',''); right.style.cssText='display:flex;flex-direction:column;gap:14px;';
+        if(slide.video){ right.appendChild(watchCard(slide.video,260)); }
+        if(slide.images){
+          const dip = el('div','dip');
+          slide.images.forEach((img,i)=>{
+            const {wrap} = frameFig(img,{delay:260+i*120});
+            wrap.querySelector('.frame').classList.add('reveal-item');
+            revealItem(wrap.querySelector('.frame'),260+i*120);
+            dip.appendChild(wrap);
+          });
+          right.appendChild(dip);
+        }
+        if(slide.links) right.appendChild(linkChipRow(slide.links,460));
+        grid.appendChild(right);
+        inner.appendChild(grid);
+        if(window.innerWidth < 880){ grid.style.gridTemplateColumns='1fr'; }
+        break;
+      }
+      case 'announcement': {
+        if(slide.label) inner.appendChild(buildKicker(slide.label,0));
+        inner.appendChild(titleEl(slide.title,60));
+        const {wrap:bwrap} = frameFig(slide.banner,{delay:200});
+        bwrap.querySelector('.frame').classList.add('reveal-item'); revealItem(bwrap.querySelector('.frame'),200);
+        bwrap.style.maxWidth='640px';
+        inner.appendChild(bwrap);
+        const dip = el('div','dip'); dip.style.maxWidth='760px';
+        slide.images.forEach((img,i)=>{
+          const {wrap} = frameFig(img,{delay:340+i*130});
+          wrap.querySelector('.frame').classList.add('reveal-item'); revealItem(wrap.querySelector('.frame'),340+i*130);
+          dip.appendChild(wrap);
+        });
+        inner.appendChild(dip);
+        if(slide.links) inner.appendChild(linkChipRow(slide.links,560));
+        break;
+      }
+      case 'divider': {
+        const dw = el('div','divider-wrap');
+        dw.appendChild(buildKicker(slide.kicker,120));
+        const h = el('h1','disp divider-title reveal-item', escapeHTML(slide.title)); revealItem(h,220);
+        dw.appendChild(h);
+        inner.appendChild(dw);
+        // ghost numeral lives at the slide level (like page-num) so it never affects slide-inner's scroll height
+        const num = el('div','divider-num reveal-item', escapeHTML(slide.num)); revealItem(num,40);
+        s.appendChild(num);
+        break;
+      }
+      case 'media': {
+        if(slide.kicker) inner.appendChild(buildKicker(slide.kicker,0));
+        inner.appendChild(titleEl(slide.title,60));
+        if(slide.subtitle){ const sub = el('p','subtitle reveal-item', escapeHTML(slide.subtitle)); revealItem(sub,120); inner.appendChild(sub); }
+
+        if(slide.layout==='split' || slide.layout==='split-reverse'){
+          const grid = el('div','split-grid'+(slide.layout==='split-reverse'?' reverse':''));
+          const textCol = el('div','split-text');
+          if(slide.bullets) textCol.appendChild(buildBullets(slide.bullets,220));
+          if(slide.stat) textCol.appendChild(buildStats([slide.stat],420));
+          if(slide.links) textCol.appendChild(linkChipRow(slide.links,520));
+          grid.appendChild(textCol);
+          const mediaCol = el('div','split-media');
+          if(slide.images && slide.images[0]){
+            const {wrap} = frameFig(slide.images[0],{delay:280});
+            wrap.querySelector('.frame').classList.add('reveal-item'); revealItem(wrap.querySelector('.frame'),280);
+            mediaCol.appendChild(wrap);
+          }
+          grid.appendChild(mediaCol);
+          // move kicker/title out of inner flow order: keep at top already appended
+          inner.appendChild(grid);
+        } else if(slide.layout==='dip'){
+          if(slide.bullets) inner.appendChild(buildBullets(slide.bullets,180));
+          const dip = el('div','dip');
+          slide.images.forEach((img,i)=>{
+            const {wrap} = frameFig(img,{delay:320+i*130});
+            wrap.querySelector('.frame').classList.add('reveal-item'); revealItem(wrap.querySelector('.frame'),320+i*130);
+            dip.appendChild(wrap);
+          });
+          inner.appendChild(dip);
+          if(slide.links) inner.appendChild(linkChipRow(slide.links,560));
+        } else if(slide.layout==='grid3'){
+          const g3 = el('div','grid3');
+          slide.images.forEach((img,i)=>{
+            const {wrap} = frameFig(img,{delay:220+i*120});
+            wrap.querySelector('.frame').classList.add('reveal-item'); revealItem(wrap.querySelector('.frame'),220+i*120);
+            g3.appendChild(wrap);
+          });
+          inner.appendChild(g3);
+          if(slide.bullets) inner.appendChild(buildBullets(slide.bullets,560));
+          if(slide.links) inner.appendChild(linkChipRow(slide.links,620));
+        } else if(slide.layout==='badge'){
+          inner.style.position='relative';
+          if(slide.bullets) inner.appendChild(buildBullets(slide.bullets,180));
+          if(slide.images && slide.images[0]){
+            const {wrap} = frameFig(slide.images[0],{delay:280});
+            wrap.querySelector('.frame').classList.add('reveal-item'); revealItem(wrap.querySelector('.frame'),280);
+            wrap.style.maxWidth='620px';
+            inner.appendChild(wrap);
+          }
+          if(slide.links) inner.appendChild(linkChipRow(slide.links,460));
+          if(slide.badge){
+            const b = el('div','badge-logo');
+            const im = document.createElement('img'); im.src = slide.badge; im.loading='lazy';
+            b.appendChild(im);
+            inner.appendChild(b);
+            inner.style.paddingRight='90px';
+          }
+        } else { // single
+          if(slide.bullets) inner.appendChild(buildBullets(slide.bullets,180));
+          if(slide.images && slide.images[0]){
+            const mb = el('div','media-body');
+            const fig = el('div','media-figure');
+            const {wrap} = frameFig(slide.images[0],{delay:320});
+            wrap.querySelector('.frame').classList.add('reveal-item'); revealItem(wrap.querySelector('.frame'),320);
+            fig.appendChild(wrap);
+            mb.appendChild(fig);
+            inner.appendChild(mb);
+          }
+          if(slide.links) inner.appendChild(linkChipRow(slide.links,480));
+        }
+        break;
+      }
+      case 'stat-banner': {
+        if(slide.kicker) inner.appendChild(buildKicker(slide.kicker,0));
+        inner.appendChild(titleEl(slide.title,60));
+        inner.appendChild(buildStats(slide.stats,180));
+        if(slide.image){
+          const {wrap} = frameFig(slide.image,{delay:420});
+          const frEl = wrap.querySelector('.frame');
+          frEl.classList.add('reveal-item'); revealItem(frEl,420);
+          wrap.style.cssText='max-width:640px;max-height:24vh;';
+          frEl.style.maxHeight='24vh';
+          frEl.querySelector('img').style.maxHeight='24vh';
+          inner.appendChild(wrap);
+        }
+        if(slide.links) inner.appendChild(linkChipRow(slide.links,560));
+        break;
+      }
+      case 'exhibit': {
+        const w = el('div','exhibit-wrap');
+        w.appendChild(buildKicker(slide.kicker,0));
+        const {wrap} = frameFig(slide.image,{delay:160});
+        wrap.querySelector('.frame').classList.add('reveal-item'); revealItem(wrap.querySelector('.frame'),160);
+        w.appendChild(wrap);
+        if(slide.links) w.appendChild(linkChipRow(slide.links,360));
+        inner.appendChild(w);
+        inner.style.alignItems='center';
+        break;
+      }
+      case 'closing': {
+        inner.classList.add('closing-wrap');
+        const h = el('h1','disp title-hero reveal-item', escapeHTML(slide.title)); revealItem(h,100);
+        const rule = el('div','rule reveal-item'); revealItem(rule,40);
+        const rule2 = el('div','rule reveal-item'); revealItem(rule2,360);
+        inner.appendChild(rule); inner.appendChild(h);
+        if(slide.subtitle){ const sub=el('p','subtitle reveal-item', escapeHTML(slide.subtitle)); revealItem(sub,220); inner.appendChild(sub); }
+        inner.appendChild(rule2);
+        break;
+      }
+      default: break;
+    }
+    s.appendChild(inner);
+    return s;
+  }
+
+  const slideEls = SLIDES.map((sl,i)=> build(sl,i));
+  slideEls.forEach(e=> deck.appendChild(e));
+
+  let current = -1, notesOpen = false;
+
+  function animateCountUps(container){
+    const nums = container.querySelectorAll('.stat-num');
+    nums.forEach(n=>{
+      const target = n.dataset.target;
+      const numeric = parseFloat(String(target).replace(/,/g,''));
+      const prefix = n.dataset.prefix||'', suffix = n.dataset.suffix||'';
+      if(prefersReduced || isNaN(numeric)){ n.textContent = prefix+target+suffix; return; }
+      const dur = 1100; const start = performance.now();
+      function frame(t){
+        const p = Math.min(1,(t-start)/dur);
+        const eased = 1-Math.pow(1-p,3);
+        const val = numeric*eased;
+        const display = Math.round(val).toString();
+        n.textContent = prefix+display+suffix;
+        if(p<1) requestAnimationFrame(frame); else n.textContent = prefix+target+suffix;
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  function activate(idx){
+    current = idx;
+    slideEls.forEach((e,i)=>{
+      if(i===idx){ e.classList.add('active'); }
+      else{
+        e.classList.remove('active');
+        e.querySelectorAll('.reveal-item').forEach(r=> r.classList.remove('in'));
+        e.querySelectorAll('.frame').forEach(x=> x.classList.remove('in'));
+        e.querySelectorAll('.banner-wrap').forEach(x=> x.classList.remove('in'));
+        e.querySelectorAll('.badge-logo').forEach(x=> x.classList.remove('in'));
+        if(e._bannerEl){ e._bannerEl.querySelectorAll('img').forEach(im=>{ im.style.opacity=0; im.style.transform='scale(1.1)'; }); }
+      }
+    });
+    const activeEl = slideEls[idx];
+    requestAnimationFrame(()=>{
+      activeEl.querySelectorAll('.reveal-item').forEach(r=> r.classList.add('in'));
+      activeEl.querySelectorAll('.frame').forEach(x=> x.classList.add('in'));
+      activeEl.querySelectorAll('.banner-wrap').forEach(x=> x.classList.add('in'));
+      activeEl.querySelectorAll('.badge-logo').forEach(x=> x.classList.add('in'));
+      if(activeEl._bannerEl){ activeEl._bannerEl.querySelectorAll('img').forEach(im=>{ im.style.opacity=1; im.style.transform='scale(1)'; }); }
+      animateCountUps(activeEl);
+    });
+
+    applyAccent(idx);
+    progressFill.style.width = ((idx)/(SLIDES.length-1)*100).toFixed(2)+'%';
+    counterEl.textContent = String(idx+1).padStart(2,'0')+' / '+SLIDES.length;
+    pageNum.textContent = String(idx+1).padStart(2,'0');
+    prevBtn.disabled = idx===0;
+    nextBtn.disabled = idx===SLIDES.length-1;
+
+    const sd = SLIDES[idx];
+    let notesText = sd.notes || '';
+    if(sd.notesLinks && sd.notesLinks.length){
+      notesText += (notesText?'\n\n':'') + 'Reference: ' + sd.notesLinks.join('\n');
+    }
+    if(notesText){
+      notesBody.innerHTML = '<h3>Speaker Notes</h3><p></p>';
+      notesBody.querySelector('p').textContent = notesText;
+      notesToggle.style.opacity = 1;
+    } else {
+      notesBody.innerHTML = '<h3>Speaker Notes</h3><p class="notes-empty">No speaker notes for this slide.</p>';
+      notesToggle.style.opacity = .45;
+    }
+    location.hash = 's'+(idx+1);
+  }
+
+  function next(){ if(current < SLIDES.length-1) activate(current+1); hideHint(); }
+  function prev(){ if(current > 0) activate(current-1); hideHint(); }
+  let hintHidden = false;
+  function hideHint(){ if(!hintHidden){ hint.classList.add('hide'); hintHidden = true; } }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  deck.addEventListener('click', (e)=>{ if(e.target.closest('a')) return; next(); });
+
+  let wheelLock = false;
+  window.addEventListener('wheel', (e)=>{
+    if(wheelLock) return;
+    if(Math.abs(e.deltaY) < 24) return;
+    wheelLock = true;
+    if(e.deltaY > 0) next(); else prev();
+    setTimeout(()=> wheelLock=false, 650);
+  }, {passive:true});
+
+  window.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight' || e.key===' ' || e.key==='PageDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft' || e.key==='PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='ArrowDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='Home'){ e.preventDefault(); activate(0); }
+    else if(e.key==='End'){ e.preventDefault(); activate(SLIDES.length-1); }
+    else if(e.key==='n' || e.key==='N'){ toggleNotes(); }
+    else if(e.key==='Escape'){ if(notesOpen) toggleNotes(); }
+    else if(e.key==='+' || e.key==='='){ e.preventDefault(); zoomIn(); }
+    else if(e.key==='-' || e.key==='_'){ e.preventDefault(); zoomOut(); }
+    else if(e.key==='0'){ e.preventDefault(); zoomReset(); }
+  });
+
+  const ZOOM_MIN=0.75, ZOOM_MAX=2, ZOOM_STEP=0.1;
+  let zoomLevel = 1;
+  try{ const saved = parseFloat(localStorage.getItem('spm261_w2_3_zoom')); if(!isNaN(saved)&&saved>=ZOOM_MIN&&saved<=ZOOM_MAX) zoomLevel=saved; }catch(err){}
+  function applyZoom(){
+    document.documentElement.style.setProperty('--zoom', zoomLevel.toFixed(2));
+    zoomResetBtn.textContent = Math.round(zoomLevel*100)+'%';
+    zoomOutBtn.disabled = zoomLevel<=ZOOM_MIN; zoomInBtn.disabled = zoomLevel>=ZOOM_MAX;
+    try{ localStorage.setItem('spm261_w2_3_zoom', zoomLevel); }catch(err){}
+  }
+  function zoomIn(){ zoomLevel=Math.min(ZOOM_MAX,+(zoomLevel+ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomOut(){ zoomLevel=Math.max(ZOOM_MIN,+(zoomLevel-ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomReset(){ zoomLevel=1; applyZoom(); }
+  zoomInBtn.addEventListener('click',(e)=>{ e.stopPropagation(); zoomIn(); });
+  zoomOutBtn.addEventListener('click',(e)=>{ e.stopPropagation(); zoomOut(); });
+  zoomResetBtn.addEventListener('click',(e)=>{ e.stopPropagation(); zoomReset(); });
+  applyZoom();
+
+  function toggleNotes(){ notesOpen = !notesOpen; notesPanel.classList.toggle('open', notesOpen); }
+  notesToggle.addEventListener('click', toggleNotes);
+  document.getElementById('closeNotes').addEventListener('click', toggleNotes);
+
+  setTimeout(hideHint, 5000);
+
+  let startIdx = 0;
+  const m = location.hash.match(/s(\d+)/);
+  if(m){ const n = parseInt(m[1],10)-1; if(n>=0 && n<SLIDES.length) startIdx = n; }
+  activate(startIdx);
+})();
+</script>
+</body>
+</html>
