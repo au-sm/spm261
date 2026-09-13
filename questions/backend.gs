@@ -4,7 +4,8 @@
  * Backend for the "?" button embedded in the lecture decks (week3-1 and
  * on). A student clicks it on any slide, types a question or comment,
  * and it becomes one row in a Google Sheet you can read at your own
- * pace -- tagged with which deck and which slide it came from.
+ * pace -- tagged with which deck and which slide it came from. You also
+ * get an immediate email so you don't have to keep the Sheet open.
  *
  * One standalone Apps Script project serves every deck on the site.
  *
@@ -20,11 +21,19 @@
  *     Deploy, authorize, copy the Web app URL (ends in /exec).
  *  5. Put that URL in SPM261_26/questions/config.js and push.
  *
+ * UPDATING AN EXISTING DEPLOYMENT (e.g. after this email-notification
+ * change was added): paste the new code into the same script project,
+ * Save, then Deploy -> Manage deployments -> pencil icon on the active
+ * deployment -> Version: "New version" -> Deploy. This keeps the same
+ * /exec URL, so config.js does NOT need to change.
+ *
  * No triggers, no cron. Every submission is a synchronous doPost that
- * appends one row. Open the Sheet any time to read what came in --
- * newest at the bottom, or add a filter/sort to read by deck or slide.
+ * appends one row and sends one email. Open the Sheet any time to read
+ * the full history -- newest at the bottom, or add a filter/sort to
+ * read by deck or slide.
  */
 
+var NOTIFY_EMAIL = 'kimjw@arcadia.edu';   // gets an email on every submission
 var PROPS = PropertiesService.getScriptProperties();
 
 function doGet(e){
@@ -46,14 +55,13 @@ function handle_(body){
     var text = String(body.question || '').trim().slice(0, 4000);
     if (!text) return { ok: false, error: 'empty_question' };
 
-    appendRow_([
-      new Date(),
-      String(body.deck || '').slice(0, 160),
-      body.slideIndex === '' || body.slideIndex == null ? '' : Number(body.slideIndex),
-      String(body.slideTitle || '').slice(0, 200),
-      text,
-      String(body.name || 'Anonymous').trim().slice(0, 120) || 'Anonymous'
-    ]);
+    var deck = String(body.deck || '').slice(0, 160);
+    var slideIndex = body.slideIndex === '' || body.slideIndex == null ? '' : Number(body.slideIndex);
+    var slideTitle = String(body.slideTitle || '').slice(0, 200);
+    var name = String(body.name || 'Anonymous').trim().slice(0, 120) || 'Anonymous';
+
+    appendRow_([new Date(), deck, slideIndex, slideTitle, text, name]);
+    notify_(deck, slideIndex, slideTitle, text, name);
     return { ok: true };
   } finally {
     lock.releaseLock();
@@ -70,6 +78,23 @@ function appendRow_(row){
     sh.setFrozenRows(1);
   }
   sh.appendRow(row);
+}
+
+function notify_(deck, slideIndex, slideTitle, text, name){
+  if (!NOTIFY_EMAIL) return;
+  try {
+    var subject = 'SPM261 question — ' + (deck || 'a deck') + ', slide ' + slideIndex;
+    var body = [
+      'From: ' + name,
+      'Deck: ' + (deck || '(not sent)'),
+      'Slide: ' + slideIndex + (slideTitle ? ' — ' + slideTitle : ''),
+      '',
+      text
+    ].join('\n');
+    MailApp.sendEmail(NOTIFY_EMAIL, subject, body);
+  } catch (e) {
+    // a failed notification email must never break the student's submission
+  }
 }
 
 function json_(obj){
