@@ -93,8 +93,23 @@ function notify_(deck, slideIndex, slideTitle, text, name){
     ].join('\n');
     MailApp.sendEmail(NOTIFY_EMAIL, subject, body);
   } catch (e) {
-    // a failed notification email must never break the student's submission
+    // a failed notification email must never break the student's submission,
+    // but log it so it's visible in Executions instead of failing silently.
+    console.error('notify_ failed: ' + (e && e.message));
   }
+}
+
+/**
+ * Run this ONCE manually from the script editor (select "testEmail" in the
+ * function dropdown at the top, click Run) if emails aren't arriving. The
+ * first time a script calls MailApp it needs you to approve a Gmail-sending
+ * permission -- that consent prompt only appears when you run something
+ * directly in the editor, NOT just from redeploying the Web app. Approve it,
+ * then check NOTIFY_EMAIL's inbox (and spam folder) for a test message.
+ */
+function testEmail(){
+  MailApp.sendEmail(NOTIFY_EMAIL, 'SPM261 questions backend — test email',
+    'If you got this, email notifications are working.');
 }
 
 function json_(obj){
