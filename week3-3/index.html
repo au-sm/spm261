@@ -265,6 +265,9 @@ a{color:inherit;}
   border-left:2px solid var(--line);padding-left:14px;
 }
 .prompt-note b{color:var(--ink);font-weight:400;}
+a.prompt-note{text-decoration:none;cursor:pointer;transition:border-color .2s ease,color .2s ease;}
+a.prompt-note:hover{border-left-color:var(--accent);color:var(--ink);}
+a.prompt-note .arrow{margin-left:auto;color:var(--accent);}
 
 /* ============================================================
    WATCH CARD (video) — single + duo + vs layouts
@@ -605,7 +608,7 @@ a{color:inherit;}
       <p class="prompt-sub rz3">Give examples — your own ideas.</p>
       <div class="prompt-notes rz4">
         <div class="prompt-note"><b>Module</b> — Sport Technology Presentation</div>
-        <div class="prompt-note"><b>Presentation Schedule Link</b></div>
+        <a class="prompt-note" href="https://canvas.arcadia.edu/courses/50043/pages/presentation-schedule-order-included?module_item_id=1529086" target="_blank" rel="noopener"><b>Presentation Schedule Link</b><span class="arrow">&rarr;</span></a>
       </div>
     </div>
   </section>
