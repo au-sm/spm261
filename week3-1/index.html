@@ -125,6 +125,58 @@ body{
 .zoom-reset{min-width:40px;text-align:center;font-size:10px;color:var(--muted2);}
 .zoom-btn:disabled{opacity:.3;cursor:default;}
 
+/* ask a question */
+.ask-btn{
+  position:fixed;left:clamp(20px,4vw,48px);bottom:calc(clamp(14px,3vh,28px) + 52px);z-index:21;
+  pointer-events:auto;width:38px;height:38px;border-radius:50%;
+  border:1px solid var(--line);background:rgba(10,14,16,.6);backdrop-filter:blur(6px);
+  color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-family:var(--font-display);font-weight:700;font-size:16px;
+  transition:background .25s ease, border-color .25s ease, transform .2s ease;
+}
+.ask-btn:hover{background:var(--accent-live-soft);border-color:var(--accent-live);transform:translateY(-2px);}
+.ask-backdrop{
+  position:fixed;inset:0;z-index:30;background:rgba(6,8,9,.72);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.ask-backdrop.open{opacity:1;pointer-events:auto;}
+.ask-panel{
+  width:min(480px,100%);background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:26px 26px 22px;box-shadow:0 40px 90px -30px rgba(0,0,0,.7);
+  transform:translateY(14px) scale(.98);opacity:0;transition:transform .3s var(--ease),opacity .3s var(--ease);
+}
+.ask-backdrop.open .ask-panel{transform:translateY(0) scale(1);opacity:1;}
+.ask-title{font-family:var(--font-display);font-weight:700;font-size:19px;color:var(--ink);margin:0 0 4px;}
+.ask-context{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--accent-live);margin:0 0 16px;}
+.ask-panel textarea{
+  width:100%;min-height:96px;resize:vertical;background:var(--bg2);color:var(--ink);
+  border:1px solid var(--line);border-radius:8px;padding:12px 14px;font:14px/1.5 var(--font-body);
+  outline:none;transition:border-color .2s ease;box-sizing:border-box;
+}
+.ask-panel textarea:focus{border-color:var(--accent-live);}
+.ask-panel input[type=text]{
+  width:100%;margin-top:10px;background:var(--bg2);color:var(--ink);
+  border:1px solid var(--line);border-radius:8px;padding:10px 14px;font:13px var(--font-body);
+  outline:none;transition:border-color .2s ease;box-sizing:border-box;
+}
+.ask-panel input[type=text]:focus{border-color:var(--accent-live);}
+.ask-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;}
+.ask-hint{font-family:var(--font-mono);font-size:10.5px;color:var(--muted2);}
+.ask-actions{display:flex;gap:10px;}
+.ask-btn-cancel,.ask-btn-send{
+  font-family:var(--font-body);font-size:13px;font-weight:600;border-radius:7px;padding:9px 16px;
+  cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.ask-btn-cancel:hover{color:var(--ink);border-color:var(--muted);}
+.ask-btn-send{background:var(--accent-live);border-color:var(--accent-live);color:#08110f;}
+.ask-btn-send:hover{filter:brightness(1.08);}
+.ask-btn-send:disabled{opacity:.5;cursor:default;filter:none;}
+.ask-status{font-family:var(--font-mono);font-size:12px;margin-top:12px;min-height:16px;}
+.ask-status.err{color:var(--rose);}
+.ask-status.ok{color:var(--accent-live);}
+
 /* reveal primitives */
 .reveal-item{opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
 .slide.active .reveal-item.in{opacity:1;transform:translateY(0);}
@@ -358,6 +410,25 @@ ul.bullets li.q::before{background:var(--muted);}
   <div id="notesBody"><h3>Speaker Notes</h3><p class="notes-empty">No speaker notes for this slide.</p></div>
 </aside>
 
+<button class="ask-btn" id="askBtn" title="Ask a question about this slide" aria-label="Ask a question about this slide">?</button>
+<div class="ask-backdrop" id="askBackdrop">
+  <div class="ask-panel">
+    <p class="ask-title">Ask a question or leave a comment</p>
+    <p class="ask-context" id="askContext"></p>
+    <textarea id="askText" placeholder="What's on your mind about this slide?" maxlength="4000"></textarea>
+    <input type="text" id="askName" placeholder="Your name" maxlength="120">
+    <div class="ask-row">
+      <span class="ask-hint">Goes straight to Dr. Kim.</span>
+      <div class="ask-actions">
+        <button class="ask-btn-cancel" id="askCancel">Cancel</button>
+        <button class="ask-btn-send" id="askSend">Send</button>
+      </div>
+    </div>
+    <div class="ask-status" id="askStatus"></div>
+  </div>
+</div>
+
+<script src="../questions/config.js"></script>
 <script type="application/json" id="slide-data">
 [
 {"type":"title","title":"Virtual Reality in Sports","subtitle":"SPM261 Introduction to Sport Management","images":[{"src":"assets/s0_p0.jpg","fit":"contain"},{"src":"assets/s0_p1.jpg","fit":"cover"}]},
@@ -885,6 +956,84 @@ ul.bullets li.q::before{background:var(--muted);}
   document.getElementById('closeNotes').addEventListener('click', toggleNotes);
 
   setTimeout(hideHint, 5000);
+
+  // ask a question / leave a comment
+  (function(){
+    const askBtn = document.getElementById('askBtn');
+    const backdrop = document.getElementById('askBackdrop');
+    const context = document.getElementById('askContext');
+    const textEl = document.getElementById('askText');
+    const nameEl = document.getElementById('askName');
+    const sendBtn = document.getElementById('askSend');
+    const cancelBtn = document.getElementById('askCancel');
+    const statusEl = document.getElementById('askStatus');
+    const DECK = 'SPM261 Week 3-1 — Virtual Reality in Sports';
+
+    function open(){
+      const slide = SLIDES[current] || {};
+      const title = slide.title || slide.text || slide.label || '(untitled)';
+      context.textContent = 'Slide ' + (current+1) + ' of ' + SLIDES.length + ' — ' + title;
+      statusEl.textContent = ''; statusEl.className = 'ask-status';
+      sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      backdrop.classList.add('open');
+      setTimeout(()=> textEl.focus(), 50);
+    }
+    function close(){
+      backdrop.classList.remove('open');
+      textEl.value=''; nameEl.value='';
+    }
+    async function send(){
+      const question = textEl.value.trim();
+      const name = nameEl.value.trim();
+      if(!name){
+        statusEl.textContent = 'Please enter your name.';
+        statusEl.className = 'ask-status err';
+        nameEl.focus();
+        return;
+      }
+      if(!question){
+        statusEl.textContent = 'Please enter a question or comment.';
+        statusEl.className = 'ask-status err';
+        textEl.focus();
+        return;
+      }
+      if(!window.QUESTIONS_API){
+        statusEl.textContent = "This form isn't connected yet — let your professor know.";
+        statusEl.className = 'ask-status err';
+        return;
+      }
+      sendBtn.disabled = true; sendBtn.textContent = 'Sending…';
+      statusEl.textContent = ''; statusEl.className = 'ask-status';
+      const slide = SLIDES[current] || {};
+      try{
+        await fetch(window.QUESTIONS_API, {
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify({
+            deck: DECK,
+            slideIndex: current+1,
+            slideTitle: slide.title || slide.text || slide.label || '',
+            question: question,
+            name: nameEl.value.trim()
+          })
+        });
+        statusEl.textContent = 'Sent — thanks!';
+        statusEl.className = 'ask-status ok';
+        setTimeout(close, 1100);
+      }catch(err){
+        statusEl.textContent = "Couldn't send — check your connection and try again.";
+        statusEl.className = 'ask-status err';
+        sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      }
+    }
+    askBtn.addEventListener('click', open);
+    cancelBtn.addEventListener('click', close);
+    sendBtn.addEventListener('click', send);
+    backdrop.addEventListener('click', (e)=>{ if(e.target === backdrop) close(); });
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape' && backdrop.classList.contains('open')) close();
+    });
+  })();
 
   let startIdx = 0;
   const m = location.hash.match(/s(\d+)/);
