@@ -267,7 +267,9 @@ a{color:inherit;}
 .prompt-note b{color:var(--ink);font-weight:400;}
 a.prompt-note{text-decoration:none;cursor:pointer;transition:border-color .2s ease,color .2s ease;}
 a.prompt-note:hover{border-left-color:var(--accent);color:var(--ink);}
-a.prompt-note .arrow{margin-left:auto;color:var(--accent);}
+a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
+.prompt-note-body{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.prompt-note-url{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
 /* ============================================================
    WATCH CARD (video) — single + duo + vs layouts
@@ -608,7 +610,13 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);}
       <p class="prompt-sub rz3">Give examples — your own ideas.</p>
       <div class="prompt-notes rz4">
         <div class="prompt-note"><b>Module</b> — Sport Technology Presentation</div>
-        <a class="prompt-note" href="https://canvas.arcadia.edu/courses/50043/pages/presentation-schedule-order-included?module_item_id=1529086" target="_blank" rel="noopener"><b>Presentation Schedule Link</b><span class="arrow">&rarr;</span></a>
+        <a class="prompt-note" href="https://canvas.arcadia.edu/courses/50043/pages/presentation-schedule-order-included?module_item_id=1529086" target="_blank" rel="noopener">
+          <span class="prompt-note-body">
+            <b>Presentation Schedule Link</b>
+            <span class="prompt-note-url">canvas.arcadia.edu/courses/50043/pages/presentation-schedule-order-included</span>
+          </span>
+          <span class="arrow">&rarr;</span>
+        </a>
       </div>
     </div>
   </section>
