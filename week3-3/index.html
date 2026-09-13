@@ -1101,6 +1101,8 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   document.getElementById('zoneRight').addEventListener('click', next);
 
   document.addEventListener('keydown', function(e){
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'TEXTAREA' || tag === 'INPUT' || (e.target && e.target.isContentEditable)) return;
     if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
     else if (e.key === 'Home'){ goTo(0); }

@@ -921,6 +921,8 @@ ul.bullets li.q::before{background:var(--muted);}
   }, {passive:true});
 
   window.addEventListener('keydown', (e)=>{
+    const tag = (e.target && e.target.tagName) || '';
+    if(tag==='TEXTAREA' || tag==='INPUT' || (e.target && e.target.isContentEditable)) return;
     if(e.key==='ArrowRight' || e.key===' ' || e.key==='PageDown'){ e.preventDefault(); next(); }
     else if(e.key==='ArrowLeft' || e.key==='PageUp'){ e.preventDefault(); prev(); }
     else if(e.key==='ArrowDown'){ e.preventDefault(); next(); }
