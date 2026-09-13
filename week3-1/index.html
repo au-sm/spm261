@@ -222,6 +222,7 @@ ul.bullets li.q::before{background:var(--muted);}
 
 /* diptych / grid */
 .dip{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.dip.single{grid-template-columns:1fr;max-width:480px;margin:0 auto;}
 .dip .frame{height:min(42vh,400px);}
 .dip .frame img{height:100%;}
 .dip.contain-all .frame{background:transparent;}
@@ -370,6 +371,7 @@ ul.bullets li.q::before{background:var(--muted);}
 {"type":"case","year":"2023","label":"Case File","title":"MLB","video":{"poster":"assets/s4_video_poster.jpeg","title":"The best of UMP CAM in the 2023 Division Series!","url":"https://www.youtube.com/watch?v=zr573JSCf8k"},"notesLinks":["https://www.youtube.com/watch?v=zr573JSCf8k"]},
 
 {"type":"announcement","label":"Case File","title":"Google Glasses Discontinued","banner":{"src":"assets/s5_p4.png","fit":"contain"},"images":[{"src":"assets/s5_p5.jpg","fit":"cover"},{"src":"assets/s5_p6.png","fit":"contain"}],"links":["https://www.youtube.com/watch?v=P_rVJ4pHcKY&t=4s"],"notesLinks":["https://www.youtube.com/watch?v=P_rVJ4pHcKY&t=4s"]},
+{"type":"announcement","label":"Case File","title":"Google Glasses Coming This Fall","banner":{"src":"assets/s6_p27_hero.png","fit":"contain"},"images":[{"src":"assets/s6_p28_ecosystem.png","fit":"contain"}],"links":["https://www.youtube.com/watch?v=P_rVJ4pHcKY&t=4s"],"notesLinks":["https://www.youtube.com/watch?v=P_rVJ4pHcKY&t=4s"]},
 
 {"type":"divider","section":"vr","num":"01","kicker":"Section 01","title":"How is virtual reality (VR) changing sports?"},
 
@@ -395,7 +397,7 @@ ul.bullets li.q::before{background:var(--muted);}
 
 {"type":"media","layout":"split","kicker":"MR Uses in Sports","title":"Virtual Items in Real-World Space","bullets":["MR — virtual items appear in real-world space","MR for coaching?"],"images":[{"src":"assets/s18_p24.jpg","fit":"cover"}],"links":["https://www.youtube.com/watch?v=x-wn4rGDkSw","https://www.youtube.com/watch?v=_XhgfnwVTts"],"notes":"AR — usually not anchored in space"},
 
-{"type":"media","layout":"split-reverse","kicker":"MR Uses in Sports","title":"NFL and Snapchat Use AR to Kick Off 2023 Football Season","images":[{"src":"assets/s19_p25.png","fit":"contain"}],"links":["https://www.snapchat.com/add/nfl?web_client_id=5264ccb8-ffb1-4ef5-a817-98af1acdfae3"]},
+{"type":"media","layout":"split-reverse","kicker":"MR Uses in Sports","title":"NFL and Snapchat Use AR to Kick Off 2023 Football Season","images":[{"src":"assets/s19_p25.png","fit":"contain"}]},
 
 {"type":"exhibit","kicker":"Exhibit","image":{"src":"assets/s20_p26.png","fit":"contain"},"links":["https://www.lightmaker.com/technology-changing-live-sports-viewing-experience/"]},
 
@@ -621,7 +623,7 @@ ul.bullets li.q::before{background:var(--muted);}
         bwrap.querySelector('.frame').classList.add('reveal-item'); revealItem(bwrap.querySelector('.frame'),200);
         bwrap.style.maxWidth='640px';
         inner.appendChild(bwrap);
-        const dip = el('div','dip'); dip.style.maxWidth='760px';
+        const dip = el('div','dip'+(slide.images.length===1?' single':'')); if(slide.images.length>1) dip.style.maxWidth='760px';
         slide.images.forEach((img,i)=>{
           const {wrap} = frameFig(img,{delay:340+i*130});
           wrap.querySelector('.frame').classList.add('reveal-item'); revealItem(wrap.querySelector('.frame'),340+i*130);
