@@ -13,9 +13,17 @@
  *     Deploy, authorize, copy the Web app URL (ends in /exec).
  *  4. Put that URL in coin-exchange/config.js and push.
  *
- * No triggers, no cron. Today's point tracks the live BTC price on every request;
- * every past day is frozen at its close. To change the leverage, edit the LEVERAGE
- * number below, Save, and redeploy (Manage deployments -> edit -> New version).
+ * Today's point tracks the live BTC price on every request; every past day is
+ * frozen at its close. To change the leverage, edit the LEVERAGE number below,
+ * Save, and redeploy (Manage deployments -> edit -> New version).
+ *
+ * DAILY TRIGGER (so a row is created every day even if nobody opens the page):
+ * paste this updated code in, then run "installDailyTrigger" ONCE from the
+ * script editor's function dropdown (approve the trigger-permission prompt
+ * if asked). That's a one-time setup step; after that dailyTick() runs on its
+ * own every day. Without it, a day with zero visits is simply skipped and the
+ * next visit's %-change ends up spanning however many days were missed —
+ * that's what was happening before this was added.
  */
 
 var BTC_URL = 'https://api.coinbase.com/v2/prices/BTC-USD/spot';
@@ -37,28 +45,8 @@ function handle_(section, body){
   var lock = LockService.getScriptLock();
   try { lock.waitLock(9000); } catch(err){ return {ok:false, error:'busy'}; }
   try {
-    var st = loadState_(section);
-    var btc = fetchBtc_();
-    if (!st.startPrice) st.startPrice = btc;                 // first ever call seeds the baseline
-
-    // Today's point tracks the live BTC price on every request. Every PAST day is
-    // frozen at its closing value and never changes. Today's point "closes" (freezes
-    // for good) the first time the page is opened on the following day.
-    var today = todayISO_();
-    var liveIndex = round2_(100 * btc / st.startPrice);
-    var n = st.history.length;
-    var last = n ? st.history[n - 1] : null;
-    if (last && last.date === today) {
-      var prevClose = n >= 2 ? st.history[n - 2].index : 100;
-      last.index = liveIndex;
-      last.pct = round2_((liveIndex - prevClose) / prevClose * 100);
-      last.btc = round2_(btc);
-    } else {
-      var prior = last ? last.index : 100;
-      st.history.push({ date: today, index: liveIndex, pct: round2_((liveIndex - prior) / prior * 100), btc: round2_(btc) });
-      last = st.history[st.history.length - 1];
-      if (st.history.length > 400) st.history = st.history.slice(-400);
-    }
+    var r = ensureTodayRow_(section);
+    var st = r.st, today = r.today, btc = r.btc, last = r.last;
     var index = last.index;                                  // today's live value
     var closeBtc = last.btc || btc;
 
@@ -68,10 +56,10 @@ function handle_(section, body){
       } else {
         if (!checkPw_(section, body.password)) return {ok:false, error:'not_authorized'};
         applyAction_(st, body.action, body.payload || {}, index);
+        saveState_(section, st);
       }
     }
 
-    saveState_(section, st);
     return {
       ok: true, section: section, leverage: LEVERAGE,
       btc: closeBtc, liveBtc: btc, startPrice: round2_(st.startPrice), index: index,
@@ -80,6 +68,66 @@ function handle_(section, body){
   } finally {
     lock.releaseLock();
   }
+}
+
+/**
+ * Creates or refreshes TODAY's history row for one section, exactly like a page
+ * visit would. Shared by handle_ (on-demand) and dailyTick (scheduled) so the
+ * two never drift out of sync.
+ */
+function ensureTodayRow_(section){
+  var st = loadState_(section);
+  var btc = fetchBtc_();
+  if (!st.startPrice) st.startPrice = btc;                 // first ever call seeds the baseline
+
+  // Today's point tracks the live BTC price on every request. Every PAST day is
+  // frozen at its closing value and never changes. Today's point "closes" (freezes
+  // for good) the first time this runs on the following day.
+  var today = todayISO_();
+  var liveIndex = round2_(100 * btc / st.startPrice);
+  var n = st.history.length;
+  var last = n ? st.history[n - 1] : null;
+  if (last && last.date === today) {
+    var prevClose = n >= 2 ? st.history[n - 2].index : 100;
+    last.index = liveIndex;
+    last.pct = round2_((liveIndex - prevClose) / prevClose * 100);
+    last.btc = round2_(btc);
+  } else {
+    var prior = last ? last.index : 100;
+    st.history.push({ date: today, index: liveIndex, pct: round2_((liveIndex - prior) / prior * 100), btc: round2_(btc) });
+    last = st.history[st.history.length - 1];
+    if (st.history.length > 400) st.history = st.history.slice(-400);
+  }
+  saveState_(section, st);
+  return { st: st, today: today, btc: btc, last: last };
+}
+
+/**
+ * Runs once a day via a time-driven trigger (see installDailyTrigger below) so
+ * a history row exists for every calendar day, even one with zero page visits.
+ * Without this, a skipped day just doesn't get a row, and the next visit's
+ * %-change silently spans however many days were missed instead of one.
+ */
+function dailyTick(){
+  ['01', '02'].forEach(function(section){
+    var lock = LockService.getScriptLock();
+    try { lock.waitLock(9000); } catch (e) { return; }
+    try { ensureTodayRow_(section); } finally { lock.releaseLock(); }
+  });
+}
+
+/**
+ * Run this ONCE from the script editor (select "installDailyTrigger" in the
+ * function dropdown, click Run) to schedule dailyTick to run automatically
+ * every day. Approve the permission prompt if one appears. Safe to run again
+ * later (e.g. after changing the hour below) -- it clears any prior
+ * dailyTick trigger first so you never end up with duplicates.
+ */
+function installDailyTrigger(){
+  ScriptApp.getProjectTriggers().forEach(function(t){
+    if (t.getHandlerFunction() === 'dailyTick') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('dailyTick').timeBased().everyDays(1).atHour(6).create();
 }
 
 function applyAction_(st, action, p, index){
