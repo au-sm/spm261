@@ -284,6 +284,30 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   font-family:var(--font-display);font-size:clamp(34px,5.4vw,64px);line-height:.98;text-transform:uppercase;
   margin:0 0 3.2vh;
 }
+
+/* ============================================================
+   EXPLAIN — heading + paragraph + labeled concept cards
+   ============================================================ */
+.s-explain .slide-inner{justify-content:center;max-width:1040px;}
+.explain-head{text-align:left;margin-bottom:4vh;}
+.explain-lede{
+  font-family:var(--font-body);font-weight:500;font-size:clamp(16px,1.7vw,20px);line-height:1.5;
+  color:var(--ink-dim);max-width:64ch;margin:1.4vh 0 0;
+}
+.explain-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.explain-card{
+  border:1px solid var(--line);border-left:2px solid var(--accent);border-radius:10px;
+  padding:20px 22px;background:rgba(255,255,255,.02);
+}
+.explain-card-label{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+  margin:0 0 10px;
+}
+.explain-card-body{
+  font-family:var(--font-body);font-size:clamp(14px,1.3vw,16px);line-height:1.55;color:var(--ink-dim);margin:0;
+}
+@media (max-width:820px){.explain-grid{grid-template-columns:1fr;}}
+
 .watch-card{
   display:block;position:relative;border-radius:10px;overflow:hidden;
   text-decoration:none;background:#000;
@@ -637,7 +661,7 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
     <div class="hero-scrim"></div>
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> SPM 261 — Introduction to Sport Management</div>
-      <div class="slide-count"><span id="cur">01</span> / <span id="tot">12</span></div>
+      <div class="slide-count"><span id="cur">01</span> / <span id="tot">13</span></div>
     </div>
     <div class="hero-body">
       <p class="hero-kicker">Week 3-3 · Artificial Intelligence</p>
@@ -656,7 +680,7 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   <section class="slide s-prompt" data-theme="signal" aria-label="Discussion prompt">
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> Discussion</div>
-      <div class="slide-count"><span class="cur">02</span> / <span class="tot">12</span></div>
+      <div class="slide-count"><span class="cur">02</span> / <span class="tot">13</span></div>
     </div>
     <div class="slide-inner">
       <p class="prompt-kicker rz1">AI</p>
@@ -674,7 +698,7 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   <section class="slide s-watch" data-theme="signal" aria-label="Real-time play-by-play commentary">
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> Real-Time AI</div>
-      <div class="slide-count"><span class="cur">03</span> / <span class="tot">12</span></div>
+      <div class="slide-count"><span class="cur">03</span> / <span class="tot">13</span></div>
     </div>
     <div class="slide-inner">
       <div class="watch-duo-head rz1">
@@ -712,12 +736,39 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   </section>
 
   <!-- ============================================================
-       SLIDE 3 — REAL-TIME: GAME PREDICTION & ANALYSIS (video)
+       SLIDE 3 — THE CLASSIC APPROACH: RULE-BASED AI
+       ============================================================ -->
+  <section class="slide s-explain" data-theme="signal" aria-label="The classic approach: rule-based AI commentary">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">●</span> Real-Time AI</div>
+      <div class="slide-count"><span class="cur">04</span> / <span class="tot">13</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="explain-head rz rz1">
+        <p class="watch-eyebrow">Real-Time · Play-by-Play Commentary</p>
+        <h2 class="watch-title">The Classic Approach: Rule-Based AI</h2>
+        <p class="explain-lede">In older titles like the classic Winning Eleven games, the commentary system utilized a basic form of AI known as trigger-based logic or finite state machines.</p>
+      </div>
+      <div class="explain-grid rz rz2">
+        <div class="explain-card">
+          <p class="explain-card-label">Event Triggers</p>
+          <p class="explain-card-body">The game engine constantly monitors the state of the game. If a specific event happens (e.g., a player presses the &ldquo;shoot&rdquo; button inside the penalty box), it triggers a specific code.</p>
+        </div>
+        <div class="explain-card">
+          <p class="explain-card-label">Audio Splicing</p>
+          <p class="explain-card-body">The AI acts as a rapid librarian. It pulls a pre-recorded audio file of the commentator shouting the player&rsquo;s name and seamlessly stitches it together with a pre-recorded reaction (e.g., &ldquo;[Messi]&hellip; [with the shot!]&rdquo;).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 4 — REAL-TIME: GAME PREDICTION & ANALYSIS (video)
        ============================================================ -->
   <section class="slide s-watch" data-theme="signal" aria-label="Real-time game prediction and analysis video">
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> Real-Time AI</div>
-      <div class="slide-count"><span class="cur">04</span> / <span class="tot">12</span></div>
+      <div class="slide-count"><span class="cur">05</span> / <span class="tot">13</span></div>
     </div>
     <div class="slide-inner">
       <div class="watch-wrap rz1">
@@ -743,7 +794,7 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   <section class="slide s-chart" data-theme="signal" aria-label="Specific grid scores in the Octagon">
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> Game Prediction</div>
-      <div class="slide-count"><span class="cur">05</span> / <span class="tot">12</span></div>
+      <div class="slide-count"><span class="cur">06</span> / <span class="tot">13</span></div>
     </div>
     <div class="slide-inner">
       <div class="chart-head rz1">
@@ -767,7 +818,7 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   <section class="slide s-stats" data-theme="signal" aria-label="Cumulative CSD prediction results">
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> Game Prediction</div>
-      <div class="slide-count"><span class="cur">06</span> / <span class="tot">12</span></div>
+      <div class="slide-count"><span class="cur">07</span> / <span class="tot">13</span></div>
     </div>
     <div class="slide-inner">
       <div class="stats-head rz1">
@@ -809,7 +860,7 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   <section class="slide s-vs" data-theme="circuit" aria-label="Physical AI: golf robot versus tennis analysis AI">
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> Physical AI</div>
-      <div class="slide-count"><span class="cur">07</span> / <span class="tot">12</span></div>
+      <div class="slide-count"><span class="cur">08</span> / <span class="tot">13</span></div>
     </div>
     <div class="slide-inner">
       <div class="vs-head rz1">
@@ -847,7 +898,7 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   <section class="slide s-watch" data-theme="circuit" aria-label="Physical AI: Helix household robot">
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> Physical AI</div>
-      <div class="slide-count"><span class="cur">08</span> / <span class="tot">12</span></div>
+      <div class="slide-count"><span class="cur">09</span> / <span class="tot">13</span></div>
     </div>
     <div class="slide-inner">
       <div class="watch-wrap rz1">
@@ -873,7 +924,7 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   <section class="slide s-watch" data-theme="circuit" aria-label="Physical AI: CUE7 basketball robot">
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> Physical AI</div>
-      <div class="slide-count"><span class="cur">09</span> / <span class="tot">12</span></div>
+      <div class="slide-count"><span class="cur">10</span> / <span class="tot">13</span></div>
     </div>
     <div class="slide-inner">
       <div class="watch-wrap rz1">
@@ -899,7 +950,7 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   <section class="slide s-watch" data-theme="circuit" aria-label="Physical AI: Atlas robot at the FIFA World Cup">
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> Physical AI</div>
-      <div class="slide-count"><span class="cur">10</span> / <span class="tot">12</span></div>
+      <div class="slide-count"><span class="cur">11</span> / <span class="tot">13</span></div>
     </div>
     <div class="slide-inner">
       <div class="watch-wrap rz1">
@@ -925,7 +976,7 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   <section class="slide s-statement" data-theme="pulse" aria-label="Closing statement">
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> The Shift</div>
-      <div class="slide-count"><span class="cur">11</span> / <span class="tot">12</span></div>
+      <div class="slide-count"><span class="cur">12</span> / <span class="tot">13</span></div>
     </div>
     <div class="slide-inner">
       <p class="statement-kicker rz1">AI</p>
@@ -941,7 +992,7 @@ a.prompt-note .arrow{margin-left:auto;color:var(--accent);flex:none;}
   <section class="slide s-outro" data-theme="pulse" aria-label="Questions">
     <div class="chrome-top">
       <div class="eyebrow"><span class="dot">●</span> Discussion</div>
-      <div class="slide-count"><span class="cur">12</span> / <span class="tot">12</span></div>
+      <div class="slide-count"><span class="cur">13</span> / <span class="tot">13</span></div>
     </div>
     <div class="slide-inner">
       <p class="outro-kicker">SPM 261 — Week 3-3</p>
