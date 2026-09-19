@@ -347,7 +347,17 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
 .obj-card{border:1px solid var(--line);border-radius:12px;padding:2vh 1.2vw;text-align:center;background:rgba(255,255,255,.02);}
 .obj-card .num{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.1em;}
 .obj-card p{margin-top:1vh;font-size:clamp(12.5px,1.1vw,15px);color:var(--ink);line-height:1.4;}
-.logos-frame{margin-top:2.6vh;max-width:640px;}
+.logos-frame{margin-top:2.6vh;max-width:520px;height:min(15vh,130px);}
+.obj-radial{margin-top:2.4vh;display:flex;flex-direction:column;align-items:center;}
+.obj-satellites{display:flex;gap:1.6vw;width:100%;max-width:640px;justify-content:center;}
+.obj-sat{flex:1;max-width:220px;border:1px solid var(--line);border-radius:12px;padding:1.5vh 1vw;text-align:center;background:rgba(255,255,255,.02);}
+.obj-sat .num{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.1em;}
+.obj-sat p{margin-top:.8vh;font-size:clamp(12px,1vw,14px);color:var(--ink);line-height:1.35;}
+.obj-connectors{width:100%;max-width:640px;height:4vh;color:var(--accent);opacity:.55;}
+.obj-connectors svg{width:100%;height:100%;display:block;}
+.obj-hub{border:2px solid var(--accent);border-radius:16px;padding:1.8vh 3vw;text-align:center;background:rgba(255,255,255,.04);min-width:240px;}
+.obj-hub .num{font-family:var(--font-mono);font-size:13px;color:var(--accent);letter-spacing:.1em;}
+.obj-hub p{margin-top:.6vh;font-size:clamp(17px,1.7vw,23px);font-weight:700;color:var(--ink);}
 
 /* two-value cards (monetary / trade) */
 .value-cards{display:flex;gap:2vw;margin-top:2.8vh;}
@@ -962,14 +972,23 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
     <div class="slide-inner">
       <p class="kicker rz rz1">Sports as More than a Marketing Tool</p>
       <h2 class="disp md rz rz2">Corporate-related sport sponsorship objectives</h2>
-      <div class="obj-grid rz rz3">
-        <div class="obj-card"><div class="num">01</div><p>Goodwill</p></div>
-        <div class="obj-card"><div class="num">02</div><p>Alter public perception</p></div>
-        <div class="obj-card"><div class="num">03</div><p>Involvement with the community</p></div>
-        <div class="obj-card"><div class="num">04</div><p>Enhance employee relations</p></div>
+      <div class="obj-radial rz rz3">
+        <div class="obj-satellites">
+          <div class="obj-sat"><div class="num">02</div><p>Alter public perception</p></div>
+          <div class="obj-sat"><div class="num">03</div><p>Involvement with the community</p></div>
+          <div class="obj-sat"><div class="num">04</div><p>Enhance employee relations</p></div>
+        </div>
+        <div class="obj-connectors" aria-hidden="true">
+          <svg viewBox="0 0 300 60" preserveAspectRatio="none">
+            <line x1="50" y1="0" x2="150" y2="60" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="150" y1="0" x2="150" y2="60" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="250" y1="0" x2="150" y2="60" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="obj-hub"><div class="num">01</div><p>Goodwill</p></div>
       </div>
       <div class="img-frame logos-frame rz rz4">
-        <img src="assets/s18_olympic_partners.png" alt="Grid of Olympic worldwide corporate partner logos, including Airbnb, Alibaba Group, Allianz, Atos, Bridgestone, Coca-Cola, Dow, GE, Intel, Omega, Panasonic, P&amp;G, Samsung, Toyota, and Visa">
+        <img src="assets/s18_olympic_partners.png" alt="Grid of Olympic worldwide corporate partner logos, including Airbnb, Alibaba Group, Allianz, Atos, Bridgestone, Coca-Cola, Dow, GE, Intel, Omega, Panasonic, P&amp;G, Samsung, Toyota, and Visa" style="object-fit:contain;">
       </div>
     </div>
   </section>
