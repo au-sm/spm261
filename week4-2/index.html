@@ -266,6 +266,8 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
 .img-frame img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 6s var(--ease);}
 .slide.active .img-frame img{transform:scale(1);}
 .img-frame.contain img{object-fit:contain;transform:none;}
+.gallery-strip{display:flex;gap:1.6vw;}
+.gallery-strip .img-frame{flex:1;min-width:0;}
 .img-cap{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-faint);margin-top:1vh;}
 
 /* full-bleed infographic frame (contain, centered, no crop) */
@@ -381,10 +383,13 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
 .notes-body a{color:var(--roundel);}
 
 .kbd-hint{
-  position:fixed;right:4.5vw;bottom:2vh;z-index:20;
+  position:fixed;right:4.5vw;bottom:2vh;z-index:31;
   font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--ink-faint);
 }
 .kbd-hint kbd{border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-family:var(--font-mono);}
+.kbd-hint-btn{background:none;border:none;padding:0;margin:0;color:inherit;font:inherit;letter-spacing:inherit;cursor:pointer;}
+.kbd-hint-btn:hover{color:var(--ink);}
+.kbd-hint-btn:hover kbd{border-color:var(--accent);}
 
 /* ============================================================
    ASK A QUESTION
@@ -571,8 +576,13 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
       <p class="disp lg rz rz1" style="color:var(--accent);">Olympic Sponsors (TOP)</p>
       <p class="lede rz rz2">The Olympic Partner (TOP) Program is the IOC&rsquo;s worldwide sponsorship tier. Its 14 current partners hold exclusive global marketing rights across every Olympic Games.</p>
       <p class="lede rz rz3" style="margin-top:.6vh;"><a href="https://www.olympic.org/sponsors" target="_blank" rel="noopener" style="color:var(--accent);">olympic.org/sponsors</a></p>
-      <div class="img-frame contain rz rz4" style="margin-top:2.6vh;height:min(20vh,180px);background:#fff;border-radius:12px;padding:2vh 1.5vw;">
-        <img src="assets/logos-top-partners-grid.png" alt="Grid of the 14 current Worldwide Olympic Partner logos: airbnb, Alibaba Group, Allianz, Atos, Bridgestone, Coca-Cola, Deloitte, Intel, Omega, Panasonic, P&amp;G, Samsung, Toyota, and Visa">
+      <div class="gallery-strip rz rz4" style="margin-top:2.2vh;">
+        <div class="img-frame contain" style="height:min(20vh,180px);background:#fff;border-radius:12px;padding:2vh 1.5vw;">
+          <img src="assets/logos-top-partners-grid-a.png" alt="Grid of Worldwide Olympic Partner logos, one roster snapshot: airbnb, Alibaba Group, Allianz, Atos, Bridgestone, Coca-Cola, Dow, GE, Intel, Omega, Panasonic, P&amp;G, Samsung, Toyota, and Visa">
+        </div>
+        <div class="img-frame contain" style="height:min(20vh,180px);background:#fff;border-radius:12px;padding:2vh 1.5vw;">
+          <img src="assets/logos-top-partners-grid.png" alt="Grid of Worldwide Olympic Partner logos, a later roster snapshot: airbnb, Alibaba Group, Allianz, Atos, Bridgestone, Coca-Cola, Deloitte, Intel, Omega, Panasonic, P&amp;G, Samsung, Toyota, and Visa">
+        </div>
       </div>
     </div>
   </section>
@@ -587,7 +597,12 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
       <div class="cite-block rz rz1">
         <p class="cite-text">&ldquo;Worldwide Olympic Partnership &mdash; the highest level of Olympic sponsorship. The TOP Program provides each Worldwide Olympic Partner with <mark>exclusive global marketing rights</mark> and opportunities.&rdquo;</p>
       </div>
-      <div class="roundel-mark rz rz2" style="margin-top:3.6vh;"></div>
+      <div class="img-frame contain rz rz2" style="margin-top:2.6vh;height:min(20vh,180px);border-radius:12px;">
+        <img src="assets/earth-partners-horizon-a.jpg" alt="Illustration of Earth's horizon from space with Worldwide Olympic Partner logos arranged along the curve, one roster snapshot: ABInBev, airbnb, Alibaba, Allianz, AtoS, Bridgestone, Coca-Cola, Deloitte, Intel, Omega, Panasonic, P&amp;G, Toyota, Samsung, Visa">
+      </div>
+      <div class="img-frame contain rz rz3" style="margin-top:1.4vh;height:min(20vh,180px);border-radius:12px;">
+        <img src="assets/earth-partners-horizon-b.jpg" alt="Illustration of Earth's horizon from space with Worldwide Olympic Partner logos arranged along the curve, a later roster snapshot including JPMorganChase and TCL: ABInBev, airbnb, Alibaba, Allianz, Coca-Cola, Deloitte, JPMorganChase, Omega, P&amp;G, Samsung, TCL, Visa">
+      </div>
     </div>
   </section>
 
@@ -679,7 +694,7 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
       <div class="slide-count"><span class="cur">10</span> / <span class="tot">37</span></div>
     </div>
     <div class="slide-inner">
-      <p class="kicker rz rz1">Which company has become the most recent Olympic Partner &mdash; and how much did they pay?</p>
+      <p class="disp md rz rz1" style="color:var(--accent);">Which company has become the most recent Olympic Partner &mdash; and how much did they pay?</p>
       <div class="value-cards rz rz2">
         <div class="value-card">
           <h4>airbnb</h4>
@@ -703,7 +718,7 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
       <div class="slide-count"><span class="cur">11</span> / <span class="tot">37</span></div>
     </div>
     <div class="slide-inner" style="justify-content:center;">
-      <p class="kicker rz rz1" style="text-align:center;justify-content:center;">Which company has become the most recent Olympic Partner &mdash; and how much did they pay?</p>
+      <p class="disp md rz rz1" style="color:var(--accent);text-align:center;">Which company has become the most recent Olympic Partner &mdash; and how much did they pay?</p>
       <div class="stat-hero rz rz2">
         <div class="num">Deloitte</div>
         <div class="label" style="font-size:clamp(18px,2vw,24px);color:var(--ink);margin-top:1vh;">$1.3 billion / 8 years <span style="color:var(--ink-dim);">(2022 &ndash; 2028)</span></div>
@@ -735,8 +750,13 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
             </div>
           </a>
         </div>
-        <div class="img-frame rz rz6" style="flex:1;height:min(46vh,400px);">
-          <img src="assets/photo-corona-goldenmoment.jpg" alt="Corona 'For Every Golden Moment' Olympic Games Paris 2024 advertisement, two people toasting Corona Cero bottles at sunset">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1.4vh;">
+          <div class="img-frame rz rz6" style="height:min(32vh,280px);">
+            <img src="assets/photo-corona-goldenmoment.jpg" alt="Corona 'For Every Golden Moment' Olympic Games Paris 2024 advertisement, two people toasting Corona Cero bottles at sunset">
+          </div>
+          <div class="img-frame contain rz rz6" style="height:min(13vh,110px);background:#fff;border-radius:10px;padding:1vh .8vw;">
+            <img src="assets/photo-abinbev-brand-wall.jpg" alt="A wall of dozens of beer brands owned by AB InBev on ice, including Budweiser, Michelob Ultra, Stella Artois, Busch, and Rolling Rock">
+          </div>
         </div>
       </div>
     </div>
@@ -765,7 +785,7 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
     <div class="slide-inner">
       <div style="display:flex;gap:3.4vw;flex:1;min-height:0;align-items:center;">
         <div style="flex:1.2;min-width:0;">
-          <div class="img-frame contain rz rz1" style="height:min(9vh,72px);background:#fff;border-radius:10px;padding:1.2vh 1vw;max-width:360px;">
+          <div class="img-frame contain rz rz1" style="height:min(17vh,150px);background:#fff;border-radius:10px;padding:1.6vh 1.2vw;max-width:420px;">
             <img src="assets/logo-jpmorganchase-partner.png" alt="JPMorganChase and Olympic/Paralympic rings logo, reading Official Worldwide Partner">
           </div>
           <ul class="bullet-list rz rz2" style="margin-top:2.4vh;">
@@ -818,7 +838,7 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
             <li>A freight ship arrived in Amsterdam carrying the US Olympic Team and 1,000 cases of Coca-Cola. Bottles were sold at kiosks around the Olympic stadium and rowing course.</li>
           </ul>
         </div>
-        <div class="img-frame rz rz3 def-photo">
+        <div class="img-frame contain rz rz3 def-photo" style="max-width:280px;background:#000;">
           <img src="assets/photo-cocacola-kiosk-1928.jpg" alt="Black and white photograph of a Drink Coca-Cola kiosk with two men standing beside it, circa 1928">
         </div>
       </div>
@@ -1257,7 +1277,7 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
 
 <nav class="dots" id="dots" aria-label="Slide navigation"></nav>
 
-<div class="kbd-hint"><kbd>N</kbd> notes &nbsp; <kbd>&larr;</kbd><kbd>&rarr;</kbd> navigate</div>
+<div class="kbd-hint"><button class="kbd-hint-btn" id="notesToggleBtn" type="button"><kbd>N</kbd> notes</button> &nbsp; <kbd>&larr;</kbd><kbd>&rarr;</kbd> navigate</div>
 
 <div class="notes-panel" id="notesPanel">
   <p class="notes-kicker">Speaker Notes &mdash; press N to close</p>
@@ -1311,6 +1331,8 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
   var btnNext = document.getElementById('btnNext');
   var notesPanel = document.getElementById('notesPanel');
   var notesBody = document.getElementById('notesBody');
+  var notesToggleBtn = document.getElementById('notesToggleBtn');
+  if (notesToggleBtn) notesToggleBtn.addEventListener('click', function(){ notesPanel.classList.toggle('open'); });
 
   for (var i = 0; i < total; i++){
     var d = document.createElement('button');

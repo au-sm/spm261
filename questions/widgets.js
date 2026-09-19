@@ -61,7 +61,10 @@
     '.poll-card.collapsed .poll-q,.poll-card.collapsed .poll-options,.poll-card.collapsed .poll-results,.poll-card.collapsed .poll-status{display:none;}' +
     '.poll-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}' +
     '.poll-badge{font:700 10px/1 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#5eead4;border:1px solid rgba(94,234,212,.4);border-radius:999px;padding:3px 9px;}' +
-    '.poll-collapse{background:none;border:1px solid rgba(255,255,255,.2);border-radius:50%;width:22px;height:22px;color:#f2f3f5;cursor:pointer;line-height:1;font-size:14px;padding:0;}' +
+    '.poll-collapse{background:none;border:1px solid rgba(255,255,255,.2);border-radius:50%;width:22px;height:22px;color:#f2f3f5;cursor:pointer;line-height:1;font-size:14px;padding:0;flex:none;}' +
+    '.poll-head-actions{display:flex;align-items:center;gap:8px;}' +
+    '.poll-reset{background:none;border:1px solid rgba(255,255,255,.18);border-radius:999px;color:rgba(255,255,255,.55);cursor:pointer;font:600 10px/1 system-ui,sans-serif;letter-spacing:.04em;padding:4px 9px;}' +
+    '.poll-reset:hover{color:#f2f3f5;border-color:rgba(255,255,255,.4);}' +
     '.poll-q{font-weight:600;margin-bottom:10px;text-wrap:balance;}' +
     '.poll-options{display:flex;flex-direction:column;gap:7px;}' +
     '.poll-opt{text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);color:#f2f3f5;border-radius:10px;padding:9px 12px;cursor:pointer;font:14px/1.3 inherit;transition:background .15s ease,border-color .15s ease;}' +
@@ -204,7 +207,10 @@
 
   function renderPollCard(pollDef, slideIdx, votedOption){
     var html = '<div class="poll-head"><span class="poll-badge">Poll</span>' +
-      '<button class="poll-collapse" type="button" aria-label="Minimize poll">−</button></div>' +
+      '<span class="poll-head-actions">' +
+      '<button class="poll-reset" type="button" title="Reset this poll for a new section — clears the live tally, keeps history">Reset</button>' +
+      '<button class="poll-collapse" type="button" aria-label="Minimize poll">−</button>' +
+      '</span></div>' +
       '<div class="poll-q">' + escapeHtml(pollDef.question) + '</div>';
     if (votedOption === null){
       html += '<div class="poll-options">';
@@ -223,6 +229,10 @@
       collapseBtn.textContent = pollCard.classList.contains('collapsed') ? '+' : '−';
     });
 
+    pollCard.querySelector('.poll-reset').addEventListener('click', function(){
+      resetPoll(pollDef, slideIdx);
+    });
+
     if (votedOption === null){
       pollCard.querySelectorAll('.poll-opt').forEach(function(btn){
         btn.addEventListener('click', function(){
@@ -232,6 +242,20 @@
     } else {
       renderResults(pollDef);
     }
+  }
+
+  function resetPoll(pollDef, slideIdx){
+    if (!window.confirm('Reset "' + pollDef.question + '" for everyone? This clears the live results (for a new class section, say) — past votes stay recorded in the Sheet, just out of this tally.')) return;
+    if (!window.QUESTIONS_API) return;
+    fetch(window.QUESTIONS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ type: 'poll_reset', pollId: pollDef.id })
+    }).then(function(){
+      try { localStorage.removeItem(votedKey(pollDef.id)); } catch (e) {}
+      clearInterval(activePollTimer);
+      renderPollCard(pollDef, slideIdx, null);
+    }).catch(function(){});
   }
 
   function submitVote(pollDef, slideIdx, optionIndex){

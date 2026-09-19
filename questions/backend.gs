@@ -58,6 +58,7 @@ function doPost(e){
   var type = body.type || 'question';
   if (type === 'reaction') return json_(handleReaction_(body));
   if (type === 'poll_vote') return json_(handlePollVote_(body));
+  if (type === 'poll_reset') return json_(handlePollReset_(body));
   return json_(handle_(body));
 }
 
@@ -169,9 +170,43 @@ function appendPollRow_(row){
 }
 
 /**
- * Tallies votes for one pollId into {"0": n, "1": n, ...} counts. Cached
- * for a few seconds so a whole class polling every ~3s during a live vote
- * doesn't hammer the Sheet with a full read on every request.
+ * Resets a poll for reuse across another class section, WITHOUT deleting
+ * any vote history. Appends a marker row to the "PollResets" tab; pollResults_
+ * only counts PollVotes rows timestamped after a pollId's latest reset, so
+ * every earlier section's votes stay in the Sheet for the record but drop
+ * out of the live tally. Anyone with the deck open can trigger this (no
+ * login in this system) -- the frontend gates it behind a confirm dialog,
+ * not a real permission check.
+ */
+function handlePollReset_(body){
+  var lock = LockService.getScriptLock();
+  try { lock.waitLock(9000); } catch (err) { return { ok: false, error: 'busy' }; }
+  try {
+    var pollId = String(body.pollId || '').slice(0, 120);
+    if (!pollId) return { ok: false, error: 'missing_poll' };
+
+    var id = PROPS.getProperty('SHEET_ID');
+    if (!id) throw new Error('Missing Script Property SHEET_ID');
+    var ss = SpreadsheetApp.openById(id);
+    var sh = ss.getSheetByName('PollResets') || ss.insertSheet('PollResets');
+    if (sh.getLastRow() === 0) {
+      sh.appendRow(['When', 'Poll ID']);
+      sh.setFrozenRows(1);
+    }
+    sh.appendRow([new Date(), pollId]);
+
+    CacheService.getScriptCache().remove('pollres_' + pollId);
+    return { ok: true };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * Tallies votes for one pollId into {"0": n, "1": n, ...} counts, counting
+ * only votes cast after that pollId's most recent reset marker (if any).
+ * Cached for a few seconds so a whole class polling every ~3s during a
+ * live vote doesn't hammer the Sheet with a full read on every request.
  */
 function pollResults_(params){
   var pollId = String((params && params.pollId) || '').slice(0, 120);
@@ -185,13 +220,26 @@ function pollResults_(params){
   var id = PROPS.getProperty('SHEET_ID');
   if (!id) return { ok: false, error: 'not_configured' };
   var ss = SpreadsheetApp.openById(id);
+
+  var cutoff = 0;
+  var resetSh = ss.getSheetByName('PollResets');
+  if (resetSh && resetSh.getLastRow() > 1) {
+    var resets = resetSh.getRange(2, 1, resetSh.getLastRow() - 1, 2).getValues();
+    for (var r = 0; r < resets.length; r++) {
+      if (String(resets[r][1]) === pollId) {
+        var t = new Date(resets[r][0]).getTime();
+        if (t > cutoff) cutoff = t;
+      }
+    }
+  }
+
   var sh = ss.getSheetByName('PollVotes');
   var counts = {};
   var total = 0;
   if (sh && sh.getLastRow() > 1) {
     var data = sh.getRange(2, 1, sh.getLastRow() - 1, 7).getValues();
     for (var i = 0; i < data.length; i++) {
-      if (String(data[i][3]) === pollId) {
+      if (String(data[i][3]) === pollId && new Date(data[i][0]).getTime() > cutoff) {
         var opt = String(data[i][5]);
         counts[opt] = (counts[opt] || 0) + 1;
         total++;
