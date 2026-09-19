@@ -1,0 +1,1523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BMW&rsquo;s Olympic Sponsorship Strategy &mdash; SPM 261 Week 4-2</title>
+<style>
+/* ============================================================
+   TOKENS — "Roundel" theme: BMW blue-black base,
+   roundel blue / motorsport violet / M red accents.
+   ============================================================ */
+:root{
+  --bg:            #060a14;
+  --bg-raised:     #0d1626;
+  --ink:           #f2f5fa;
+  --ink-dim:       #a9b4c8;
+  --ink-faint:     #5c6a84;
+  --line:          rgba(242,245,250,.12);
+  --line-soft:     rgba(242,245,250,.06);
+
+  --roundel:       #2f7dde;
+  --roundel-dim:   #0d2c58;
+  --roundel-glow:  rgba(47,125,222,.34);
+
+  --motorsport:    #8a3fe0;
+  --motorsport-dim:#33144f;
+  --motorsport-glow:rgba(138,63,224,.28);
+
+  --mred:          #e2321f;
+  --mred-dim:      #4c130c;
+  --mred-glow:     rgba(226,50,31,.28);
+
+  --font-display:  'Futura', 'Century Gothic', 'Avenir Next', 'Arial Narrow', Helvetica, Arial, sans-serif;
+  --font-body:     -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:     ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+
+  --ease:          cubic-bezier(.22,.68,.16,1);
+  --dur-fast:      .45s;
+  --dur-med:       .8s;
+  --dur-slow:      1.4s;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;}
+h1,h2,h3,h4,p,ul,ol{margin:0;}
+
+/* ambient background glow */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.ambient::before,.ambient::after{
+  content:'';position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;
+  animation:drift 26s ease-in-out infinite alternate;
+}
+.ambient::before{
+  width:52vw;height:52vw;top:-18vw;left:-14vw;
+  background:radial-gradient(circle at 30% 30%,var(--roundel-glow),transparent 70%);
+}
+.ambient::after{
+  width:46vw;height:46vw;bottom:-16vw;right:-12vw;
+  background:radial-gradient(circle at 60% 60%,var(--motorsport-glow),transparent 70%);
+  animation-delay:-13s;
+}
+@keyframes drift{
+  from{transform:translate(0,0) scale(1);}
+  to{transform:translate(3vw,2vw) scale(1.08);}
+}
+
+/* top chrome */
+.home-link,.pdf-link-fixed{
+  position:fixed;top:1.6vh;z-index:60;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-faint);text-decoration:none;
+  transition:color .2s ease;
+}
+.home-link{left:4.5vw;}
+.pdf-link-fixed{right:4.5vw;}
+.home-link:hover,.pdf-link-fixed:hover{color:var(--ink);}
+
+.zoom-controls{
+  position:fixed;bottom:2.4vh;left:50%;transform:translateX(-50%);z-index:20;
+  display:flex;align-items:center;
+}
+.zoom-btn{
+  pointer-events:auto;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;
+  font-family:var(--font-mono);font-size:13px;line-height:1;
+  padding:6px 11px;transition:border-color .2s ease,color .2s ease,background .2s ease;
+}
+.zoom-btn:hover{background:rgba(255,255,255,.09);color:var(--ink);}
+.zoom-controls .zoom-btn+.zoom-btn{margin-left:-1px;}
+.zoom-controls .zoom-btn:first-child{border-radius:999px 0 0 999px;}
+.zoom-controls .zoom-btn:last-child{border-radius:0 999px 999px 0;}
+.zoom-reset{min-width:48px;text-align:center;font-size:10px;letter-spacing:.03em;}
+.zoom-btn:disabled{opacity:.3;cursor:default;}
+.zoom-btn:disabled:hover{background:rgba(255,255,255,.04);color:var(--ink-dim);}
+
+.progress-rail{position:fixed;top:0;left:0;right:0;height:2px;background:var(--line-soft);z-index:20;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--roundel),var(--motorsport));width:2.7%;transition:width .5s var(--ease);}
+
+.dots{
+  position:fixed;left:4.5vw;top:50%;transform:translateY(-50%);z-index:20;
+  display:flex;flex-direction:column;gap:7px;
+  max-height:78vh;overflow:hidden;
+}
+.dot{
+  width:6px;height:6px;border-radius:50%;background:var(--line);border:none;padding:0;cursor:pointer;flex:none;
+  transition:background .3s var(--ease),transform .3s var(--ease);
+}
+.dot:hover{transform:scale(1.3);}
+.dot.on{background:var(--ink);transform:scale(1.3);}
+
+.navbtn{
+  position:fixed;top:50%;transform:translateY(-50%);z-index:20;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--ink-dim);transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease);
+}
+.navbtn:hover{background:rgba(255,255,255,.09);color:var(--ink);border-color:var(--line);}
+.navbtn svg{width:16px;height:16px;fill:currentColor;}
+.navbtn.prev{left:4vw;}
+.navbtn.next{right:4vw;}
+.navbtn[disabled]{opacity:.25;cursor:default;pointer-events:none;}
+
+.click-zone{position:fixed;top:0;bottom:0;width:14%;z-index:15;cursor:pointer;}
+.click-zone.left{left:0;} .click-zone.right{right:0;}
+
+/* deck / slides */
+.deck{position:fixed;inset:0;z-index:1;}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
+  pointer-events:none;
+  will-change:opacity,transform;
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto;}
+
+.slide-inner{
+  position:relative;z-index:2;
+  flex:1;
+  display:flex;flex-direction:column;
+  padding:13vh 7vw 7vh;
+  min-height:0;
+  zoom:var(--zoom,1);
+}
+.chrome-top{
+  position:absolute;top:0;left:0;right:0;z-index:5;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:4.2vh 4.5vw 0;
+  pointer-events:none;
+}
+.eyebrow{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-dim);
+  opacity:0;transform:translateY(-8px);
+  transition:opacity .6s var(--ease),transform .6s var(--ease);
+}
+.slide.active .eyebrow{opacity:1;transform:translateY(0);transition-delay:.15s;}
+.eyebrow .dot{color:var(--accent,var(--roundel));}
+.slide-count{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.15em;color:var(--ink-faint);
+  opacity:0;transition:opacity .6s var(--ease);
+}
+.slide.active .slide-count{opacity:1;transition-delay:.2s;}
+
+/* per-slide accent theme */
+.slide[data-theme="roundel"]{--accent:var(--roundel);--accent-dim:var(--roundel-dim);}
+.slide[data-theme="motorsport"]{--accent:var(--motorsport);--accent-dim:var(--motorsport-dim);}
+.slide[data-theme="mred"]{--accent:var(--mred);--accent-dim:var(--mred-dim);}
+
+/* ============================================================
+   REVEAL PRIMITIVES (auto-staggered on slide activation)
+   ============================================================ */
+.rz{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+.slide.active .rz{opacity:1;transform:translateY(0);}
+.rz1{transition-delay:.05s;} .rz2{transition-delay:.18s;} .rz3{transition-delay:.32s;}
+.rz4{transition-delay:.46s;} .rz5{transition-delay:.60s;} .rz6{transition-delay:.74s;}
+.rz7{transition-delay:.88s;} .rz8{transition-delay:1.02s;} .rz9{transition-delay:1.16s;}
+.rz10{transition-delay:1.30s;}
+
+/* ============================================================
+   TYPOGRAPHY / GENERIC CONTENT COMPONENTS
+   ============================================================ */
+.kicker{
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 1.4vh;
+}
+.disp{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:.005em;color:var(--ink);line-height:1.04;}
+.disp.xl{font-size:clamp(36px,5.8vw,92px);}
+.disp.lg{font-size:clamp(28px,4.2vw,56px);}
+.disp.md{font-size:clamp(21px,2.8vw,36px);}
+.lede{font-family:var(--font-body);font-weight:400;font-size:clamp(15.5px,1.6vw,20px);line-height:1.55;color:var(--ink-dim);max-width:66ch;margin:1.8vh 0 0;}
+.lede b,.lede strong{color:var(--ink);font-weight:600;}
+
+.rule{width:60px;height:3px;background:var(--accent);border-radius:2px;margin:2vh 0 0;}
+
+.cite-block{border-left:3px solid var(--accent);padding:1.4vh 0 1.4vh 2.2vw;margin:2.6vh 0 0;max-width:76ch;}
+.cite-text{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,2.2vw,28px);line-height:1.34;color:var(--ink);margin:0;text-transform:none;}
+.cite-text mark{background:none;color:var(--accent);}
+.cite-attr{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.05em;color:var(--ink-faint);margin:1.6vh 0 0;}
+
+.bullet-list{list-style:none;margin:2.6vh 0 0;padding:0;display:flex;flex-direction:column;gap:1.5vh;max-width:74ch;}
+.bullet-list li{position:relative;padding-left:2.1em;font-size:clamp(15px,1.5vw,19px);line-height:1.5;color:var(--ink-dim);}
+.bullet-list li::before{content:'';position:absolute;left:0;top:.5em;width:9px;height:9px;border-radius:50%;background:var(--accent);}
+.bullet-list li b,.bullet-list li strong{color:var(--ink);font-weight:600;}
+
+.callout{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:2.2vh 2.4vw;margin-top:2.8vh;max-width:74ch;background:rgba(255,255,255,.02);}
+.callout p{margin:0;font-size:clamp(15.5px,1.6vw,19px);line-height:1.5;color:var(--ink);}
+.callout .src{margin-top:1vh;font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2.6vw;margin-top:auto;margin-bottom:auto;}
+.col-card{border:1px solid var(--line);border-radius:12px;padding:2.6vh 2.2vw;background:rgba(255,255,255,.02);display:flex;flex-direction:column;}
+.col-card h3{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;font-size:clamp(16px,1.7vw,21px);color:var(--accent);margin:0 0 1.2vh;}
+.col-card p{color:var(--ink-dim);font-size:clamp(13.5px,1.25vw,16px);line-height:1.55;margin:0;}
+.col-card .thrust-tag{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1vh;}
+
+/* definition layout w/ side photo or logo */
+.def-layout{display:flex;align-items:center;gap:4vw;flex:1;min-height:0;}
+.def-text{flex:1 1 56%;min-width:0;}
+.def-photo{flex:1 1 38%;min-width:0;max-width:480px;margin-left:auto;height:min(32vh,300px);}
+.def-text .bullet-list li{font-size:clamp(15px,1.5vw,18px);}
+@media (max-width:820px){.def-layout{flex-direction:column;}.def-photo{margin-left:0;max-width:100%;}}
+
+/* tables */
+.table-clean{width:100%;border-collapse:collapse;margin-top:2vh;font-size:clamp(12px,1.05vw,14.5px);}
+.table-clean th{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+  text-align:left;padding:1vh 1vw;border-bottom:1px solid var(--line);}
+.table-clean td{padding:1.1vh 1vw;border-bottom:1px solid var(--line-soft);color:var(--ink-dim);vertical-align:top;}
+.table-clean tr:last-child td{border-bottom:none;}
+.table-clean td.hl,.table-clean th.hl{color:var(--ink);font-weight:600;}
+.table-clean tr.total td{color:var(--ink);font-weight:700;background:rgba(255,255,255,.03);}
+.table-clean tbody tr{opacity:0;transform:translateY(10px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
+.slide.active .table-clean tbody tr{opacity:1;transform:translateY(0);}
+.table-clean tbody tr:nth-child(1){transition-delay:.15s;}
+.table-clean tbody tr:nth-child(2){transition-delay:.24s;}
+.table-clean tbody tr:nth-child(3){transition-delay:.33s;}
+.table-clean tbody tr:nth-child(4){transition-delay:.42s;}
+.table-clean tbody tr:nth-child(5){transition-delay:.51s;}
+.table-clean tbody tr:nth-child(6){transition-delay:.60s;}
+.table-clean tbody tr:nth-child(7){transition-delay:.69s;}
+.table-clean tbody tr:nth-child(8){transition-delay:.78s;}
+.table-clean tbody tr:nth-child(9){transition-delay:.87s;}
+.table-clean tbody tr:nth-child(10){transition-delay:.96s;}
+.table-source{margin-top:1vh;font-family:var(--font-mono);font-size:10px;color:var(--ink-faint);letter-spacing:.02em;}
+.table-pair{display:grid;grid-template-columns:1fr 1fr;gap:0 2.2vw;min-height:0;}
+.table-pair .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.table-pair .table-wrap::-webkit-scrollbar{height:5px;}
+.table-pair .table-wrap::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
+.table-pair table.table-clean{font-size:clamp(10px,.82vw,12px);min-width:600px;}
+.table-pair table.table-clean th,.table-pair table.table-clean td{padding:.9vh .55vw;white-space:nowrap;}
+@media (max-width:900px){.table-pair{grid-template-columns:1fr;}}
+
+/* image display — no mat / no card, sits directly on background */
+.img-frame{position:relative;overflow:hidden;border-radius:10px;}
+.img-frame img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 6s var(--ease);}
+.slide.active .img-frame img{transform:scale(1);}
+.img-frame.contain img{object-fit:contain;transform:none;}
+.img-cap{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-faint);margin-top:1vh;}
+
+/* full-bleed infographic frame (contain, centered, no crop) */
+.full-figure{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;margin-top:1.6vh;}
+.full-figure img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:8px;}
+
+/* stat hero — big number emphasis */
+.stat-hero{text-align:center;margin:auto;}
+.stat-hero .num{font-family:var(--font-display);font-weight:800;font-size:clamp(56px,9.5vw,150px);color:var(--accent);line-height:1;letter-spacing:.01em;font-variant-numeric:tabular-nums;}
+.stat-hero .label{margin-top:2vh;font-size:clamp(15px,1.6vw,20px);color:var(--ink-dim);max-width:52ch;margin-left:auto;margin-right:auto;}
+.stat-row{display:flex;gap:5vw;justify-content:center;margin:auto;flex-wrap:wrap;}
+.stat-row .stat-hero{margin:0;}
+.stat-row .stat-hero .num{font-size:clamp(40px,6.5vw,96px);}
+
+/* value / cost comparison cards */
+.value-cards{display:flex;gap:2vw;margin-top:2.8vh;flex-wrap:wrap;}
+.value-card{flex:1;min-width:240px;border:1px solid var(--line);border-radius:12px;padding:2.4vh 1.8vw;background:rgba(255,255,255,.02);}
+.value-card h4{font-family:var(--font-display);text-transform:uppercase;font-size:clamp(15px,1.5vw,19px);color:var(--accent);margin:0 0 .8vh;}
+.value-card .amt{font-family:var(--font-display);font-weight:800;font-size:clamp(24px,2.6vw,34px);color:var(--ink);margin:.4vh 0;}
+.value-card p{font-size:clamp(12.5px,1.15vw,15px);color:var(--ink-dim);line-height:1.5;margin:0;}
+.value-card .src{margin-top:1vh;font-family:var(--font-mono);font-size:10px;color:var(--ink-faint);word-break:break-all;}
+
+/* badge chips (dates / roles) */
+.chip-row{display:flex;gap:1vw;flex-wrap:wrap;margin-top:2vh;}
+.chip{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.05em;color:var(--ink);
+  border:1px solid var(--line);border-radius:999px;padding:6px 14px;background:rgba(255,255,255,.03);}
+.chip.out{border-color:var(--mred);color:var(--mred);}
+.chip b{color:inherit;}
+
+/* logo pairing (compare two brands) */
+.logo-pair{display:flex;align-items:center;justify-content:center;gap:4vw;margin:auto;flex:1;}
+.logo-pair .logo-box{flex:none;width:min(220px,26vw);height:min(220px,26vw);border-radius:16px;border:1px solid var(--line);
+  background:#fff;display:flex;align-items:center;justify-content:center;padding:10%;}
+.logo-pair .logo-box img{max-width:100%;max-height:100%;object-fit:contain;}
+.logo-pair .vs{font-family:var(--font-display);font-size:clamp(18px,2vw,26px);color:var(--ink-faint);letter-spacing:.05em;}
+.logo-pair .cap{margin-top:1.4vh;text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);}
+.logo-pair-wrap{display:flex;flex-direction:column;align-items:center;}
+
+/* single centered logo card */
+.logo-solo{margin:auto;text-align:center;}
+.logo-solo .logo-box{width:min(360px,50vw);height:min(200px,26vw);border-radius:14px;background:#fff;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;padding:6%;margin:0 auto;}
+.logo-solo .logo-box img{max-width:100%;max-height:100%;object-fit:contain;}
+
+/* future host-city grid */
+.host-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2vw;margin-top:2.8vh;flex:1;align-items:stretch;}
+.host-card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:1.6vh 1vw;display:flex;align-items:center;justify-content:center;}
+.host-card img{max-width:100%;max-height:100%;object-fit:contain;}
+@media (max-width:900px){.host-grid{grid-template-columns:repeat(2,1fr);}}
+
+/* discussion / activity card */
+.activity-card{border:1px solid var(--accent);border-radius:16px;padding:4vh 4vw;text-align:center;margin:auto;max-width:780px;background:rgba(255,255,255,.03);}
+.activity-card .kicker{justify-content:center;}
+.activity-card .q{font-family:var(--font-display);font-weight:700;text-transform:none;font-size:clamp(21px,2.6vw,32px);line-height:1.2;color:var(--ink);margin-top:1vh;}
+
+/* reading callout */
+.read-card{border:1px dashed var(--accent);border-radius:16px;padding:4vh 4.5vw;margin:auto;max-width:720px;text-align:center;background:rgba(255,255,255,.02);}
+.read-card .icon{width:44px;height:44px;margin:0 auto 2vh;color:var(--accent);}
+.read-card p{font-family:var(--font-display);font-weight:700;font-size:clamp(19px,2.2vw,27px);text-transform:none;color:var(--ink);line-height:1.35;}
+
+/* ============================================================
+   WATCH CARD (video) — clickable poster + play button
+   ============================================================ */
+.s-watch .slide-inner{justify-content:center;align-items:center;}
+.watch-wrap{width:min(880px,84vw);text-align:center;}
+.watch-wrap.sm{width:min(620px,70vw);}
+.watch-eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin:0 0 1.6vh;}
+.watch-title{font-family:var(--font-display);font-size:clamp(28px,4.6vw,54px);line-height:1;text-transform:uppercase;margin:0 0 3vh;}
+.watch-card{display:block;position:relative;border-radius:10px;overflow:hidden;text-decoration:none;background:#000;
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.7);}
+.watch-thumb{position:relative;aspect-ratio:16/9;overflow:hidden;}
+.watch-thumb.portrait{aspect-ratio:9/16;max-height:46vh;margin:0 auto;}
+.watch-card.portrait{width:fit-content;margin:0 auto;}
+.watch-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease);}
+.watch-card:hover .watch-thumb img{transform:scale(1.045);}
+.watch-thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.55) 100%);}
+.play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%;
+  background:rgba(6,10,20,.55);border:1.5px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;z-index:2;
+  backdrop-filter:blur(3px);transition:transform .35s var(--ease),background .35s var(--ease),border-color .35s var(--ease);}
+.play-btn.sm{width:52px;height:52px;}
+.watch-card:hover .play-btn{transform:translate(-50%,-50%) scale(1.1);background:var(--accent);border-color:var(--accent);}
+.play-btn svg{width:22px;height:22px;fill:#fff;margin-left:4px;}
+.play-btn.sm svg{width:16px;height:16px;}
+.watch-meta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;}
+.watch-meta .badge{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#fff;
+  background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.35);padding:4px 9px;border-radius:20px;white-space:nowrap;}
+.watch-url{font-family:var(--font-mono);font-size:11.5px;color:#dfe3ea;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.watch-inline{display:flex;align-items:center;gap:1.6vw;margin-top:2.6vh;}
+.watch-inline .watch-card{flex:none;width:min(260px,30vw);}
+.watch-inline .watch-thumb{aspect-ratio:16/9;}
+
+/* roundel decorative mark */
+.roundel-mark{position:relative;width:110px;height:110px;border-radius:50%;flex:none;
+  background:conic-gradient(var(--roundel) 0 25%, #fff 25% 50%, var(--roundel) 50% 75%, #fff 75% 100%);
+  border:3px solid #14151a;box-shadow:0 0 0 1px rgba(255,255,255,.25);
+  transform:scale(.7) rotate(-20deg);opacity:0;transition:transform 1s var(--ease),opacity 1s var(--ease);}
+.slide.active .roundel-mark{transform:scale(1) rotate(0deg);opacity:1;}
+.roundel-mark::after{content:'';position:absolute;inset:34%;border-radius:50%;background:#0b0d12;border:1px solid rgba(255,255,255,.25);}
+
+/* ============================================================
+   SPEAKER NOTES PANEL
+   ============================================================ */
+.notes-panel{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  max-height:34vh;overflow:auto;
+  background:rgba(6,10,20,.96);border-top:1px solid var(--line);
+  padding:3vh 6vw;
+  transform:translateY(100%);transition:transform .4s var(--ease);
+}
+.notes-panel.open{transform:translateY(0);}
+.notes-kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--roundel);margin:0 0 1.2vh;}
+.notes-body{font-family:var(--font-body);font-size:15px;line-height:1.6;color:var(--ink-dim);}
+.notes-body a{color:var(--roundel);}
+
+.kbd-hint{
+  position:fixed;right:4.5vw;bottom:2vh;z-index:20;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--ink-faint);
+}
+.kbd-hint kbd{border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-family:var(--font-mono);}
+
+/* ============================================================
+   ASK A QUESTION
+   ============================================================ */
+.ask-btn{
+  position:fixed;right:4.5vw;top:calc(4.2vh + 30px);z-index:20;
+  height:32px;padding:0 15px;border-radius:18px;white-space:nowrap;
+  border:1px solid var(--line);background:rgba(6,10,20,.6);backdrop-filter:blur(6px);
+  color:var(--ink-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-family:var(--font-body);font-weight:600;font-size:12.5px;
+  transition:color .2s ease,border-color .2s ease,transform .2s ease;
+}
+.ask-btn:hover{color:var(--roundel);border-color:var(--roundel);transform:translateY(-2px);}
+.ask-backdrop{
+  position:fixed;inset:0;z-index:40;background:rgba(3,5,10,.75);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.ask-backdrop.open{opacity:1;pointer-events:auto;}
+.ask-panel{
+  width:min(480px,100%);background:var(--bg-raised);border:1px solid var(--line);border-radius:10px;
+  padding:26px 26px 22px;box-shadow:0 40px 90px -30px rgba(0,0,0,.8);
+  transform:translateY(14px) scale(.98);opacity:0;transition:transform .3s var(--ease),opacity .3s var(--ease);
+}
+.ask-backdrop.open .ask-panel{transform:translateY(0) scale(1);opacity:1;}
+.ask-title{font-family:var(--font-display);font-size:22px;letter-spacing:.01em;color:var(--ink);margin:0 0 4px;text-transform:uppercase;}
+.ask-context{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;color:var(--roundel);margin:0 0 16px;}
+.ask-panel textarea{
+  width:100%;min-height:96px;resize:vertical;background:var(--bg);color:var(--ink);
+  border:1px solid var(--line);border-radius:6px;padding:12px 14px;font:14px/1.5 var(--font-body);
+  outline:none;transition:border-color .2s ease;box-sizing:border-box;
+}
+.ask-panel textarea:focus{border-color:var(--roundel);}
+.ask-panel input[type=text]{
+  width:100%;margin-top:10px;background:var(--bg);color:var(--ink);
+  border:1px solid var(--line);border-radius:6px;padding:10px 14px;font:13px var(--font-body);
+  outline:none;transition:border-color .2s ease;box-sizing:border-box;
+}
+.ask-panel input[type=text]:focus{border-color:var(--roundel);}
+.ask-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;}
+.ask-hint{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);}
+.ask-actions{display:flex;gap:10px;}
+.ask-btn-cancel,.ask-btn-send{
+  font-family:var(--font-body);font-size:13px;font-weight:600;border-radius:6px;padding:9px 16px;
+  cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink-dim);
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.ask-btn-cancel:hover{color:var(--ink);border-color:var(--ink-dim);}
+.ask-btn-send{background:var(--roundel);border-color:var(--roundel);color:#04101f;}
+.ask-btn-send:hover{filter:brightness(1.08);}
+.ask-btn-send:disabled{opacity:.5;cursor:default;filter:none;}
+.ask-status{font-family:var(--font-mono);font-size:12px;margin-top:12px;min-height:16px;}
+.ask-status.err{color:var(--mred);}
+.ask-status.ok{color:var(--roundel);}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;transition-delay:0s !important;}
+  .slide{transform:none !important;}
+  .img-frame img{transform:none !important;}
+  .roundel-mark{transform:none !important;opacity:1 !important;}
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:900px){
+  .two-col,.host-grid{grid-template-columns:1fr;}
+  .table-pair{grid-template-columns:1fr;}
+  .logo-pair{flex-direction:column;gap:2vh;}
+  .stat-row{flex-direction:column;gap:2vh;}
+  .watch-inline{flex-direction:column;}
+  .dots{display:none;}
+  .navbtn{width:38px;height:38px;}
+}
+
+/* ============================================================
+   PRINT (PDF EXPORT)
+   ============================================================ */
+@media print{
+  html,body{overflow:visible !important;height:auto !important;background:var(--bg);}
+  .ambient,.progress-rail,.dots,.navbtn,.click-zone,.notes-panel,.kbd-hint,.home-link,.pdf-link-fixed,.ask-btn,.ask-backdrop,.zoom-controls{display:none !important;}
+  .deck{position:static !important;}
+  .slide{
+    position:relative !important;
+    inset:auto !important;
+    opacity:1 !important;
+    transform:none !important;
+    pointer-events:auto !important;
+    width:100vw;height:100vh;
+    page-break-after:always;break-after:page;
+    overflow:hidden;
+  }
+  .slide:last-child{page-break-after:auto;}
+  .rz,.eyebrow,.slide-count,.roundel-mark,.table-clean tbody tr,.img-frame img{
+    opacity:1 !important;transform:none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true"></div>
+
+<a class="home-link" href="../" title="Back to course home">&larr; Home</a>
+<a class="pdf-link-fixed" href="SPM261_Week4-2_Slides.pdf" download title="Download this deck as a PDF">PDF &darr;</a>
+<div class="zoom-controls" role="group" aria-label="Zoom controls">
+  <button class="zoom-btn" id="zoomOutBtn" title="Zoom out (&minus;)" aria-label="Zoom out">&minus;</button>
+  <button class="zoom-btn zoom-reset" id="zoomResetBtn" title="Reset zoom (0)" aria-label="Reset zoom">100%</button>
+  <button class="zoom-btn" id="zoomInBtn" title="Zoom in (+)" aria-label="Zoom in">+</button>
+</div>
+
+<div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+
+<main class="deck" id="deck">
+
+  <!-- 1 — TITLE -->
+  <section class="slide s-title" data-theme="roundel" aria-label="Title">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> SPM 261 &mdash; Introduction to Sport Management</div>
+      <div class="slide-count"><span class="cur">01</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <div style="display:flex;align-items:center;gap:3vw;">
+        <div style="flex:1;min-width:0;">
+          <p class="kicker rz rz1">Week 4-2</p>
+          <h1 class="disp xl rz rz2">BMW&rsquo;s Olympic<br>Sponsorship<br>Strategy</h1>
+          <p class="lede rz rz3">SPM261 Intro to Sport Management &middot; Arcadia University</p>
+        </div>
+        <div class="img-frame contain rz rz4" style="flex:none;width:min(300px,28vw);height:min(220px,22vw);">
+          <img src="assets/title-bmw-usa-partner.jpg" alt="BMW logo beside a Team USA Olympic rings logo, reading Proud Partner">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 — REACH STAT -->
+  <section class="slide s-stat-img" data-theme="mred" aria-label="How big is the Olympic audience — Paris 2024 reach">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Why Brands Sponsor the Olympics</div>
+      <div class="slide-count"><span class="cur">02</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">The Reach</p>
+      <div class="full-figure rz rz2" style="max-height:58vh;">
+        <img src="assets/stat-paris2024-reach.jpg" alt="Graphic reading 84% of the potential audience followed the Olympic Games Paris 2024, equal to approximately 5 billion people, over a photo of the Eiffel Tower and a beach volleyball crowd at night">
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 — VIDEO: TOP PROGRAM INTRO -->
+  <section class="slide s-watch" data-theme="roundel" aria-label="Video: Best of Olympic Games Paris 2024">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> The Olympic Partner Program</div>
+      <div class="slide-count"><span class="cur">03</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="watch-wrap rz rz1">
+        <p class="watch-eyebrow">Watch</p>
+        <h2 class="watch-title">The Olympic Partner Program</h2>
+        <a class="watch-card" href="https://www.youtube.com/watch?v=vy6FivZHRjQ" target="_blank" rel="noopener">
+          <div class="watch-thumb">
+            <img src="assets/video-top-program-poster.jpg" alt="Best of Olympic Games Paris 2024 video thumbnail: the illuminated Eiffel Tower at dusk with the Olympic rings">
+            <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="watch-meta">
+              <span class="badge">Olympic Games</span>
+              <span class="watch-url">youtube.com/watch?v=vy6FivZHRjQ</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 — TOP SPONSORS DEFINITION -->
+  <section class="slide s-def" data-theme="roundel" aria-label="Olympic Sponsors (TOP)">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> The Olympic Partner Program</div>
+      <div class="slide-count"><span class="cur">04</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="disp lg rz rz1" style="color:var(--accent);">Olympic Sponsors (TOP)</p>
+      <p class="lede rz rz2">The Olympic Partner (TOP) Program is the IOC&rsquo;s worldwide sponsorship tier. Its 14 current partners hold exclusive global marketing rights across every Olympic Games.</p>
+      <p class="lede rz rz3" style="margin-top:.6vh;"><a href="https://www.olympic.org/sponsors" target="_blank" rel="noopener" style="color:var(--accent);">olympic.org/sponsors</a></p>
+      <div class="img-frame contain rz rz4" style="margin-top:2.6vh;height:min(20vh,180px);background:#fff;border-radius:12px;padding:2vh 1.5vw;">
+        <img src="assets/logos-top-partners-grid.png" alt="Grid of the 14 current Worldwide Olympic Partner logos: airbnb, Alibaba Group, Allianz, Atos, Bridgestone, Coca-Cola, Deloitte, Intel, Omega, Panasonic, P&amp;G, Samsung, Toyota, and Visa">
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 — WORLDWIDE OLYMPIC PARTNERSHIP DEFINITION -->
+  <section class="slide s-def" data-theme="roundel" aria-label="Worldwide Olympic Partnership definition">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> The Olympic Partner Program Cont.</div>
+      <div class="slide-count"><span class="cur">05</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <div class="cite-block rz rz1">
+        <p class="cite-text">&ldquo;Worldwide Olympic Partnership &mdash; the highest level of Olympic sponsorship. The TOP Program provides each Worldwide Olympic Partner with <mark>exclusive global marketing rights</mark> and opportunities.&rdquo;</p>
+      </div>
+      <div class="roundel-mark rz rz2" style="margin-top:3.6vh;"></div>
+    </div>
+  </section>
+
+  <!-- 6 — TOP PROGRAM INFOGRAPHIC -->
+  <section class="slide s-figure" data-theme="roundel" aria-label="How the TOP Program works">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> The Olympic Partner Program Cont.</div>
+      <div class="slide-count"><span class="cur">06</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">How TOP Works</p>
+      <div class="full-figure rz rz2">
+        <img src="assets/infographic-top-program.png" alt="Infographic titled The Olympic Partner Programme: founded in 1985, the highest level of Olympic partnership. TOP Partners (AB InBev, airbnb, Alibaba, Allianz, Coca-Cola, Deloitte, Omega, P&amp;G, Samsung, TCL, Visa) provide valuable financial resources, products/services/technology/expertise/staff, direct support for athlete training and development, global marketing campaigns, activations to enhance the Games experience, and essential services for athletes participating in the Games">
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 — BRIDGESTONE / TOYOTA EXIT -->
+  <section class="slide s-def" data-theme="motorsport" aria-label="TOP Cont. — sponsors no longer worldwide partners">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> TOP Cont.</div>
+      <div class="slide-count"><span class="cur">07</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="disp lg rz rz1" style="color:var(--accent);">No Longer Worldwide Partners</p>
+      <div class="value-cards rz rz2" style="margin-top:3vh;">
+        <div class="value-card" style="text-align:center;">
+          <div class="img-frame contain" style="height:min(14vh,120px);background:#fff;border-radius:10px;padding:1.4vh 1vw;margin-bottom:1.4vh;">
+            <img src="assets/logo-bridgestone.png" alt="Bridgestone logo">
+          </div>
+          <h4>Bridgestone</h4>
+          <p class="amt" style="font-size:clamp(18px,2vw,24px);">2014 &ndash; 2024</p>
+        </div>
+        <div class="value-card" style="text-align:center;">
+          <div class="img-frame contain" style="height:min(14vh,120px);background:#fff;border-radius:10px;padding:1.4vh 1vw;margin-bottom:1.4vh;">
+            <img src="assets/logo-toyota.png" alt="Toyota logo">
+          </div>
+          <h4>Toyota</h4>
+          <p class="amt" style="font-size:clamp(18px,2vw,24px);">2015 &ndash; 2025</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 — ALIBABA GROUP + POLL -->
+  <section class="slide s-def" data-theme="motorsport" aria-label="Alibaba Group — new TOP partner, with class poll on the 2028 host city">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> TOP Cont.</div>
+      <div class="slide-count"><span class="cur">08</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="def-layout" style="align-items:flex-start;padding-top:1vh;">
+        <div class="def-text">
+          <p class="disp lg rz rz1" style="color:var(--accent);">Alibaba Group</p>
+          <p class="kicker rz rz2" style="margin-top:.6vh;">New Partner</p>
+          <ul class="bullet-list rz rz3">
+            <li>Worldwide Olympic Partner through 2028</li>
+            <li>New partner of TOP IX, which starts in 2017</li>
+            <li>Why? &mdash; Beijing hosted the 2022 Winter Olympics</li>
+          </ul>
+          <p class="lede rz rz4" style="margin-top:1.4vh;font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);">A class poll appears below &mdash; cast your vote.</p>
+        </div>
+        <div class="img-frame contain rz rz5 def-photo" style="background:#fff;border-radius:14px;padding:6%;margin-top:0;">
+          <img src="assets/logo-alibaba.png" alt="Alibaba.com logo, orange background with white swirl mark">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 — AVERAGE TOP COST -->
+  <section class="slide s-stat" data-theme="mred" aria-label="TOP Cont. — average cost of Worldwide Olympic sponsorship">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> TOP Cont.</div>
+      <div class="slide-count"><span class="cur">09</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <p class="kicker rz rz1" style="text-align:center;justify-content:center;">How much do businesses pay to be an official Olympic sponsor &mdash; especially a Worldwide Partner?</p>
+      <div class="stat-hero rz rz2">
+        <div class="num"><span class="cu" data-countup data-to="200" data-prefix="$" data-suffix="M">$0M</span></div>
+        <div class="label">on average, for 4 years</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 — AIRBNB & ALLIANZ -->
+  <section class="slide s-def" data-theme="roundel" aria-label="TOP Cont. — Airbnb and Allianz partnership terms">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> TOP Cont.</div>
+      <div class="slide-count"><span class="cur">10</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Which company has become the most recent Olympic Partner &mdash; and how much did they pay?</p>
+      <div class="value-cards rz rz2">
+        <div class="value-card">
+          <h4>airbnb</h4>
+          <p class="amt">$500 million / 9 years</p>
+          <p>2020 &ndash; 2028</p>
+          <p class="src"><a href="https://www.businessinsider.com/airbnb-wins-reported-500-million-partnership-for-the-2020-tokyo-olympics-2019-11" target="_blank" rel="noopener" style="color:var(--ink-faint);">businessinsider.com &mdash; Airbnb wins reported $500 million partnership for the 2020 Tokyo Olympics</a></p>
+        </div>
+        <div class="value-card">
+          <h4>Allianz</h4>
+          <p class="amt">8 years / no financial info</p>
+          <p>2021 &ndash; 2028 &middot; approx. $50M per year</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 — DELOITTE -->
+  <section class="slide s-def" data-theme="roundel" aria-label="TOP Cont. — Deloitte partnership terms">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> TOP Cont.</div>
+      <div class="slide-count"><span class="cur">11</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <p class="kicker rz rz1" style="text-align:center;justify-content:center;">Which company has become the most recent Olympic Partner &mdash; and how much did they pay?</p>
+      <div class="stat-hero rz rz2">
+        <div class="num">Deloitte</div>
+        <div class="label" style="font-size:clamp(18px,2vw,24px);color:var(--ink);margin-top:1vh;">$1.3 billion / 8 years <span style="color:var(--ink-dim);">(2022 &ndash; 2028)</span></div>
+      </div>
+      <p class="lede rz rz3" style="text-align:center;margin:2.4vh auto 0;font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);">sportsbusinessjournal.com/Journal/Issues/2022/04/18/Upfront/Olympics.aspx</p>
+    </div>
+  </section>
+
+  <!-- 12 — AB INBEV / CORONA -->
+  <section class="slide s-content-watch" data-theme="motorsport" aria-label="AB InBev / Corona — first beer company as a global Olympic sponsor">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> New Partners</div>
+      <div class="slide-count"><span class="cur">12</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div style="display:flex;gap:3.4vw;flex:1;min-height:0;align-items:center;">
+        <div style="flex:1;min-width:0;">
+          <div class="img-frame contain rz rz1" style="height:min(11vh,90px);background:#fff;border-radius:10px;padding:1.4vh 1vw;max-width:340px;">
+            <img src="assets/logo-abinbev-partner.png" alt="AB InBev and Olympic rings logo, reading Official Partner">
+          </div>
+          <p class="kicker rz rz2" style="margin-top:2.2vh;">Since Jan 2024</p>
+          <h2 class="disp md rz rz3">First time a beer company has been a global sponsor of the Olympics</h2>
+          <p class="lede rz rz4">Why? Shared value?</p>
+          <a class="watch-card rz rz5" href="https://www.youtube.com/watch?v=DyREX8ZQswk&amp;t=14s" target="_blank" rel="noopener" style="margin-top:2vh;display:block;max-width:360px;">
+            <div class="watch-thumb">
+              <img src="assets/video-corona-poster.jpg" alt="Corona For Every Golden Moment Olympic Games Paris 2024 commercial thumbnail">
+              <div class="play-btn sm"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+              <div class="watch-meta"><span class="badge">Corona</span></div>
+            </div>
+          </a>
+        </div>
+        <div class="img-frame rz rz6" style="flex:1;height:min(46vh,400px);">
+          <img src="assets/photo-corona-goldenmoment.jpg" alt="Corona 'For Every Golden Moment' Olympic Games Paris 2024 advertisement, two people toasting Corona Cero bottles at sunset">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 — DISCUSSION: JPMORGANCHASE -->
+  <section class="slide s-activity" data-theme="mred" aria-label="Discussion — why is JPMorganChase investing?">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> New Partners</div>
+      <div class="slide-count"><span class="cur">13</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <div class="activity-card rz rz1">
+        <p class="kicker">Discussion</p>
+        <p class="q">Why is JPMorganChase investing?</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 — JPMORGANCHASE CONTENT + VIDEO -->
+  <section class="slide s-content-watch" data-theme="roundel" aria-label="JPMorganChase — first global banking partner">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> New Partners Cont.</div>
+      <div class="slide-count"><span class="cur">14</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div style="display:flex;gap:3.4vw;flex:1;min-height:0;align-items:center;">
+        <div style="flex:1.2;min-width:0;">
+          <div class="img-frame contain rz rz1" style="height:min(9vh,72px);background:#fff;border-radius:10px;padding:1.2vh 1vw;max-width:360px;">
+            <img src="assets/logo-jpmorganchase-partner.png" alt="JPMorganChase and Olympic/Paralympic rings logo, reading Official Worldwide Partner">
+          </div>
+          <ul class="bullet-list rz rz2" style="margin-top:2.4vh;">
+            <li>First ever global banking partner</li>
+            <li>LA 2028 Olympic and Paralympic Games &amp; French Alps 2030</li>
+            <li>Plan to hire 100 additional bankers across Southern California</li>
+            <li>Already has 5 million banking customers and 600,000 small business clients in LA</li>
+          </ul>
+        </div>
+        <div class="watch-wrap sm rz rz3" style="flex:none;">
+          <a class="watch-card portrait" href="https://youtube.com/shorts/ENg82F_HUMQ?si=eVu0XW7sBwwGHRWh" target="_blank" rel="noopener">
+            <div class="watch-thumb portrait">
+              <img src="assets/video-jpmorgan-poster.jpg" alt="CNBC Television segment: Why JPMorgan is investing big in the 2028 LA Olympics">
+              <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+              <div class="watch-meta"><span class="badge">CNBC</span></div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 — DISCUSSION: LONGEST PARTNERSHIP -->
+  <section class="slide s-activity" data-theme="mred" aria-label="Discussion — longest Olympic partnership">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> New Partners Cont.</div>
+      <div class="slide-count"><span class="cur">15</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <div class="activity-card rz rz1">
+        <p class="kicker">Discussion</p>
+        <p class="q">Which company do you think has the longest partnership with the Olympics?</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 — COCA-COLA -->
+  <section class="slide s-def" data-theme="motorsport" aria-label="Coca-Cola — longest continuous Olympic sponsor">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> New Partners Cont.</div>
+      <div class="slide-count"><span class="cur">16</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="def-layout">
+        <div class="def-text">
+          <p class="disp lg rz rz1" style="color:var(--accent);">Coca-Cola</p>
+          <ul class="bullet-list rz rz2">
+            <li>The Coca-Cola Company is the longest continuous sponsor of the Olympic Games.</li>
+            <li>Their relationship started way back in the 1928 Amsterdam Olympics.</li>
+            <li>A freight ship arrived in Amsterdam carrying the US Olympic Team and 1,000 cases of Coca-Cola. Bottles were sold at kiosks around the Olympic stadium and rowing course.</li>
+          </ul>
+        </div>
+        <div class="img-frame rz rz3 def-photo">
+          <img src="assets/photo-cocacola-kiosk-1928.jpg" alt="Black and white photograph of a Drink Coca-Cola kiosk with two men standing beside it, circa 1928">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 — TOP REVENUE TABLE -->
+  <section class="slide s-table" data-theme="roundel" aria-label="TOP Cont. — TOP Program revenue by Olympiad">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> TOP Cont.</div>
+      <div class="slide-count"><span class="cur">17</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">TOP Program Growth</p>
+      <table class="table-clean rz rz2">
+        <thead><tr><th>Olympiad</th><th>Games</th><th>Partners</th><th>Participating NOCs</th><th>Revenue (USD millions)</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">1985&ndash;1988</td><td>Calgary / Seoul</td><td>9</td><td>159</td><td>96</td></tr>
+          <tr><td class="hl">1989&ndash;1992</td><td>Albertville / Barcelona</td><td>12</td><td>169</td><td>172</td></tr>
+          <tr><td class="hl">1993&ndash;1996</td><td>Lillehammer / Atlanta</td><td>10</td><td>197</td><td>279</td></tr>
+          <tr><td class="hl">1997&ndash;2000</td><td>Nagano / Sydney</td><td>11</td><td>199</td><td>579</td></tr>
+          <tr><td class="hl">2001&ndash;2004</td><td>Salt Lake City / Athens</td><td>11</td><td>202</td><td>663</td></tr>
+          <tr><td class="hl">2005&ndash;2008</td><td>Torino / Beijing</td><td>12</td><td>205</td><td>866</td></tr>
+          <tr><td class="hl">2009&ndash;2012</td><td>Vancouver / London</td><td>11</td><td>205</td><td>950</td></tr>
+          <tr><td class="hl">2013&ndash;2016</td><td>Sochi / Rio</td><td>12</td><td>205</td><td>1,003</td></tr>
+          <tr><td class="hl">2017&ndash;2020/21**</td><td>PyeongChang / Tokyo</td><td>14&ndash;15</td><td>205</td><td>2,295</td></tr>
+          <tr><td class="hl">2021&ndash;2024</td><td>Beijing / Paris</td><td>15</td><td>206</td><td>3,040</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 18 — OLYMPIC REVENUE (2 TABLES) -->
+  <section class="slide s-table" data-theme="roundel" aria-label="Olympic Revenue — revenue sources and OCOG spending">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Olympic Revenue</div>
+      <div class="slide-count"><span class="cur">18</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Revenue Sources vs. OCOG* Spending <span style="color:var(--ink-faint);text-transform:none;letter-spacing:0;">(USD millions)</span></p>
+      <div class="table-pair rz rz2">
+        <div>
+          <p class="table-source" style="margin-top:0;">Revenue sources</p>
+          <div class="table-wrap">
+          <table class="table-clean">
+            <thead><tr><th>Source</th><th>1993&ndash;96</th><th>1997&ndash;00</th><th>2001&ndash;04</th><th>2005&ndash;08</th><th>2009&ndash;12</th><th>2013&ndash;16</th><th>2017&ndash;20/21</th><th>2021&ndash;24</th></tr></thead>
+            <tbody>
+              <tr><td class="hl">Broadcast</td><td>1,251</td><td>1,845</td><td>2,232</td><td>2,567</td><td>3,850</td><td>4,161</td><td>4,544</td><td>4,706</td></tr>
+              <tr><td class="hl">TOP Programme</td><td>279</td><td>579</td><td>663</td><td>866</td><td>950</td><td>1,003</td><td>2,295</td><td>3,040</td></tr>
+              <tr class="total"><td>Total</td><td>1,530</td><td>2,424</td><td>2,895</td><td>3,433</td><td>4,800</td><td>5,164</td><td>6,839</td><td>7,746</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <div>
+          <p class="table-source" style="margin-top:0;">OCOG* spending</p>
+          <div class="table-wrap">
+          <table class="table-clean">
+            <thead><tr><th>Source</th><th>1993&ndash;96</th><th>1997&ndash;00</th><th>2001&ndash;04</th><th>2005&ndash;08</th><th>2009&ndash;12</th><th>2013&ndash;16</th><th>2017&ndash;21</th><th>2021&ndash;24</th></tr></thead>
+            <tbody>
+              <tr><td class="hl">Domestic Sponsorship</td><td>534</td><td>655</td><td>796</td><td>1,555</td><td>1,838</td><td>2,037</td><td>3,732</td><td>3,177</td></tr>
+              <tr><td class="hl">Ticketing</td><td>451</td><td>625</td><td>411</td><td>274</td><td>1,238</td><td>527</td><td>146</td><td>1,304</td></tr>
+              <tr><td class="hl">Licensing</td><td>115</td><td>66</td><td>87</td><td>185</td><td>170</td><td>74</td><td>131</td><td>242</td></tr>
+              <tr class="total"><td>Total</td><td>1,100</td><td>1,346</td><td>1,294</td><td>2,014</td><td>3,246</td><td>2,638</td><td>4,009</td><td>4,723</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+      <p class="table-source rz rz3">*OCOG &mdash; Organizing Committee for the Olympic Games</p>
+    </div>
+  </section>
+
+  <!-- 19 — IOC FUNDING INFOGRAPHIC -->
+  <section class="slide s-figure" data-theme="roundel" aria-label="The IOC is privately funded">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Olympic Revenue Cont.</div>
+      <div class="slide-count"><span class="cur">19</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="full-figure rz rz1">
+        <img src="assets/infographic-ioc-funding.png" alt="Infographic: the IOC is privately funded. Revenue sources are 73% broadcasting rights, 18% TOP Programme marketing rights, 5% other revenues, 4% other rights, totaling $5bn. 90% goes to Olympic Games and athlete development, 10% to IOC operations. IOC distribution is strictly monitored, with compliance and good governance, IFRS financial statements published annually, and external audits">
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 — WHERE IOC REVENUES GO / OLYMPIC SOLIDARITY -->
+  <section class="slide s-table" data-theme="roundel" aria-label="Where IOC revenues go and Olympic Solidarity">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Olympic Revenue Cont.</div>
+      <div class="slide-count"><span class="cur">20</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div style="display:flex;gap:3vw;flex:1;min-height:0;align-items:center;">
+        <div class="img-frame contain rz rz1" style="flex:1;height:min(50vh,440px);background:#fff;border-radius:12px;padding:2vh 1.4vw;">
+          <img src="assets/panel-where-revenues-go.png" alt="Where IOC revenues go: 90% to IOC activities to develop sport and operations, 10% distributed to NOCs, IFs, individual athletes and coaches, organising committees, and other Olympic Movement organisations">
+        </div>
+        <div class="img-frame contain rz rz2" style="flex:1;height:min(50vh,440px);background:#fff;border-radius:12px;padding:2vh 1.4vw;">
+          <img src="assets/panel-olympic-solidarity.png" alt="Olympic Solidarity: $509m budget for 2017-2020, 21 world programmes and 5 continental programmes available to all NOCs worldwide">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 21 — NBC BROADCASTER -->
+  <section class="slide s-content-watch" data-theme="motorsport" aria-label="NBC — the IOC's single biggest broadcaster">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Broadcast Rights</div>
+      <div class="slide-count"><span class="cur">21</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div style="display:flex;gap:3.2vw;flex:1;min-height:0;align-items:center;">
+        <div style="flex:1;min-width:0;">
+          <p class="disp lg rz rz1" style="color:var(--accent);">NBC</p>
+          <p class="lede rz rz2">NBC is the IOC&rsquo;s single biggest broadcaster. (Ex: BBC, CBC, Eurosport/Discovery)</p>
+          <ul class="bullet-list rz rz3">
+            <li>2021&ndash;32: <b>$7.65 billion</b>, extended to 2036 for another $3 billion</li>
+            <li>2020 Tokyo: <b>$1.45 billion</b></li>
+            <li>2024 Paris: <b>$1.69 billion</b></li>
+            <li>Roughly more than <b>50%</b> of the IOC&rsquo;s worldwide broadcast rights</li>
+            <li>NBC has its own designated zones and adds its own cameras to its coverage (nearly 100) &mdash; US-focused coverage, alongside the Olympic Broadcasting Services (OBS)</li>
+          </ul>
+        </div>
+        <div class="watch-wrap sm rz rz4" style="flex:none;">
+          <a class="watch-card" href="https://www.youtube.com/watch?v=64CJQ1SZ_Qs&amp;t=36s" target="_blank" rel="noopener">
+            <div class="watch-thumb">
+              <img src="assets/video-nbc-poster.jpg" alt="NBC Sports video thumbnail: The best camera angles from the Tokyo Olympics">
+              <div class="play-btn sm"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+              <div class="watch-meta"><span class="badge">NBC Sports</span></div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 22 — CATEGORY EXCLUSIVITY -->
+  <section class="slide s-def" data-theme="mred" aria-label="Category Exclusivity definition">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Category Exclusivity</div>
+      <div class="slide-count"><span class="cur">22</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <p class="disp lg rz rz1" style="color:var(--accent);">Category Exclusivity</p>
+      <div class="cite-block rz rz2">
+        <p class="cite-text">&ldquo;The right of a sponsor to be the only company within its product or service category associated with the sponsored property.&rdquo;</p>
+        <p class="cite-attr">IEG, 2009</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 23 — CATEGORY EXCLUSIVITY CONT. -->
+  <section class="slide s-def" data-theme="mred" aria-label="Category Exclusivity — why it matters">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Category Exclusivity Cont.</div>
+      <div class="slide-count"><span class="cur">23</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <p class="kicker rz rz1" style="text-align:center;justify-content:center;">Why is category exclusivity important?</p>
+      <div class="cite-block rz rz2" style="margin-left:auto;margin-right:auto;">
+        <p class="cite-text">Preclude any of the sponsor&rsquo;s competitors from associating with the same property.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 24 — COMMERCIALS: AIRBNB -->
+  <section class="slide s-watch" data-theme="roundel" aria-label="Commercials — Airbnb Homes With Pools">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Commercials</div>
+      <div class="slide-count"><span class="cur">24</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="watch-wrap rz rz1">
+        <p class="watch-eyebrow">Commercials</p>
+        <h2 class="watch-title">Homes With Pools</h2>
+        <a class="watch-card" href="https://www.youtube.com/watch?v=dKiF7aFyvhY" target="_blank" rel="noopener">
+          <div class="watch-thumb">
+            <img src="assets/video-airbnb-commercial-poster.jpg" alt="Airbnb 'Homes With Pools — Made possible by Hosts' commercial thumbnail">
+            <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="watch-meta">
+              <span class="badge">Airbnb</span>
+              <span class="watch-url">youtube.com/watch?v=dKiF7aFyvhY</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 25 — COMMERCIALS: ALLIANZ -->
+  <section class="slide s-watch" data-theme="motorsport" aria-label="Commercials — Allianz Direct Future Sports Heroes">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Commercials</div>
+      <div class="slide-count"><span class="cur">25</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="watch-wrap rz rz1">
+        <p class="watch-eyebrow">Commercials</p>
+        <h2 class="watch-title">Future Sports Heroes</h2>
+        <a class="watch-card" href="https://www.youtube.com/watch?v=cB9pexddFgg" target="_blank" rel="noopener">
+          <div class="watch-thumb">
+            <img src="assets/video-allianz-commercial-poster.jpg" alt="Allianz Direct 'Future Sports Heroes' commercial thumbnail">
+            <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="watch-meta">
+              <span class="badge">Allianz Direct</span>
+              <span class="watch-url">youtube.com/watch?v=cB9pexddFgg</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 26 — COMMERCIALS: COCA-COLA -->
+  <section class="slide s-watch" data-theme="mred" aria-label="Commercials — Coca-Cola Olympics">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Commercials</div>
+      <div class="slide-count"><span class="cur">26</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="watch-wrap rz rz1">
+        <p class="watch-eyebrow">Commercials</p>
+        <h2 class="watch-title">Coca-Cola Olympics</h2>
+        <a class="watch-card" href="https://www.youtube.com/watch?v=ye0wNC33MXE&amp;t=4s" target="_blank" rel="noopener">
+          <div class="watch-thumb">
+            <img src="assets/video-cocacola-commercial-poster.jpg" alt="Coca-Cola Olympics commercial thumbnail, Coca-Cola South Africa">
+            <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="watch-meta">
+              <span class="badge">Coca-Cola</span>
+              <span class="watch-url">youtube.com/watch?v=ye0wNC33MXE</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 27 — READING CALLOUT -->
+  <section class="slide s-read" data-theme="roundel" aria-label="Reading — the BMW Deal article">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Case Study</div>
+      <div class="slide-count"><span class="cur">27</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <div class="read-card rz rz1">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 17.5v-13Z"/><path d="M4 17.5A2.5 2.5 0 0 1 6.5 15H20"/><path d="M8 7h8M8 10.5h8"/></svg>
+        <p>Read the &lsquo;BMW Deal&rsquo; article in the Module 4 Lecture Slide &amp; Readings</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 28 — BMW & TEAM USA (2010 DEAL) -->
+  <section class="slide s-def" data-theme="roundel" aria-label="BMW & Team USA — the 2010 deal">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> BMW &amp; Team USA</div>
+      <div class="slide-count"><span class="cur">28</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="disp lg rz rz1" style="color:var(--accent);">BMW &amp; Team USA</p>
+      <ul class="bullet-list rz rz2">
+        <li>In 2010, BMW signed a 6-year deal with the USOC worth <b>$4 million annually</b>.</li>
+        <li>Gained extensive media coverage.</li>
+        <li>Built a new racing wheelchair for the U.S. Paralympic team in 2016, as well as a bobsled in 2014.</li>
+      </ul>
+      <div class="img-frame contain rz rz3" style="margin-top:2.8vh;height:min(20vh,170px);max-width:640px;">
+        <img src="assets/photo-bmw-teamusa-ad.jpg" alt="BMW advertisement reading 'Get Behind the Wheel and Get Behind Team USA', showing three BMW cars beside the Team USA Olympic rings, Proud Partner logo">
+      </div>
+    </div>
+  </section>
+
+  <!-- 29 — BMW & TEAM USA CONT. (2012 SALES) -->
+  <section class="slide s-def" data-theme="roundel" aria-label="BMW & Team USA cont. — 2012 sales impact and federation deals">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> BMW &amp; Team USA Cont.</div>
+      <div class="slide-count"><span class="cur">29</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <ul class="bullet-list rz rz1" style="max-width:80ch;">
+        <li>In 2012, BMW sold <b>6,000 additional cars</b> that year.</li>
+        <li>Partnership with USA Swimming through 2020, and USA Bobsled &amp; Skeleton through 2022.</li>
+        <li>Individual sport-governing-body deals are far cheaper but don&rsquo;t allow BMW to call itself an Olympic Sponsor or use the rings.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 30 — BMW & TEAM USA CONT. ($ BREAKDOWN) -->
+  <section class="slide s-table" data-theme="mred" aria-label="BMW & Team USA cont. — sponsorship dollar breakdown">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> BMW &amp; Team USA Cont.</div>
+      <div class="slide-count"><span class="cur">30</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">The Dollar Breakdown</p>
+      <table class="table-clean rz rz2" style="max-width:70ch;">
+        <thead><tr><th>Federation</th><th>Annual</th><th>Term</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">USOC</td><td>$4,000,000</td><td>&times; 6 years</td><td class="hl">$24,000,000</td></tr>
+          <tr><td class="hl">USA Swimming</td><td>$500,000</td><td>&times; 6 years</td><td class="hl">$3,000,000</td></tr>
+          <tr><td class="hl">USA Bobsled &amp; Skeleton</td><td>$500,000</td><td>&times; 6 years</td><td class="hl">$3,000,000</td></tr>
+        </tbody>
+      </table>
+      <p class="lede rz rz3">Mid six figures, annually.</p>
+      <div class="callout rz rz4"><p>Why swimming and bobsled?</p></div>
+    </div>
+  </section>
+
+  <!-- 31 — SWIM PERFORMANCE ANALYTICS -->
+  <section class="slide s-gallery" data-theme="roundel" aria-label="BMW performance analytics with USA Swimming">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> BMW &amp; Team USA Cont.</div>
+      <div class="slide-count"><span class="cur">31</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">USA Swimming &mdash; Performance Technology</p>
+      <div style="display:flex;gap:1.6vw;flex:1;min-height:0;margin-top:1.6vh;">
+        <div class="img-frame rz rz2" style="flex:1.2;"><img src="assets/photo-swim-analytics-1.jpg" alt="Two coaches analyzing underwater swim footage on multiple monitors with motion-tracking overlays"></div>
+        <div class="img-frame rz rz3" style="flex:1;"><img src="assets/photo-swim-analytics-2.jpg" alt="Underwater swimmer with joint-angle tracking overlays (194.1°, 168.5°, 183.6°, 144.2°) used for stroke analysis"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 32 — NOT A WORLDWIDE PARTNER? -->
+  <section class="slide s-compare" data-theme="motorsport" aria-label="Not a Worldwide Partner? BMW vs. Toyota">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> BMW &amp; Team USA Cont.</div>
+      <div class="slide-count"><span class="cur">32</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="disp lg rz rz1" style="text-align:center;">Not a Worldwide Partner?</p>
+      <div class="logo-pair rz rz2">
+        <div class="logo-pair-wrap">
+          <div class="logo-box"><img src="assets/logo-bmw.png" alt="BMW logo"></div>
+          <p class="cap">Individual federation deals</p>
+        </div>
+        <div class="vs">vs.</div>
+        <div class="logo-pair-wrap">
+          <div class="logo-box"><img src="assets/logo-toyota.png" alt="Toyota logo"></div>
+          <p class="cap">Worldwide Olympic Partner (2015&ndash;2025)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 33 — STRATEGY? -->
+  <section class="slide s-def" data-theme="roundel" aria-label="Strategy — TV commercials via NBC">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Strategy</div>
+      <div class="slide-count"><span class="cur">33</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="def-layout">
+        <div class="def-text">
+          <p class="disp lg rz rz1" style="color:var(--accent);">Strategy?</p>
+          <p class="lede rz rz2">TV commercials via NBC &mdash; if Toyota does not buy category exclusivity.</p>
+        </div>
+        <div class="img-frame contain rz rz3 def-photo" style="background:#fff;border-radius:14px;padding:6%;">
+          <img src="assets/logo-usa-bmw.png" alt="USA Olympic rings logo beside the BMW logo">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 34 — STRATEGY CONT. -->
+  <section class="slide s-gallery" data-theme="roundel" aria-label="Strategy cont. — BMW-branded USA bobsled">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Strategy Cont.</div>
+      <div class="slide-count"><span class="cur">34</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div style="display:flex;gap:1.6vw;flex:1;min-height:0;">
+        <div class="img-frame rz rz1" style="flex:1;"><img src="assets/photo-bobsled-1.jpg" alt="Close-up overhead of a BMW-branded USA four-man bobsled with driver and crew inside"></div>
+        <div class="img-frame rz rz2" style="flex:1;"><img src="assets/photo-bobsled-2.jpg" alt="USA bobsled team in BMW-branded gear pushing their sled labeled 'Bedroom Champions' at the start line"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 35 — SPONSORSHIP STRUCTURE (TOKYO 2020 TIERS) -->
+  <section class="slide s-def" data-theme="motorsport" aria-label="Sponsorship Structure — Tokyo 2020 tiered sponsorship">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Sponsorship Structure</div>
+      <div class="slide-count"><span class="cur">35</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="def-layout">
+        <div class="def-text">
+          <p class="disp lg rz rz1" style="color:var(--accent);">Sponsorship Structure</p>
+          <p class="lede rz rz2">Beyond the Worldwide TOP Program, host organizing committees run their own domestic sponsor tiers &mdash; here, Tokyo 2020&rsquo;s.</p>
+          <p class="lede rz rz3" style="margin-top:1.2vh;color:var(--ink-faint);font-family:var(--font-mono);font-size:12px;">Region of sponsorship is limited to Japan. Terms and conditions of sponsorship differ according to the category.</p>
+        </div>
+        <div class="img-frame contain rz rz4 def-photo" style="background:#fff;border-radius:14px;padding:4%;height:min(38vh,340px);">
+          <img src="assets/diagram-tokyo2020-tiers.png" alt="Pyramid diagram: The Worldwide Olympic Partners at the top, then Tokyo 2020 Sponsors split into Tier 1 Tokyo 2020 Gold Partner, Tier 2 Tokyo 2020 Official Partner, Tier 3 Tokyo 2020 Official Supporter">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 36 — FUTURE HOST CITIES -->
+  <section class="slide s-hostgrid" data-theme="roundel" aria-label="Looking ahead — future Olympic and Paralympic host cities">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Looking Ahead</div>
+      <div class="slide-count"><span class="cur">36</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Future Olympic &amp; Paralympic Hosts</p>
+      <div class="host-grid rz rz2">
+        <div class="host-card"><img src="assets/logo-host-milanocortina2026.png" alt="Milano Cortina 2026 logo"></div>
+        <div class="host-card"><img src="assets/logo-host-frenchalps2030.png" alt="French Alps 2030 Olympic and Paralympic Winter Games Host logo"></div>
+        <div class="host-card"><img src="assets/logo-host-brisbane2032.png" alt="Brisbane 2032 Olympic and Paralympic Games Host, Queensland logo"></div>
+        <div class="host-card"><img src="assets/logo-host-la28.png" alt="LA28 logo"></div>
+        <div class="host-card"><img src="assets/logo-host-saltlake2034.png" alt="Salt Lake City Utah 2034 Olympic and Paralympic Winter Games Host logo"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 37 — QUESTIONS -->
+  <section class="slide s-outro" data-theme="roundel" aria-label="Questions">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> SPM 261 &mdash; Week 4-2</div>
+      <div class="slide-count"><span class="cur">37</span> / <span class="tot">37</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <div style="margin:auto;text-align:center;">
+        <div class="roundel-mark rz rz1" style="margin:0 auto 3vh;"></div>
+        <h1 class="disp xl rz rz2">Questions?</h1>
+        <div class="rule rz rz3" style="margin-left:auto;margin-right:auto;"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<button class="navbtn prev" id="btnPrev" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15.4 6.6 9 12l6.4 5.4"/></svg></button>
+<button class="navbtn next" id="btnNext" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M8.6 6.6 15 12l-6.4 5.4"/></svg></button>
+<div class="click-zone left" id="zoneLeft"></div>
+<div class="click-zone right" id="zoneRight"></div>
+
+<nav class="dots" id="dots" aria-label="Slide navigation"></nav>
+
+<div class="kbd-hint"><kbd>N</kbd> notes &nbsp; <kbd>&larr;</kbd><kbd>&rarr;</kbd> navigate</div>
+
+<div class="notes-panel" id="notesPanel">
+  <p class="notes-kicker">Speaker Notes &mdash; press N to close</p>
+  <div class="notes-body" id="notesBody"></div>
+</div>
+
+<button class="ask-btn" id="askBtn" title="Ask a question about this slide" aria-label="Ask a question about this slide">Question?</button>
+<div class="ask-backdrop" id="askBackdrop">
+  <div class="ask-panel">
+    <p class="ask-title">Ask a question or leave a comment</p>
+    <p class="ask-context" id="askContext"></p>
+    <textarea id="askText" placeholder="What's on your mind about this slide?" maxlength="4000"></textarea>
+    <input type="text" id="askName" placeholder="Your name" maxlength="120">
+    <div class="ask-row">
+      <span class="ask-hint">Goes straight to Dr. Kim.</span>
+      <div class="ask-actions">
+        <button class="ask-btn-cancel" id="askCancel">Cancel</button>
+        <button class="ask-btn-send" id="askSend">Send</button>
+      </div>
+    </div>
+    <div class="ask-status" id="askStatus"></div>
+  </div>
+</div>
+
+<script src="../questions/config.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var idx = 0;
+  var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var NOTES = {
+    2: 'The Olympic Partner Program',
+    3: 'The Olympic Partner Program',
+    4: 'Anheuser-Busch InBev (Interbrew — Belgium + Ambev — Brazil)',
+    6: 'Bridgestone → 2014 through 2024. Toyota → 10-year deal from 2015.',
+    11: 'Belgian-Brazilian multinational drink and brewing company based in Belgium. 500 brands. 40% of global market share / $88.6 billion.',
+    13: 'https://youtube.com/shorts/ENg82F_HUMQ?si=eVu0XW7sBwwGHRWh',
+    23: 'https://www.youtube.com/watch?v=dKiF7aFyvhY',
+    24: 'https://www.youtube.com/watch?v=cB9pexddFgg',
+    25: 'https://www.youtube.com/watch?v=ye0wNC33MXE&t=4s',
+    34: 'Region of sponsorship is limited to Japan. Terms and conditions of sponsorship differ according to the category.'
+  };
+
+  var progressFill = document.getElementById('progressFill');
+  var dotsWrap = document.getElementById('dots');
+  var btnPrev = document.getElementById('btnPrev');
+  var btnNext = document.getElementById('btnNext');
+  var notesPanel = document.getElementById('notesPanel');
+  var notesBody = document.getElementById('notesBody');
+
+  for (var i = 0; i < total; i++){
+    var d = document.createElement('button');
+    d.className = 'dot';
+    d.setAttribute('aria-label', 'Go to slide ' + (i+1));
+    d.addEventListener('click', (function(n){ return function(){ goTo(n); }; })(i));
+    dotsWrap.appendChild(d);
+  }
+  var dotEls = Array.prototype.slice.call(dotsWrap.children);
+
+  function renderNotes(entry){
+    if (!entry){
+      notesBody.textContent = 'No speaker notes for this slide.';
+      return;
+    }
+    var list = Array.isArray(entry) ? entry : [entry];
+    notesBody.innerHTML = list.map(function(text){
+      if (/^https?:\/\//.test(text)){
+        return '<div><a href="'+text+'" target="_blank" rel="noopener">'+text+'</a></div>';
+      }
+      return '<div>'+text+'</div>';
+    }).join('');
+  }
+
+  function animateCountups(slideEl){
+    var els = slideEl.querySelectorAll('[data-countup]');
+    els.forEach(function(el){
+      var to = parseFloat(el.getAttribute('data-to'));
+      if (isNaN(to)) return;
+      var prefix = el.getAttribute('data-prefix') || '';
+      var suffix = el.getAttribute('data-suffix') || '';
+      if (prefersReducedMotion){ el.textContent = prefix + to.toLocaleString() + suffix; return; }
+      var start = null;
+      var dur = 1200;
+      function tick(ts){
+        if (start === null) start = ts;
+        var p = Math.min(1, (ts - start) / dur);
+        var eased = 1 - Math.pow(1 - p, 3);
+        var val = Math.round(to * eased);
+        el.textContent = prefix + val.toLocaleString() + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  function setActive(newIdx){
+    slides.forEach(function(s, i){
+      s.classList.toggle('active', i === newIdx);
+    });
+    idx = newIdx;
+    progressFill.style.width = ((idx+1)/total*100) + '%';
+    dotEls.forEach(function(d,i){ d.classList.toggle('on', i===idx); });
+    btnPrev.disabled = (idx === 0);
+    btnNext.disabled = (idx === total-1);
+    renderNotes(NOTES[idx]);
+    animateCountups(slides[idx]);
+  }
+
+  function goTo(n){
+    n = Math.max(0, Math.min(total-1, n));
+    if (n === idx) return;
+    setActive(n);
+  }
+  function next(){ if (idx < total-1) setActive(idx+1); }
+  function prev(){ if (idx > 0) setActive(idx-1); }
+
+  btnNext.addEventListener('click', next);
+  btnPrev.addEventListener('click', prev);
+  document.getElementById('zoneLeft').addEventListener('click', prev);
+  document.getElementById('zoneRight').addEventListener('click', next);
+
+  document.addEventListener('keydown', function(e){
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'TEXTAREA' || tag === 'INPUT' || (e.target && e.target.isContentEditable)) return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if (e.key === 'Home'){ goTo(0); }
+    else if (e.key === 'End'){ goTo(total-1); }
+    else if (e.key === 'n' || e.key === 'N'){ notesPanel.classList.toggle('open'); }
+    else if (e.key === '+' || e.key === '='){ e.preventDefault(); zoomIn(); }
+    else if (e.key === '-' || e.key === '_'){ e.preventDefault(); zoomOut(); }
+    else if (e.key === '0'){ e.preventDefault(); zoomReset(); }
+  });
+
+  var zoomOutBtn = document.getElementById('zoomOutBtn');
+  var zoomInBtn = document.getElementById('zoomInBtn');
+  var zoomResetBtn = document.getElementById('zoomResetBtn');
+  var ZOOM_MIN = 0.75, ZOOM_MAX = 2, ZOOM_STEP = 0.1;
+  var zoomLevel = 1;
+  var ZOOM_KEY = 'spm261_zoom_' + location.pathname;
+  try {
+    var savedZoom = parseFloat(localStorage.getItem(ZOOM_KEY));
+    if (!isNaN(savedZoom) && savedZoom >= ZOOM_MIN && savedZoom <= ZOOM_MAX) zoomLevel = savedZoom;
+  } catch (e) {}
+  function applyZoom(){
+    document.documentElement.style.setProperty('--zoom', zoomLevel.toFixed(2));
+    zoomResetBtn.textContent = Math.round(zoomLevel*100)+'%';
+    zoomOutBtn.disabled = zoomLevel<=ZOOM_MIN;
+    zoomInBtn.disabled = zoomLevel>=ZOOM_MAX;
+    try { localStorage.setItem(ZOOM_KEY, zoomLevel); } catch (e) {}
+  }
+  function zoomIn(){ zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel+ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomOut(){ zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel-ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomReset(){ zoomLevel = 1; applyZoom(); }
+  zoomInBtn.addEventListener('click', function(e){ e.stopPropagation(); zoomIn(); });
+  zoomOutBtn.addEventListener('click', function(e){ e.stopPropagation(); zoomOut(); });
+  zoomResetBtn.addEventListener('click', function(e){ e.stopPropagation(); zoomReset(); });
+  applyZoom();
+
+  // touch swipe
+  var touchX = null;
+  document.addEventListener('touchstart', function(e){ touchX = e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if (touchX === null) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50){ dx < 0 ? next() : prev(); }
+    touchX = null;
+  }, {passive:true});
+
+  // initial state
+  setActive(0);
+
+  // print / PDF export hook — forces every slide + all staged reveals to
+  // their finished state before the browser prints.
+  window.forceFinalState = function(){
+    slides.forEach(function(s){ s.classList.add('active'); });
+  };
+
+  // ask a question / leave a comment
+  (function(){
+    var askBtn = document.getElementById('askBtn');
+    var backdrop = document.getElementById('askBackdrop');
+    var context = document.getElementById('askContext');
+    var textEl = document.getElementById('askText');
+    var nameEl = document.getElementById('askName');
+    var sendBtn = document.getElementById('askSend');
+    var cancelBtn = document.getElementById('askCancel');
+    var statusEl = document.getElementById('askStatus');
+    var DECK = 'SPM261 Week 4-2 — BMW\'s Olympic Sponsorship Strategy';
+
+    function open(){
+      var slide = slides[idx];
+      var title = (slide && slide.getAttribute('aria-label')) || '(untitled)';
+      context.textContent = 'Slide ' + (idx+1) + ' of ' + total + ' — ' + title;
+      statusEl.textContent = ''; statusEl.className = 'ask-status';
+      sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      backdrop.classList.add('open');
+      setTimeout(function(){ textEl.focus(); }, 50);
+    }
+    function close(){
+      backdrop.classList.remove('open');
+      textEl.value=''; nameEl.value='';
+    }
+    function send(){
+      var question = textEl.value.trim();
+      var name = nameEl.value.trim();
+      if(!name){
+        statusEl.textContent = 'Please enter your name.';
+        statusEl.className = 'ask-status err';
+        nameEl.focus();
+        return;
+      }
+      if(!question){
+        statusEl.textContent = 'Please enter a question or comment.';
+        statusEl.className = 'ask-status err';
+        textEl.focus();
+        return;
+      }
+      if(!window.QUESTIONS_API){
+        statusEl.textContent = "This form isn't connected yet — let your professor know.";
+        statusEl.className = 'ask-status err';
+        return;
+      }
+      sendBtn.disabled = true; sendBtn.textContent = 'Sending…';
+      statusEl.textContent = ''; statusEl.className = 'ask-status';
+      var slide = slides[idx];
+      var title = (slide && slide.getAttribute('aria-label')) || '';
+      fetch(window.QUESTIONS_API, {
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({ deck: DECK, slideIndex: idx+1, slideTitle: title, question: question, name: name })
+      }).then(function(){
+        statusEl.textContent = 'Sent — thanks!';
+        statusEl.className = 'ask-status ok';
+        setTimeout(close, 1100);
+      }).catch(function(){
+        statusEl.textContent = "Couldn't send — check your connection and try again.";
+        statusEl.className = 'ask-status err';
+        sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      });
+    }
+    askBtn.addEventListener('click', open);
+    cancelBtn.addEventListener('click', close);
+    sendBtn.addEventListener('click', send);
+    backdrop.addEventListener('click', function(e){ if(e.target === backdrop) close(); });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && backdrop.classList.contains('open')) close();
+    });
+  })();
+})();
+</script>
+<script>
+window.SLIDE_POLLS = {
+  7: { id: 'week4-2-poll-2028host', question: 'Which city will host the 2028 Olympic Games?', options: ['Los Angeles', 'Paris', 'Budapest'] }
+};
+</script>
+<script src="../questions/widgets.js"></script>
+</body>
+</html>
