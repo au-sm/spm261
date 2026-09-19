@@ -1,0 +1,1324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sport Marketing &mdash; SPM 261 Week 4-1</title>
+<style>
+/* ============================================================
+   TOKENS — "Marquee" theme: warm stadium-night charcoal base,
+   turf green / marquee gold / brick red accents.
+   ============================================================ */
+:root{
+  --bg:            #0c0a07;
+  --bg-raised:     #18140d;
+  --ink:           #f6f1e6;
+  --ink-dim:       #b7ac99;
+  --ink-faint:     #6d6353;
+  --line:          rgba(246,241,230,.12);
+  --line-soft:     rgba(246,241,230,.06);
+
+  --turf:          #2fae6e;
+  --turf-dim:      #163f27;
+  --turf-glow:     rgba(47,174,110,.32);
+
+  --marquee:       #f2a71b;
+  --marquee-dim:   #5c3f0c;
+  --marquee-glow:  rgba(242,167,27,.30);
+
+  --brick:         #d1483c;
+  --brick-dim:     #551d17;
+  --brick-glow:    rgba(209,72,60,.28);
+
+  --font-display:  'Futura', 'Century Gothic', 'Avenir Next', 'Arial Narrow', Helvetica, Arial, sans-serif;
+  --font-body:     -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:     ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+
+  --ease:          cubic-bezier(.22,.68,.16,1);
+  --dur-fast:      .45s;
+  --dur-med:       .8s;
+  --dur-slow:      1.4s;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;}
+h1,h2,h3,h4,p,ul,ol{margin:0;}
+
+/* ambient background glow */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.ambient::before,.ambient::after{
+  content:'';position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;
+  animation:drift 26s ease-in-out infinite alternate;
+}
+.ambient::before{
+  width:52vw;height:52vw;top:-18vw;left:-14vw;
+  background:radial-gradient(circle at 30% 30%,var(--turf-glow),transparent 70%);
+}
+.ambient::after{
+  width:46vw;height:46vw;bottom:-16vw;right:-12vw;
+  background:radial-gradient(circle at 60% 60%,var(--marquee-glow),transparent 70%);
+  animation-delay:-13s;
+}
+@keyframes drift{
+  from{transform:translate(0,0) scale(1);}
+  to{transform:translate(3vw,2vw) scale(1.08);}
+}
+
+/* top chrome */
+.home-link,.pdf-link-fixed{
+  position:fixed;top:1.6vh;z-index:60;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-faint);text-decoration:none;
+  transition:color .2s ease;
+}
+.home-link{left:4.5vw;}
+.pdf-link-fixed{right:4.5vw;}
+.home-link:hover,.pdf-link-fixed:hover{color:var(--ink);}
+
+.zoom-controls{
+  position:fixed;bottom:2.4vh;left:50%;transform:translateX(-50%);z-index:20;
+  display:flex;align-items:center;
+}
+.zoom-btn{
+  pointer-events:auto;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;
+  font-family:var(--font-mono);font-size:13px;line-height:1;
+  padding:6px 11px;transition:border-color .2s ease,color .2s ease,background .2s ease;
+}
+.zoom-btn:hover{background:rgba(255,255,255,.09);color:var(--ink);}
+.zoom-controls .zoom-btn+.zoom-btn{margin-left:-1px;}
+.zoom-controls .zoom-btn:first-child{border-radius:999px 0 0 999px;}
+.zoom-controls .zoom-btn:last-child{border-radius:0 999px 999px 0;}
+.zoom-reset{min-width:48px;text-align:center;font-size:10px;letter-spacing:.03em;}
+.zoom-btn:disabled{opacity:.3;cursor:default;}
+.zoom-btn:disabled:hover{background:rgba(255,255,255,.04);color:var(--ink-dim);}
+
+.progress-rail{position:fixed;top:0;left:0;right:0;height:2px;background:var(--line-soft);z-index:20;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--turf),var(--marquee));width:4.3%;transition:width .5s var(--ease);}
+
+.dots{
+  position:fixed;left:4.5vw;top:50%;transform:translateY(-50%);z-index:20;
+  display:flex;flex-direction:column;gap:9px;
+}
+.dot{
+  width:7px;height:7px;border-radius:50%;background:var(--line);border:none;padding:0;cursor:pointer;
+  transition:background .3s var(--ease),transform .3s var(--ease);
+}
+.dot:hover{transform:scale(1.3);}
+.dot.on{background:var(--ink);transform:scale(1.3);}
+
+.navbtn{
+  position:fixed;top:50%;transform:translateY(-50%);z-index:20;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--ink-dim);transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease);
+}
+.navbtn:hover{background:rgba(255,255,255,.09);color:var(--ink);border-color:var(--line);}
+.navbtn svg{width:16px;height:16px;fill:currentColor;}
+.navbtn.prev{left:4vw;}
+.navbtn.next{right:4vw;}
+.navbtn[disabled]{opacity:.25;cursor:default;pointer-events:none;}
+
+.click-zone{position:fixed;top:0;bottom:0;width:14%;z-index:15;cursor:pointer;}
+.click-zone.left{left:0;} .click-zone.right{right:0;}
+
+/* deck / slides */
+.deck{position:fixed;inset:0;z-index:1;}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
+  pointer-events:none;
+  will-change:opacity,transform;
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto;}
+
+.slide-inner{
+  position:relative;z-index:2;
+  flex:1;
+  display:flex;flex-direction:column;
+  padding:13vh 7vw 7vh;
+  min-height:0;
+  zoom:var(--zoom,1);
+}
+.chrome-top{
+  position:absolute;top:0;left:0;right:0;z-index:5;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:4.2vh 4.5vw 0;
+  pointer-events:none;
+}
+.eyebrow{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-dim);
+  opacity:0;transform:translateY(-8px);
+  transition:opacity .6s var(--ease),transform .6s var(--ease);
+}
+.slide.active .eyebrow{opacity:1;transform:translateY(0);transition-delay:.15s;}
+.eyebrow .dot{color:var(--accent,var(--turf));}
+.slide-count{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.15em;color:var(--ink-faint);
+  opacity:0;transition:opacity .6s var(--ease);
+}
+.slide.active .slide-count{opacity:1;transition-delay:.2s;}
+
+/* per-slide accent theme */
+.slide[data-theme="turf"]{--accent:var(--turf);--accent-dim:var(--turf-dim);}
+.slide[data-theme="marquee"]{--accent:var(--marquee);--accent-dim:var(--marquee-dim);}
+.slide[data-theme="brick"]{--accent:var(--brick);--accent-dim:var(--brick-dim);}
+
+/* ============================================================
+   REVEAL PRIMITIVES (auto-staggered on slide activation)
+   ============================================================ */
+.rz{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+.slide.active .rz{opacity:1;transform:translateY(0);}
+.rz1{transition-delay:.05s;} .rz2{transition-delay:.18s;} .rz3{transition-delay:.32s;}
+.rz4{transition-delay:.46s;} .rz5{transition-delay:.60s;} .rz6{transition-delay:.74s;}
+.rz7{transition-delay:.88s;} .rz8{transition-delay:1.02s;} .rz9{transition-delay:1.16s;}
+.rz10{transition-delay:1.30s;}
+
+/* ============================================================
+   TYPOGRAPHY / GENERIC CONTENT COMPONENTS
+   ============================================================ */
+.kicker{
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 1.4vh;
+}
+.disp{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:.005em;color:var(--ink);line-height:1.04;}
+.disp.xl{font-size:clamp(38px,6.2vw,100px);}
+.disp.lg{font-size:clamp(30px,4.4vw,60px);}
+.disp.md{font-size:clamp(22px,3vw,38px);}
+.lede{font-family:var(--font-body);font-weight:400;font-size:clamp(15.5px,1.6vw,20px);line-height:1.55;color:var(--ink-dim);max-width:64ch;margin:1.8vh 0 0;}
+.lede b,.lede strong{color:var(--ink);font-weight:600;}
+
+.rule{width:60px;height:3px;background:var(--accent);border-radius:2px;margin:2vh 0 0;}
+
+.cite-block{border-left:3px solid var(--accent);padding:1.4vh 0 1.4vh 2.2vw;margin:2.6vh 0 0;max-width:74ch;}
+.cite-text{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,2.3vw,29px);line-height:1.34;color:var(--ink);margin:0;text-transform:none;}
+.cite-attr{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.05em;color:var(--ink-faint);margin:1.6vh 0 0;}
+
+.bullet-list{list-style:none;margin:2.6vh 0 0;padding:0;display:flex;flex-direction:column;gap:1.5vh;max-width:70ch;}
+.bullet-list li{position:relative;padding-left:2.1em;font-size:clamp(15px,1.5vw,19px);line-height:1.5;color:var(--ink-dim);}
+.bullet-list li::before{content:'';position:absolute;left:0;top:.5em;width:9px;height:9px;border-radius:50%;background:var(--accent);}
+.bullet-list li b,.bullet-list li strong{color:var(--ink);font-weight:600;}
+
+.myth-list{list-style:none;margin:2.8vh 0 0;padding:0;display:flex;flex-direction:column;gap:1.3vh;max-width:76ch;}
+.myth-list li{display:flex;gap:14px;align-items:flex-start;font-size:clamp(14.5px,1.4vw,17.5px);color:var(--ink-dim);}
+.myth-x{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--brick);color:var(--brick);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:13px;margin-top:1px;}
+.myth-text{padding-top:3px;line-height:1.5;}
+.myth-text em{color:var(--ink);font-style:normal;font-weight:600;}
+
+.callout{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:2.2vh 2.4vw;margin-top:2.8vh;max-width:72ch;background:rgba(255,255,255,.02);}
+.callout p{margin:0;font-size:clamp(15.5px,1.6vw,19px);line-height:1.5;color:var(--ink);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2.6vw;margin-top:auto;margin-bottom:auto;}
+.col-card{border:1px solid var(--line);border-radius:12px;padding:2.6vh 2.2vw;background:rgba(255,255,255,.02);display:flex;flex-direction:column;}
+.col-card h3{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;font-size:clamp(16px,1.7vw,21px);color:var(--accent);margin:0 0 1.2vh;}
+.col-card p{color:var(--ink-dim);font-size:clamp(13.5px,1.25vw,16px);line-height:1.55;margin:0;}
+.col-card .thrust-tag{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1vh;}
+
+/* exchange theory diagram */
+.exchange-wrap{display:flex;align-items:center;justify-content:center;gap:3.2vw;margin-top:3vh;flex:1;min-height:0;}
+.exchange-box{width:min(280px,25vw);border:2px solid var(--accent);border-radius:16px;padding:3.4vh 1.6vw;text-align:center;background:rgba(255,255,255,.03);}
+.exchange-box h4{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;font-size:clamp(19px,2vw,25px);color:var(--ink);margin:0 0 1.6vh;}
+.exchange-box ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.7vh;}
+.exchange-box li{font-size:clamp(12.5px,1.15vw,14.5px);color:var(--ink-dim);}
+.exchange-mid{display:flex;flex-direction:column;gap:3.4vh;align-items:stretch;min-width:11vw;max-width:180px;}
+.exchange-arrow{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.exchange-arrow svg{width:100%;height:20px;}
+.exchange-arrow.give svg{color:var(--turf);}
+.exchange-arrow.get svg{color:var(--marquee);transform:scaleX(-1);}
+.exchange-arrow span{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);text-align:center;}
+
+/* marketing mix wheel */
+.wheel-wrap{display:flex;align-items:center;gap:5vw;margin-top:2.6vh;flex:1;min-height:0;}
+.wheel{position:relative;width:min(30vw,320px);height:min(30vw,320px);border-radius:50%;flex:none;
+  background:conic-gradient(var(--turf) 0 25%, var(--marquee) 25% 50%, var(--brick) 50% 75%, var(--ink-faint) 75% 100%);
+  transform:scale(.7) rotate(-30deg);opacity:0;transition:transform 1s var(--ease),opacity 1s var(--ease);
+}
+.slide.active .wheel{transform:scale(1) rotate(0deg);opacity:1;}
+.wheel::after{
+  content:'';position:absolute;inset:22%;border-radius:50%;background:var(--bg-raised);border:1px solid var(--line);
+}
+.wheel-center{position:absolute;inset:22%;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--font-display);text-transform:uppercase;font-size:clamp(12px,1.1vw,15px);letter-spacing:.02em;color:var(--ink);line-height:1.2;padding:6%;}
+.wheel-label{position:absolute;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);
+  background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap;
+  opacity:0;transition:opacity .6s var(--ease);}
+.slide.active .wheel-label{opacity:1;transition-delay:.7s;}
+.wheel-label.l-product{top:6%;right:-6%;}
+.wheel-label.l-place{top:6%;left:-6%;}
+.wheel-label.l-price{bottom:6%;left:-6%;}
+.wheel-label.l-promotion{bottom:6%;right:-6%;}
+.wheel-legend{flex:1;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:1.6vh;}
+.wheel-legend li{display:flex;gap:12px;align-items:flex-start;font-size:clamp(13.5px,1.25vw,16px);color:var(--ink-dim);line-height:1.5;}
+.wheel-legend .num{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:12px;margin-top:1px;}
+.wheel-legend b{color:var(--ink);}
+.wheel-note{margin-top:1.6vh;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.03em;color:var(--ink-faint);max-width:60ch;}
+
+/* strategy grid (4 P's detail) */
+.strategy-grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:min-content;gap:2vh 2.2vw;margin-top:auto;margin-bottom:auto;}
+.strategy-card{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:2vh 1.8vw;background:rgba(255,255,255,.02);}
+.strategy-card h4{font-family:var(--font-display);text-transform:uppercase;font-size:clamp(14px,1.35vw,17px);letter-spacing:.02em;color:var(--ink);margin:0 0 1vh;}
+.strategy-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.7vh;}
+.strategy-card li{font-size:clamp(11.5px,1.02vw,13.5px);line-height:1.45;color:var(--ink-dim);padding-left:1.1em;position:relative;}
+.strategy-card li::before{content:'\2013';position:absolute;left:0;color:var(--accent);}
+
+/* tables */
+.table-clean{width:100%;border-collapse:collapse;margin-top:2vh;font-size:clamp(12px,1.05vw,14.5px);}
+.table-clean th{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+  text-align:left;padding:1vh 1vw;border-bottom:1px solid var(--line);}
+.table-clean td{padding:1.1vh 1vw;border-bottom:1px solid var(--line-soft);color:var(--ink-dim);vertical-align:top;}
+.table-clean tr:last-child td{border-bottom:none;}
+.table-clean td.hl,.table-clean th.hl{color:var(--ink);font-weight:600;}
+.table-clean tbody tr{opacity:0;transform:translateY(10px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
+.slide.active .table-clean tbody tr{opacity:1;transform:translateY(0);}
+.table-clean tbody tr:nth-child(1){transition-delay:.15s;}
+.table-clean tbody tr:nth-child(2){transition-delay:.26s;}
+.table-clean tbody tr:nth-child(3){transition-delay:.37s;}
+.table-clean tbody tr:nth-child(4){transition-delay:.48s;}
+.table-clean tbody tr:nth-child(5){transition-delay:.59s;}
+.table-clean tbody tr:nth-child(6){transition-delay:.70s;}
+.table-source{margin-top:1vh;font-family:var(--font-mono);font-size:10px;color:var(--ink-faint);letter-spacing:.02em;}
+
+/* donut chart (sponsorship spend by property sector) */
+.donut-wrap{display:flex;align-items:center;gap:4vw;}
+.donut-svg{width:min(230px,20vw);height:min(230px,20vw);flex:none;}
+.donut-svg circle.seg{stroke-dasharray:0 999;transition:stroke-dasharray 1.1s var(--ease);}
+.slide.active .donut-svg circle.seg{stroke-dasharray:var(--seg);}
+.donut-center{font-family:var(--font-display);font-size:clamp(11px,1vw,13px);letter-spacing:.02em;text-transform:uppercase;color:var(--ink-dim);}
+.donut-legend{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1vh;flex:1;}
+.donut-legend li{display:flex;align-items:flex-start;gap:10px;font-size:clamp(12.5px,1.1vw,15px);color:var(--ink-dim);}
+.donut-legend .swatch{width:11px;height:11px;border-radius:3px;flex:none;margin-top:.35em;}
+.donut-legend li>span:not(.swatch){flex:1;}
+.donut-legend b{color:var(--ink);font-variant-numeric:tabular-nums;min-width:2.6em;text-align:right;flex:none;}
+
+/* image display — no mat / no card, sits directly on background */
+.img-frame{position:relative;overflow:hidden;border-radius:10px;}
+.img-frame img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 6s var(--ease);}
+.slide.active .img-frame img{transform:scale(1);}
+.img-cap{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-faint);margin-top:1vh;}
+
+/* two-image band (marketing of/through sport examples) */
+.thrust-band{display:grid;grid-template-columns:1fr;gap:2.4vh;margin-top:2.4vh;flex:1;min-height:0;}
+.thrust-row{display:flex;align-items:center;gap:2.4vw;}
+.thrust-row .thrust-label{flex:none;width:min(220px,20vw);font-family:var(--font-display);text-transform:uppercase;font-size:clamp(14px,1.4vw,18px);color:var(--accent);letter-spacing:.01em;}
+.thrust-row .thrust-imgs{flex:1;display:flex;gap:1.4vw;min-width:0;}
+.thrust-row .img-frame{flex:1;height:min(20vh,190px);}
+
+/* fit example cards (consumer match / functional fit / image fit) */
+.example-wrap{display:flex;gap:3.4vw;align-items:center;margin-top:2.4vh;flex:1;min-height:0;}
+.example-text{flex:1;min-width:0;}
+.example-brand{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:2.2vh 0 .8vh;}
+.example-img{flex:1;min-width:0;height:min(42vh,360px);}
+
+/* fits diagram (congruency overview) */
+.fits-diagram{display:flex;align-items:center;justify-content:center;gap:2.2vw;margin-top:2.6vh;}
+.fits-root{font-family:var(--font-display);text-transform:uppercase;font-size:clamp(16px,1.7vw,22px);color:var(--ink);
+  border:2px solid var(--accent);border-radius:12px;padding:1.6vh 1.6vw;text-align:center;}
+.fits-branches{display:flex;flex-direction:column;gap:1.1vh;}
+.fits-branch{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.04em;color:var(--ink);
+  border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:1.1vh 1.4vw;white-space:nowrap;}
+.gallery-strip{display:flex;gap:1.2vw;margin-top:2.6vh;}
+.gallery-strip .img-frame{flex:1;height:min(16vh,140px);}
+.gallery-note{margin-top:1vh;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);}
+
+/* corporate objectives (SmartArt rebuild) */
+.obj-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4vw;margin-top:2.6vh;}
+.obj-card{border:1px solid var(--line);border-radius:12px;padding:2vh 1.2vw;text-align:center;background:rgba(255,255,255,.02);}
+.obj-card .num{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.1em;}
+.obj-card p{margin-top:1vh;font-size:clamp(12.5px,1.1vw,15px);color:var(--ink);line-height:1.4;}
+.logos-frame{margin-top:2.6vh;max-width:640px;}
+
+/* two-value cards (monetary / trade) */
+.value-cards{display:flex;gap:2vw;margin-top:2.8vh;}
+.value-card{flex:1;border:1px solid var(--line);border-radius:12px;padding:2.4vh 1.8vw;background:rgba(255,255,255,.02);}
+.value-card h4{font-family:var(--font-display);text-transform:uppercase;font-size:clamp(15px,1.5vw,19px);color:var(--accent);margin:0 0 .8vh;}
+.value-card p{font-size:clamp(12.5px,1.15vw,15px);color:var(--ink-dim);line-height:1.5;margin:0;}
+
+/* activity / instruction card */
+.activity-card{border:1px solid var(--accent);border-radius:16px;padding:4vh 4vw;text-align:center;margin:auto;max-width:760px;background:rgba(255,255,255,.03);}
+.activity-card .kicker{justify-content:center;}
+.score-tiles{display:flex;gap:1.4vw;margin-top:2.8vh;}
+.score-tile{flex:1;border:1px solid var(--line);border-radius:12px;padding:2.2vh 1vw;text-align:center;}
+.score-tile.low{border-top:3px solid var(--brick);}
+.score-tile.mid{border-top:3px solid var(--marquee);}
+.score-tile.high{border-top:3px solid var(--turf);}
+.score-tile .range{font-family:var(--font-display);font-size:clamp(18px,2vw,26px);color:var(--ink);}
+.score-tile .desc{margin-top:.6vh;font-size:12px;color:var(--ink-dim);}
+
+/* divider slide */
+.divider-inner{margin:auto;text-align:center;}
+
+/* outro */
+.outro-inner{margin:auto;text-align:center;}
+
+/* speaker notes panel */
+.notes-panel{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  max-height:34vh;overflow:auto;
+  background:rgba(12,10,7,.96);border-top:1px solid var(--line);
+  padding:3vh 6vw;
+  transform:translateY(100%);transition:transform .4s var(--ease);
+}
+.notes-panel.open{transform:translateY(0);}
+.notes-kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--marquee);margin:0 0 1.2vh;}
+.notes-body{font-family:var(--font-body);font-size:15px;line-height:1.6;color:var(--ink-dim);}
+.notes-body a{color:var(--turf);}
+
+.kbd-hint{
+  position:fixed;right:4.5vw;bottom:2vh;z-index:20;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--ink-faint);
+}
+.kbd-hint kbd{border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-family:var(--font-mono);}
+
+/* ask a question */
+.ask-btn{
+  position:fixed;right:4.5vw;top:calc(4.2vh + 30px);z-index:20;
+  height:32px;padding:0 15px;border-radius:18px;white-space:nowrap;
+  border:1px solid var(--line);background:rgba(12,10,7,.6);backdrop-filter:blur(6px);
+  color:var(--ink-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-family:var(--font-body);font-weight:600;font-size:12.5px;
+  transition:color .2s ease,border-color .2s ease,transform .2s ease;
+}
+.ask-btn:hover{color:var(--marquee);border-color:var(--marquee);transform:translateY(-2px);}
+.ask-backdrop{
+  position:fixed;inset:0;z-index:40;background:rgba(6,5,3,.75);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.ask-backdrop.open{opacity:1;pointer-events:auto;}
+.ask-panel{
+  width:min(480px,100%);background:var(--bg-raised);border:1px solid var(--line);border-radius:10px;
+  padding:26px 26px 22px;box-shadow:0 40px 90px -30px rgba(0,0,0,.8);
+  transform:translateY(14px) scale(.98);opacity:0;transition:transform .3s var(--ease),opacity .3s var(--ease);
+}
+.ask-backdrop.open .ask-panel{transform:translateY(0) scale(1);opacity:1;}
+.ask-title{font-family:var(--font-display);font-size:22px;letter-spacing:.01em;color:var(--ink);margin:0 0 4px;text-transform:uppercase;}
+.ask-context{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;color:var(--marquee);margin:0 0 16px;}
+.ask-panel textarea{
+  width:100%;min-height:96px;resize:vertical;background:var(--bg);color:var(--ink);
+  border:1px solid var(--line);border-radius:6px;padding:12px 14px;font:14px/1.5 var(--font-body);
+  outline:none;transition:border-color .2s ease;box-sizing:border-box;
+}
+.ask-panel textarea:focus{border-color:var(--marquee);}
+.ask-panel input[type=text]{
+  width:100%;margin-top:10px;background:var(--bg);color:var(--ink);
+  border:1px solid var(--line);border-radius:6px;padding:10px 14px;font:13px var(--font-body);
+  outline:none;transition:border-color .2s ease;box-sizing:border-box;
+}
+.ask-panel input[type=text]:focus{border-color:var(--marquee);}
+.ask-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;}
+.ask-hint{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);}
+.ask-actions{display:flex;gap:10px;}
+.ask-btn-cancel,.ask-btn-send{
+  font-family:var(--font-body);font-size:13px;font-weight:600;border-radius:6px;padding:9px 16px;
+  cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink-dim);
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.ask-btn-cancel:hover{color:var(--ink);border-color:var(--ink-dim);}
+.ask-btn-send{background:var(--marquee);border-color:var(--marquee);color:#231502;}
+.ask-btn-send:hover{filter:brightness(1.08);}
+.ask-btn-send:disabled{opacity:.5;cursor:default;filter:none;}
+.ask-status{font-family:var(--font-mono);font-size:12px;margin-top:12px;min-height:16px;}
+.ask-status.err{color:var(--brick);}
+.ask-status.ok{color:var(--turf);}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
+  .slide{transform:none !important;}
+  .img-frame img{transform:none !important;}
+  .wheel{transform:none !important;opacity:1 !important;}
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:900px){
+  .two-col,.strategy-grid,.obj-grid{grid-template-columns:1fr;}
+  .exchange-wrap{flex-direction:column;}
+  .exchange-mid{flex-direction:row;min-width:0;width:100%;}
+  .wheel-wrap,.donut-wrap,.example-wrap{flex-direction:column;}
+  .thrust-row{flex-direction:column;align-items:flex-start;}
+  .thrust-row .thrust-imgs{width:100%;}
+  .dots{display:none;}
+  .navbtn{width:38px;height:38px;}
+}
+
+/* ============================================================
+   PRINT (PDF EXPORT)
+   ============================================================ */
+@media print{
+  html,body{overflow:visible !important;height:auto !important;background:var(--bg);}
+  .ambient,.progress-rail,.dots,.navbtn,.click-zone,.notes-panel,.kbd-hint,.home-link,.pdf-link-fixed,.ask-btn,.ask-backdrop,.zoom-controls{display:none !important;}
+  .deck{position:static !important;}
+  .slide{
+    position:relative !important;
+    inset:auto !important;
+    opacity:1 !important;
+    transform:none !important;
+    pointer-events:auto !important;
+    width:100vw;height:100vh;
+    page-break-after:always;break-after:page;
+    overflow:hidden;
+  }
+  .slide:last-child{page-break-after:auto;}
+  .rz,.eyebrow,.slide-count,.wheel,.wheel-label,.table-clean tbody tr,.img-frame img{
+    opacity:1 !important;transform:none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true"></div>
+
+<a class="home-link" href="../" title="Back to course home">&larr; Home</a>
+<a class="pdf-link-fixed" href="SPM261_Week4-1_Slides.pdf" download title="Download this deck as a PDF">PDF &darr;</a>
+<div class="zoom-controls" role="group" aria-label="Zoom controls">
+  <button class="zoom-btn" id="zoomOutBtn" title="Zoom out (&minus;)" aria-label="Zoom out">&minus;</button>
+  <button class="zoom-btn zoom-reset" id="zoomResetBtn" title="Reset zoom (0)" aria-label="Reset zoom">100%</button>
+  <button class="zoom-btn" id="zoomInBtn" title="Zoom in (+)" aria-label="Zoom in">+</button>
+</div>
+
+<div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+
+<main class="deck" id="deck">
+
+  <!-- =========================================================
+       SLIDE 1 — TITLE
+       ========================================================= -->
+  <section class="slide s-title" data-theme="turf" aria-label="Title">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> SPM 261 &mdash; Introduction to Sport Management</div>
+      <div class="slide-count"><span class="cur">01</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <p class="kicker rz rz1">Week 4-1</p>
+      <h1 class="disp xl rz rz2">Sport<br>Marketing</h1>
+      <p class="lede rz rz3">SPM 261 &middot; Introduction to Sport Management<br>Arcadia University</p>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 2 — MARKET MISCONCEPTION
+       ========================================================= -->
+  <section class="slide s-myth" data-theme="brick" aria-label="What's Sport Marketing? — Market Misconception">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> What&rsquo;s Sport Marketing?</div>
+      <div class="slide-count"><span class="cur">02</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Market Misconception</p>
+      <h2 class="disp lg rz rz2">It&rsquo;s not what you think.</h2>
+      <ul class="myth-list">
+        <li class="rz rz3"><span class="myth-x">&times;</span><span class="myth-text">Sport marketing as <em>&lsquo;selling sport goods and services&rsquo;</em></span></li>
+        <li class="rz rz4"><span class="myth-x">&times;</span><span class="myth-text">Sport marketing as <em>&lsquo;designing the content and delivery of commercials&rsquo;</em></span></li>
+        <li class="rz rz5"><span class="myth-x">&times;</span><span class="myth-text">Sport marketing as <em>&lsquo;arranging for athletes to attend a charity event&rsquo;</em></span></li>
+      </ul>
+      <div class="callout rz rz6"><p>Sport Marketing is more than selling, advertising and public relations, and community relations.</p></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 3 — DEFINITION / EXCHANGE THEORY
+       ========================================================= -->
+  <section class="slide s-def" data-theme="turf" aria-label="What's Sport Marketing? — Definition and exchange theory">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> What&rsquo;s Sport Marketing? Cont.</div>
+      <div class="slide-count"><span class="cur">03</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="cite-block rz rz1">
+        <p class="cite-text">&ldquo;Sport marketing consists of all activities designed to meet the needs and wants of sport consumers through exchange processes.&rdquo;</p>
+        <p class="cite-attr">Mullin, Hardy, &amp; Sutton, 2007, p. 11</p>
+      </div>
+      <p class="kicker rz rz2" style="margin-top:3.2vh;">Exchange Theory</p>
+      <ul class="bullet-list rz rz3">
+        <li>(1) Two parties exchange resources</li>
+        <li>(2) The resources offered by each party must be valued by the reciprocating partner</li>
+      </ul>
+      <div class="img-frame rz rz4" style="margin-top:2.6vh;height:min(24vh,220px);max-width:520px;">
+        <img src="assets/s3_redbull_motogp.png" alt="A MotoGP rider in Red Bull-branded racing leathers, banking through a corner in front of a large Red Bull signboard">
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 4 — EXCHANGE DIAGRAM
+       ========================================================= -->
+  <section class="slide s-exchange" data-theme="turf" aria-label="What's Sport Marketing? — Exchange diagram, Team and Fan">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> What&rsquo;s Sport Marketing? Cont.</div>
+      <div class="slide-count"><span class="cur">04</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Exchange Theory, Illustrated</p>
+      <div class="exchange-wrap">
+        <div class="exchange-box rz rz2">
+          <h4>Team</h4>
+          <ul>
+            <li>Game / event</li>
+            <li>Merchandise</li>
+            <li>Entertainment</li>
+          </ul>
+        </div>
+        <div class="exchange-mid rz rz3">
+          <div class="exchange-arrow give">
+            <svg viewBox="0 0 120 24"><line x1="2" y1="12" x2="102" y2="12" stroke="currentColor" stroke-width="2"/><polygon points="102,4 120,12 102,20" fill="currentColor"/></svg>
+            <span>Game &middot; Merch &middot; Entertainment</span>
+          </div>
+          <div class="exchange-arrow get">
+            <svg viewBox="0 0 120 24"><line x1="2" y1="12" x2="102" y2="12" stroke="currentColor" stroke-width="2"/><polygon points="102,4 120,12 102,20" fill="currentColor"/></svg>
+            <span>Financial Support &middot; Identification</span>
+          </div>
+        </div>
+        <div class="exchange-box rz rz4">
+          <h4>Fan</h4>
+          <ul>
+            <li>Financial support</li>
+            <li>Identification</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 5 — TEAM IDENTIFICATION
+       ========================================================= -->
+  <section class="slide s-def" data-theme="turf" aria-label="What's Sport Marketing? — Team identification">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> What&rsquo;s Sport Marketing? Cont.</div>
+      <div class="slide-count"><span class="cur">05</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Team Identification?</p>
+      <h2 class="disp lg rz rz2">&lsquo;Sense of belongingness to a team&rsquo;</h2>
+      <p class="lede rz rz3" style="margin-top:3vh;">Loyal fans (= highly identified fans) are&hellip;</p>
+      <ul class="bullet-list rz rz4">
+        <li>More likely to attend a team&rsquo;s game regardless of team performance</li>
+        <li>Less complaint</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 6 — SURVEY INTRO
+       ========================================================= -->
+  <section class="slide s-activity" data-theme="marquee" aria-label="In-class activity — Sport Spectator Identification Scale introduction">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> What&rsquo;s Sport Marketing? Cont.</div>
+      <div class="slide-count"><span class="cur">06</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="activity-card rz rz1">
+        <p class="kicker">In-Class Activity</p>
+        <h2 class="disp md">Why do we identify with a sport team?</h2>
+        <p class="lede" style="margin:1.6vh auto 0;">How do we know if an individual is highly identified with her or his favorite team?</p>
+        <p class="cite-attr" style="margin-top:2vh;">Sport Spectator Identification Scale (SSIS; Wann &amp; Branscombe, 1993)</p>
+        <p class="disp md" style="margin-top:3vh;color:var(--marquee);">Fill out the survey!!!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 7 — SURVEY SCORING
+       ========================================================= -->
+  <section class="slide s-activity" data-theme="marquee" aria-label="Sport Spectator Identification Scale — scoring">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> What&rsquo;s Sport Marketing? Cont.</div>
+      <div class="slide-count"><span class="cur">07</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Sport Spectator Identification Scale (SSIS; Wann &amp; Branscombe, 1993)</p>
+      <h2 class="disp lg rz rz2">Seven items (1 to 8)</h2>
+      <p class="lede rz rz3">What score did you get? Higher numbers represent greater levels of team ID.</p>
+      <div class="score-tiles rz rz4">
+        <div class="score-tile low"><div class="range">&lt; 18</div><div class="desc">A low level of identification</div></div>
+        <div class="score-tile mid"><div class="range">18&ndash;35</div><div class="desc">Moderately identified</div></div>
+        <div class="score-tile high"><div class="range">&gt; 35</div><div class="desc">A higher level of identification</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 8 — UPLOAD INSTRUCTIONS
+       ========================================================= -->
+  <section class="slide s-activity" data-theme="marquee" aria-label="In-class activity submission instructions">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> In-Class Activity</div>
+      <div class="slide-count"><span class="cur">08</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <div class="activity-card rz rz1">
+        <p class="kicker">Submit Your Work</p>
+        <h2 class="disp md">Upload your completed survey under Module 4 &lsquo;In class activity [sport spectator identification scale]&rsquo;</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 9 — MARKETING MIX INTRO
+       ========================================================= -->
+  <section class="slide s-def" data-theme="turf" aria-label="Marketing Mix — introduction">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Marketing Mix</div>
+      <div class="slide-count"><span class="cur">09</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <p class="kicker rz rz1">Marketing Mix</p>
+      <h2 class="disp lg rz rz2">Product. Price. Distribution.</h2>
+      <ul class="bullet-list rz rz3">
+        <li>Sport marketing involves product strategies, pricing decision, and distribution issues.</li>
+        <li>These activities are referred to as the marketing mix.</li>
+        <li>Sport marketing mix is defined as a set of elements that sport organizations use to satisfy consumers&rsquo; needs.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 10 — MARKETING MIX WHEEL
+       ========================================================= -->
+  <section class="slide s-wheel" data-theme="turf" aria-label="Marketing Mix — the four P's">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Marketing Mix Cont.</div>
+      <div class="slide-count"><span class="cur">10</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Examples of Marketing Mix Elements</p>
+      <div class="wheel-wrap">
+        <div class="wheel rz rz2">
+          <div class="wheel-center">The<br>Marketing<br>Mix</div>
+          <span class="wheel-label l-product">Product</span>
+          <span class="wheel-label l-place">Place</span>
+          <span class="wheel-label l-price">Price</span>
+          <span class="wheel-label l-promotion">Promotion</span>
+        </div>
+        <ul class="wheel-legend rz rz3">
+          <li><span class="num">1</span><span>(1) <b>Product</b> strategies</span></li>
+          <li><span class="num">2</span><span>(2) <b>Place</b> strategies</span></li>
+          <li><span class="num">3</span><span>(3) <b>Pricing</b> strategies</span></li>
+          <li><span class="num">4</span><span>(4) <b>Promotion</b> strategies</span></li>
+        </ul>
+      </div>
+      <p class="wheel-note rz rz4">*** Controllable factors the sports organization puts together to satisfy a target group</p>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 11 — MARKETING MIX DETAIL
+       ========================================================= -->
+  <section class="slide s-strategy" data-theme="turf" aria-label="Marketing Mix — product, place, pricing, and promotion strategies in detail">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Marketing Mix Cont.</div>
+      <div class="slide-count"><span class="cur">11</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="strategy-grid">
+        <div class="strategy-card rz rz1">
+          <h4>(1) Product Strategies</h4>
+          <ul>
+            <li>Decisions regarding licensing, merchandising, branding, etc.</li>
+            <li>Change of team logo.</li>
+            <li>Developing services (concessions, parking, stadium seating, etc.)</li>
+          </ul>
+        </div>
+        <div class="strategy-card rz rz2">
+          <h4>(2) Place Strategies</h4>
+          <ul>
+            <li>How to deliver sport to spectators in the most effective and efficient way.</li>
+            <li>Where to build a new stadium, how to distribute tickets, etc.</li>
+            <li>Inventory management, warehousing, wholesaling, and retailing for sporting good stores.</li>
+          </ul>
+        </div>
+        <div class="strategy-card rz rz3">
+          <h4>(3) Pricing Strategies</h4>
+          <ul>
+            <li>Fees for personal seat licenses, pay-per view, price of tickets for sporting events</li>
+          </ul>
+        </div>
+        <div class="strategy-card rz rz4">
+          <h4>(4) Promotion Strategies</h4>
+          <ul>
+            <li>Sponsorship, advertising, sales promotions, personal selling, etc.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 12 — SUPER BOWL EXAMPLE
+       ========================================================= -->
+  <section class="slide s-table" data-theme="turf" aria-label="Marketing Mix — Super Bowl 59 example">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Marketing Mix Cont.</div>
+      <div class="slide-count"><span class="cur">12</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <div style="display:flex;gap:3.4vw;flex:1;min-height:0;align-items:flex-start;">
+        <div style="flex:1.1;min-width:0;">
+          <p class="kicker rz rz1">The Mix in Practice</p>
+          <h2 class="disp md rz rz2">Super Bowl 59 &mdash; Chiefs vs. Eagles</h2>
+          <table class="table-clean rz rz3">
+            <thead><tr><th>Element</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td class="hl">Products</td><td>Event / Super Bowl 59 (Chiefs vs. Eagles)</td></tr>
+              <tr><td class="hl">Pricing</td><td>Ticket price / payout to each team</td></tr>
+              <tr><td class="hl">Place</td><td>A channel of distribution / Fox / on-line streaming / Caesars Superdome New Orleans</td></tr>
+              <tr><td class="hl">Promotion</td><td>Communication with consumers / advertising / sponsorship / sales promotions</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="img-frame rz rz4" style="flex:1;height:min(46vh,400px);">
+          <img src="assets/s12_superbowl_field.jpg" alt="Overhead view of Kansas City Chiefs and Philadelphia Eagles players lined up at the Super Bowl LIX midfield logo">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 13 — TWO MAJOR THRUSTS INTRO
+       ========================================================= -->
+  <section class="slide s-twocol" data-theme="brick" aria-label="Two Major Thrusts — introduction">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Two Major Thrusts</div>
+      <div class="slide-count"><span class="cur">13</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Two Major Thrusts</p>
+      <p class="lede rz rz2">Sport marketing has developed two major thrusts:</p>
+      <div class="two-col">
+        <div class="col-card rz rz3">
+          <div class="thrust-tag">(1)</div>
+          <h3>Marketing of Sport</h3>
+          <p>The marketing of sport products and services directly to consumers of sport.</p>
+        </div>
+        <div class="col-card rz rz4">
+          <div class="thrust-tag">(2)</div>
+          <h3>Marketing through Sport</h3>
+          <p>The marketing of other consumer and industrial products or services through the use of sport promotions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 14 — TWO MAJOR THRUSTS EXAMPLES
+       ========================================================= -->
+  <section class="slide s-thrust-band" data-theme="brick" aria-label="Two Major Thrusts — examples">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Two Major Thrusts Cont.</div>
+      <div class="slide-count"><span class="cur">14</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="thrust-band">
+        <div class="thrust-row rz rz1">
+          <div class="thrust-label">Marketing of Sport</div>
+          <div class="thrust-imgs">
+            <div class="img-frame" style="background:#c81f2c;"><img src="assets/s14_phillies_promo.png" alt="Philadelphia Phillies 'Phamily Pack' promotion: 4 tickets, hot dogs, and sodas for $100 on select weekend dates" style="object-fit:contain;"></div>
+          </div>
+        </div>
+        <div class="thrust-row rz rz2">
+          <div class="thrust-label">Marketing through Sport</div>
+          <div class="thrust-imgs">
+            <div class="img-frame"><img src="assets/s14_rolex_golf.jpg" alt="A golfer teeing off in front of a Red Bull-branded Rolex signage board at a PGA Tour event"></div>
+            <div class="img-frame"><img src="assets/s14_arsenal_team.jpg" alt="Arsenal FC players walking together on the pitch in their team kits"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 15 — SPONSORSHIP DIVIDER
+       ========================================================= -->
+  <section class="slide s-divider" data-theme="marquee" aria-label="Section — Sponsorship">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Section</div>
+      <div class="slide-count"><span class="cur">15</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="divider-inner">
+        <p class="kicker rz rz1" style="justify-content:center;">Part Two</p>
+        <h1 class="disp xl rz rz2">Sponsorship</h1>
+        <div class="rule rz rz3" style="margin-left:auto;margin-right:auto;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 16 — SPONSORSHIP DEFINITION
+       ========================================================= -->
+  <section class="slide s-def" data-theme="marquee" aria-label="Sponsorship — definition">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Sponsorship</div>
+      <div class="slide-count"><span class="cur">16</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="cite-block rz rz1">
+        <p class="cite-text">&ldquo;Investing in a sport entity (athlete, league, team, or event) to support overall organizational objectives, marketing goals, and promotional strategies.&rdquo;</p>
+      </div>
+      <div class="cite-block rz rz2" style="margin-top:1.6vh;">
+        <p class="cite-text">&ldquo;The sponsorship investment may come in the form of <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> and <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>&rdquo;</p>
+        <p class="cite-attr">Shank, 2004, p. 330</p>
+      </div>
+      <div class="value-cards rz rz3">
+        <div class="value-card"><h4>Monetary</h4><p>Cash</p></div>
+        <div class="value-card"><h4>Trade</h4><p>In-kind</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 17 — SPONSORSHIP STATS
+       ========================================================= -->
+  <section class="slide s-stats" data-theme="marquee" aria-label="Sponsorship — sports as the most popular property sector">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Sponsorship Cont.</div>
+      <div class="slide-count"><span class="cur">17</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Sports as a Powerful Marketing Tool</p>
+      <h2 class="disp md rz rz2">Sports as the most popular property sector</h2>
+      <div style="display:flex;gap:3.2vw;margin-top:2vh;flex:1;min-height:0;align-items:center;">
+        <div class="donut-wrap rz rz3" style="flex:1;">
+          <svg class="donut-svg" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="var(--line)" stroke-width="16"/>
+            <circle class="seg" cx="60" cy="60" r="50" fill="none" stroke="var(--turf)" stroke-width="16"
+              style="--seg:219.8 314;transition-delay:.1s;" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+            <circle class="seg" cx="60" cy="60" r="50" fill="none" stroke="var(--marquee)" stroke-width="16"
+              style="--seg:31.4 314;transition-delay:.22s;" stroke-dashoffset="-219.8" transform="rotate(-90 60 60)"/>
+            <circle class="seg" cx="60" cy="60" r="50" fill="none" stroke="var(--brick)" stroke-width="16"
+              style="--seg:28.3 314;transition-delay:.34s;" stroke-dashoffset="-251.2" transform="rotate(-90 60 60)"/>
+            <circle class="seg" cx="60" cy="60" r="50" fill="none" stroke="#8a95a6" stroke-width="16"
+              style="--seg:12.6 314;transition-delay:.46s;" stroke-dashoffset="-279.5" transform="rotate(-90 60 60)"/>
+            <circle class="seg" cx="60" cy="60" r="50" fill="none" stroke="#5d6678" stroke-width="16"
+              style="--seg:12.6 314;transition-delay:.58s;" stroke-dashoffset="-292.1" transform="rotate(-90 60 60)"/>
+            <circle class="seg" cx="60" cy="60" r="50" fill="none" stroke="#3d4453" stroke-width="16"
+              style="--seg:9.4 314;transition-delay:.70s;" stroke-dashoffset="-304.7" transform="rotate(-90 60 60)"/>
+          </svg>
+          <ul class="donut-legend">
+            <li><span class="swatch" style="background:var(--turf);"></span><span>Sports</span><b>70%</b></li>
+            <li><span class="swatch" style="background:var(--marquee);"></span><span>Entertainment</span><b>10%</b></li>
+            <li><span class="swatch" style="background:var(--brick);"></span><span>Causes</span><b>9%</b></li>
+            <li><span class="swatch" style="background:#8a95a6;"></span><span>Arts</span><b>4%</b></li>
+            <li><span class="swatch" style="background:#5d6678;"></span><span>Festivals, Fairs &amp; Annual Events</span><b>4%</b></li>
+            <li><span class="swatch" style="background:#3d4453;"></span><span>Associations &amp; Membership Orgs</span><b>3%</b></li>
+          </ul>
+        </div>
+        <div class="rz rz4" style="flex:1.3;min-width:0;">
+          <table class="table-clean">
+            <thead><tr><th>Sector</th><th>2016</th><th>2017</th><th>2018 (Proj.)</th></tr></thead>
+            <tbody>
+              <tr><td class="hl">Sports</td><td>$15.7B</td><td>$16.26B</td><td>$17.05B</td></tr>
+              <tr><td class="hl">Entertainment</td><td>$2.22B</td><td>$2.29B</td><td>$2.4B</td></tr>
+              <tr><td class="hl">Causes</td><td>$1.99B</td><td>$2.05B</td><td>$2.14B</td></tr>
+              <tr><td class="hl">Arts</td><td>$962M</td><td>$993M</td><td>$1.03B</td></tr>
+              <tr><td class="hl">Festivals &amp; Annual Events</td><td>$878M</td><td>$903M</td><td>$936M</td></tr>
+              <tr><td class="hl">Associations &amp; Membership</td><td>$604M</td><td>$616M</td><td>$635M</td></tr>
+            </tbody>
+          </table>
+          <p class="table-source">&copy; 2018 ESP Properties, LLC. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 18 — CORPORATE OBJECTIVES
+       ========================================================= -->
+  <section class="slide s-obj" data-theme="marquee" aria-label="Sponsorship — corporate-related sport sponsorship objectives">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Sponsorship Cont.</div>
+      <div class="slide-count"><span class="cur">18</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Sports as More than a Marketing Tool</p>
+      <h2 class="disp md rz rz2">Corporate-related sport sponsorship objectives</h2>
+      <div class="obj-grid rz rz3">
+        <div class="obj-card"><div class="num">01</div><p>Goodwill</p></div>
+        <div class="obj-card"><div class="num">02</div><p>Alter public perception</p></div>
+        <div class="obj-card"><div class="num">03</div><p>Involvement with the community</p></div>
+        <div class="obj-card"><div class="num">04</div><p>Enhance employee relations</p></div>
+      </div>
+      <div class="img-frame logos-frame rz rz4">
+        <img src="assets/s18_olympic_partners.png" alt="Grid of Olympic worldwide corporate partner logos, including Airbnb, Alibaba Group, Allianz, Atos, Bridgestone, Coca-Cola, Dow, GE, Intel, Omega, Panasonic, P&amp;G, Samsung, Toyota, and Visa">
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 19 — CONGRUENCY OVERVIEW
+       ========================================================= -->
+  <section class="slide s-fits" data-theme="brick" aria-label="How does sponsorship work? — Congruency effects overview">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> How Does Sponsorship Work?</div>
+      <div class="slide-count"><span class="cur">19</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Congruency / Congruence Effects (Rifon, Choi, Trimble, &amp; Li, 2004)</p>
+      <div class="cite-block rz rz2">
+        <p class="cite-text">&ldquo;Relatedness, Relevance, Compatibility, or Fit.&rdquo;</p>
+      </div>
+      <div class="fits-diagram rz rz3">
+        <div class="fits-root">Fits</div>
+        <div class="fits-branches">
+          <div class="fits-branch">Consumer Match</div>
+          <div class="fits-branch">Functional Fit</div>
+          <div class="fits-branch">Image Fit</div>
+        </div>
+      </div>
+      <div class="gallery-strip rz rz4">
+        <div class="img-frame"><img src="assets/s19_titleist_golf.png" alt="Titleist golf advertisement of a woman golfer, reading 'What girls drive everywhere!'"></div>
+        <div class="img-frame"><img src="assets/s19_landrover_usski.png" alt="Land Rover and US Ski & Snowboard partnership logo lockup"></div>
+        <div class="img-frame"><img src="assets/s19_toyota_snow.jpg" alt="A Toyota RAV4 branded for US Ski & Snowboard parked in front of snowy mountains"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 20 — CONSUMER MATCH
+       ========================================================= -->
+  <section class="slide s-example" data-theme="brick" aria-label="How does sponsorship work? — Consumer match">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> How Does Sponsorship Work?</div>
+      <div class="slide-count"><span class="cur">20</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="example-wrap">
+        <div class="example-text rz rz1">
+          <p class="kicker">Consumer Match</p>
+          <h2 class="disp md">An event or team that a company sponsors shares the same target consumers</h2>
+          <p class="example-brand">Ex) Mercedes-Benz &mdash; The US Open</p>
+          <p class="lede">Fans watching the US Open have a relatively high income, so Mercedes-Benz wanted to target those with the high income.</p>
+        </div>
+        <div class="img-frame example-img rz rz2">
+          <img src="assets/s20_mercedes_usopen.png" alt="Mercedes-Benz logo mounted on a tennis net post at the US Open">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 21 — FUNCTIONAL FIT
+       ========================================================= -->
+  <section class="slide s-example" data-theme="brick" aria-label="How does sponsorship work? — Functional fit">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> How Does Sponsorship Work?</div>
+      <div class="slide-count"><span class="cur">21</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="example-wrap">
+        <div class="example-text rz rz1">
+          <p class="kicker">Functional Fit</p>
+          <h2 class="disp md">The sponsor&rsquo;s product is used during the event by participants or the event organizers.</h2>
+          <p class="example-brand">Ex) Wilson &mdash; MLB</p>
+          <p class="lede">If Wilson is a sponsor of MLB and their baseball gloves are used by the players, then this is a functional fit.</p>
+        </div>
+        <div class="img-frame example-img rz rz2">
+          <img src="assets/s21_wilson_mlb.jpg" alt="A black Wilson MLB-branded equipment bag with the MLB logo">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 22 — IMAGE FIT
+       ========================================================= -->
+  <section class="slide s-example" data-theme="brick" aria-label="How does sponsorship work? — Image fit">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> How Does Sponsorship Work?</div>
+      <div class="slide-count"><span class="cur">22</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="example-wrap">
+        <div class="example-text rz rz1">
+          <p class="kicker">Image Fit</p>
+          <h2 class="disp md">A company is looking for an image transfer from the event or team they are sponsoring.</h2>
+          <ul class="bullet-list" style="margin-top:1.6vh;">
+            <li>Ex) Subway sandwich &ndash; Olympic athletes (e.g., healthy image)</li>
+            <li>Ex) Land Rover &ndash; US Ski &amp; Snowboard (e.g., winter, strong SUV on snow image)</li>
+            <li>Ex) Coca-Cola &ndash; Olympics</li>
+          </ul>
+        </div>
+        <div class="img-frame example-img rz rz2">
+          <img src="assets/s22_cocacola_olympics.jpg" alt="Coca-Cola 'Open Happiness' Olympic Worldwide Partner advertisement listing Olympic host cities from Amsterdam 1928 to Sochi 2014">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SLIDE 23 — QUESTIONS
+       ========================================================= -->
+  <section class="slide s-outro" data-theme="turf" aria-label="Questions">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> SPM 261 &mdash; Week 4-1</div>
+      <div class="slide-count"><span class="cur">23</span> / <span class="tot">23</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <div class="outro-inner">
+        <h1 class="disp xl rz rz1">Questions?</h1>
+        <div class="rule rz rz2" style="margin-left:auto;margin-right:auto;"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<button class="navbtn prev" id="btnPrev" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15.4 6.6 9 12l6.4 5.4"/></svg></button>
+<button class="navbtn next" id="btnNext" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M8.6 6.6 15 12l-6.4 5.4"/></svg></button>
+<div class="click-zone left" id="zoneLeft"></div>
+<div class="click-zone right" id="zoneRight"></div>
+
+<nav class="dots" id="dots" aria-label="Slide navigation"></nav>
+
+<div class="kbd-hint"><kbd>N</kbd> notes &nbsp; <kbd>&larr;</kbd><kbd>&rarr;</kbd> navigate</div>
+
+<div class="notes-panel" id="notesPanel">
+  <p class="notes-kicker">Speaker Notes &mdash; press N to close</p>
+  <div class="notes-body" id="notesBody"></div>
+</div>
+
+<button class="ask-btn" id="askBtn" title="Ask a question about this slide" aria-label="Ask a question about this slide">Question?</button>
+<div class="ask-backdrop" id="askBackdrop">
+  <div class="ask-panel">
+    <p class="ask-title">Ask a question or leave a comment</p>
+    <p class="ask-context" id="askContext"></p>
+    <textarea id="askText" placeholder="What's on your mind about this slide?" maxlength="4000"></textarea>
+    <input type="text" id="askName" placeholder="Your name" maxlength="120">
+    <div class="ask-row">
+      <span class="ask-hint">Goes straight to Dr. Kim.</span>
+      <div class="ask-actions">
+        <button class="ask-btn-cancel" id="askCancel">Cancel</button>
+        <button class="ask-btn-send" id="askSend">Send</button>
+      </div>
+    </div>
+    <div class="ask-status" id="askStatus"></div>
+  </div>
+</div>
+
+<script src="../questions/config.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var idx = 0;
+
+  var NOTES = [
+    null, null, null, null, null, null, null, null, null, null,
+    null, null, null, null, null, null, null, null,
+    'Functional fit: where the sponsor’s product is actually used in the sport event by participants or the event organizers.',
+    'Functional fit: where the sponsor’s product is actually used in the sport event by participants or the event organizers.',
+    'Functional fit: where the sponsor’s product is actually used in the sport event by participants or the event organizers.',
+    null, null
+  ];
+
+  var progressFill = document.getElementById('progressFill');
+  var dotsWrap = document.getElementById('dots');
+  var btnPrev = document.getElementById('btnPrev');
+  var btnNext = document.getElementById('btnNext');
+  var notesPanel = document.getElementById('notesPanel');
+  var notesBody = document.getElementById('notesBody');
+
+  for (var i = 0; i < total; i++){
+    var d = document.createElement('button');
+    d.className = 'dot';
+    d.setAttribute('aria-label', 'Go to slide ' + (i+1));
+    d.addEventListener('click', (function(n){ return function(){ goTo(n); }; })(i));
+    dotsWrap.appendChild(d);
+  }
+  var dotEls = Array.prototype.slice.call(dotsWrap.children);
+
+  function renderNotes(entry){
+    if (!entry){
+      notesBody.textContent = 'No speaker notes for this slide.';
+      return;
+    }
+    var list = Array.isArray(entry) ? entry : [entry];
+    notesBody.innerHTML = list.map(function(text){
+      if (/^https?:\/\//.test(text)){
+        return '<div><a href="'+text+'" target="_blank" rel="noopener">'+text+'</a></div>';
+      }
+      return '<div>'+text+'</div>';
+    }).join('');
+  }
+
+  function setActive(newIdx){
+    slides.forEach(function(s, i){
+      s.classList.toggle('active', i === newIdx);
+    });
+    idx = newIdx;
+    progressFill.style.width = ((idx+1)/total*100) + '%';
+    dotEls.forEach(function(d,i){ d.classList.toggle('on', i===idx); });
+    btnPrev.disabled = (idx === 0);
+    btnNext.disabled = (idx === total-1);
+    renderNotes(NOTES[idx]);
+  }
+
+  function goTo(n){
+    n = Math.max(0, Math.min(total-1, n));
+    if (n === idx) return;
+    setActive(n);
+  }
+  function next(){ if (idx < total-1) setActive(idx+1); }
+  function prev(){ if (idx > 0) setActive(idx-1); }
+
+  btnNext.addEventListener('click', next);
+  btnPrev.addEventListener('click', prev);
+  document.getElementById('zoneLeft').addEventListener('click', prev);
+  document.getElementById('zoneRight').addEventListener('click', next);
+
+  document.addEventListener('keydown', function(e){
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'TEXTAREA' || tag === 'INPUT' || (e.target && e.target.isContentEditable)) return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if (e.key === 'Home'){ goTo(0); }
+    else if (e.key === 'End'){ goTo(total-1); }
+    else if (e.key === 'n' || e.key === 'N'){ notesPanel.classList.toggle('open'); }
+    else if (e.key === '+' || e.key === '='){ e.preventDefault(); zoomIn(); }
+    else if (e.key === '-' || e.key === '_'){ e.preventDefault(); zoomOut(); }
+    else if (e.key === '0'){ e.preventDefault(); zoomReset(); }
+  });
+
+  var zoomOutBtn = document.getElementById('zoomOutBtn');
+  var zoomInBtn = document.getElementById('zoomInBtn');
+  var zoomResetBtn = document.getElementById('zoomResetBtn');
+  var ZOOM_MIN = 0.75, ZOOM_MAX = 2, ZOOM_STEP = 0.1;
+  var zoomLevel = 1;
+  var ZOOM_KEY = 'spm261_zoom_' + location.pathname;
+  try {
+    var savedZoom = parseFloat(localStorage.getItem(ZOOM_KEY));
+    if (!isNaN(savedZoom) && savedZoom >= ZOOM_MIN && savedZoom <= ZOOM_MAX) zoomLevel = savedZoom;
+  } catch (e) {}
+  function applyZoom(){
+    document.documentElement.style.setProperty('--zoom', zoomLevel.toFixed(2));
+    zoomResetBtn.textContent = Math.round(zoomLevel*100)+'%';
+    zoomOutBtn.disabled = zoomLevel<=ZOOM_MIN;
+    zoomInBtn.disabled = zoomLevel>=ZOOM_MAX;
+    try { localStorage.setItem(ZOOM_KEY, zoomLevel); } catch (e) {}
+  }
+  function zoomIn(){ zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel+ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomOut(){ zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel-ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomReset(){ zoomLevel = 1; applyZoom(); }
+  zoomInBtn.addEventListener('click', function(e){ e.stopPropagation(); zoomIn(); });
+  zoomOutBtn.addEventListener('click', function(e){ e.stopPropagation(); zoomOut(); });
+  zoomResetBtn.addEventListener('click', function(e){ e.stopPropagation(); zoomReset(); });
+  applyZoom();
+
+  // touch swipe
+  var touchX = null;
+  document.addEventListener('touchstart', function(e){ touchX = e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if (touchX === null) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50){ dx < 0 ? next() : prev(); }
+    touchX = null;
+  }, {passive:true});
+
+  // initial state
+  setActive(0);
+
+  // print / PDF export hook — forces every slide + all staged reveals to
+  // their finished state before the browser prints.
+  window.forceFinalState = function(){
+    slides.forEach(function(s){ s.classList.add('active'); });
+  };
+
+  // ask a question / leave a comment
+  (function(){
+    var askBtn = document.getElementById('askBtn');
+    var backdrop = document.getElementById('askBackdrop');
+    var context = document.getElementById('askContext');
+    var textEl = document.getElementById('askText');
+    var nameEl = document.getElementById('askName');
+    var sendBtn = document.getElementById('askSend');
+    var cancelBtn = document.getElementById('askCancel');
+    var statusEl = document.getElementById('askStatus');
+    var DECK = 'SPM261 Week 4-1 — Sport Marketing';
+
+    function open(){
+      var slide = slides[idx];
+      var title = (slide && slide.getAttribute('aria-label')) || '(untitled)';
+      context.textContent = 'Slide ' + (idx+1) + ' of ' + total + ' — ' + title;
+      statusEl.textContent = ''; statusEl.className = 'ask-status';
+      sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      backdrop.classList.add('open');
+      setTimeout(function(){ textEl.focus(); }, 50);
+    }
+    function close(){
+      backdrop.classList.remove('open');
+      textEl.value=''; nameEl.value='';
+    }
+    function send(){
+      var question = textEl.value.trim();
+      var name = nameEl.value.trim();
+      if(!name){
+        statusEl.textContent = 'Please enter your name.';
+        statusEl.className = 'ask-status err';
+        nameEl.focus();
+        return;
+      }
+      if(!question){
+        statusEl.textContent = 'Please enter a question or comment.';
+        statusEl.className = 'ask-status err';
+        textEl.focus();
+        return;
+      }
+      if(!window.QUESTIONS_API){
+        statusEl.textContent = "This form isn't connected yet — let your professor know.";
+        statusEl.className = 'ask-status err';
+        return;
+      }
+      sendBtn.disabled = true; sendBtn.textContent = 'Sending…';
+      statusEl.textContent = ''; statusEl.className = 'ask-status';
+      var slide = slides[idx];
+      var title = (slide && slide.getAttribute('aria-label')) || '';
+      fetch(window.QUESTIONS_API, {
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({ deck: DECK, slideIndex: idx+1, slideTitle: title, question: question, name: name })
+      }).then(function(){
+        statusEl.textContent = 'Sent — thanks!';
+        statusEl.className = 'ask-status ok';
+        setTimeout(close, 1100);
+      }).catch(function(){
+        statusEl.textContent = "Couldn't send — check your connection and try again.";
+        statusEl.className = 'ask-status err';
+        sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      });
+    }
+    askBtn.addEventListener('click', open);
+    cancelBtn.addEventListener('click', close);
+    sendBtn.addEventListener('click', send);
+    backdrop.addEventListener('click', function(e){ if(e.target === backdrop) close(); });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && backdrop.classList.contains('open')) close();
+    });
+  })();
+})();
+</script>
+<script>window.SLIDE_POLLS = {};</script>
+<script src="../questions/widgets.js"></script>
+</body>
+</html>
