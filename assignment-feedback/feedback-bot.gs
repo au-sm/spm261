@@ -140,9 +140,30 @@ function onFormSubmit(e) {
   const resp = e.response;                 // FormResponse (form-bound trigger)
   const responseId = resp.getId();
   if (isProcessed_(responseId)) return;
+  processResponse_(resp, responseId);
+}
 
+// Manually resend feedback for ONE past submission by its Response ID --
+// run this from the Script editor's function dropdown (select
+// reprocessResponseId_, then Run) after pasting a Response ID from an
+// ERROR email below. Needed because a submission that failed (a
+// transient Gemini overload, for example) is NEVER automatically
+// retried -- onFormSubmit only fires once, at the moment of submission --
+// so without this, that student simply never gets anything unless
+// someone notices and manually resends it.
+function reprocessResponseId_(responseId) {
+  const form = FormApp.getActiveForm();
+  const resp = form.getResponse(responseId);
+  if (!resp) throw new Error('No response found for id "' + responseId + '" on this form.');
+  processResponse_(resp, responseId);
+}
+
+function processResponse_(resp, responseId) {
+  let sub; // declared here (not just inside the try) so the catch block below
+           // can still report WHO this submission was, instead of just an
+           // opaque Response ID nobody can act on.
   try {
-    const sub = parseResponse_(resp);
+    sub = parseResponse_(resp);
     if (!sub.assignmentKey) throw new Error('Could not tell which assignment: "' + sub.assignment + '"');
     const rubric = RUBRICS[sub.assignmentKey];
 
@@ -160,10 +181,16 @@ function onFormSubmit(e) {
           ai.expectedScore + ' / ' + ai.maxScore, 'sent']);
     markProcessed_(responseId);
   } catch (err) {
+    const who = sub
+      ? (sub.name || '(name not given)') + ' <' + (sub.email || 'email not given') + '> -- ' + (sub.assignment || '(assignment unclear)')
+      : '(could not even parse who this was)';
     GmailApp.sendEmail(INSTRUCTOR_EMAIL,
       SUBJECT_PREFIX + ' — ERROR on a submission',
-      'Response ID: ' + responseId + '\n\n' + (err.stack || err));
-    log_([new Date(), '', '', '', '', 'ERROR: ' + err.message]);
+      'Student: ' + who + '\nResponse ID: ' + responseId +
+      '\n\nThe student did NOT receive any feedback email. Once the problem below ' +
+      'is resolved, resend it by running this from the Script editor:\n' +
+      '  reprocessResponseId_("' + responseId + '")\n\n' + (err.stack || err));
+    log_([new Date(), sub ? sub.name : '', sub ? sub.email : '', sub ? sub.assignment : '', '', 'ERROR: ' + err.message]);
   }
 }
 
@@ -309,19 +336,35 @@ function callGemini_(rubric, sub, material) {
     generationConfig: { temperature: 0.3, responseMimeType: 'application/json' }
   };
 
-  const res = UrlFetchApp.fetch(
-    'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL +
-      ':generateContent?key=' + encodeURIComponent(key),
-    { method: 'post', contentType: 'application/json',
-      payload: JSON.stringify(payload), muteHttpExceptions: true });
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL +
+      ':generateContent?key=' + encodeURIComponent(key);
 
-  if (res.getResponseCode() !== 200) {
-    throw new Error('Gemini HTTP ' + res.getResponseCode() + ': ' + res.getContentText().slice(0, 500));
+  // Gemini's 503 "This model is currently experiencing high demand" and 429
+  // rate-limit responses are TRANSIENT -- they clear up within seconds to a
+  // couple minutes on their own. Without a retry, one of these meant the
+  // student got NOTHING (this happened for real, three separate times).
+  // onFormSubmit only ever fires once per submission, so this is the only
+  // chance to self-heal -- there's no separate retry pass later.
+  const RETRY_DELAYS_MS = [5000, 15000, 45000];
+  let lastError;
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    const res = UrlFetchApp.fetch(url, {
+      method: 'post', contentType: 'application/json',
+      payload: JSON.stringify(payload), muteHttpExceptions: true,
+    });
+    const code = res.getResponseCode();
+    if (code === 200) {
+      const out = JSON.parse(res.getContentText());
+      const txt = out.candidates && out.candidates[0].content.parts[0].text;
+      if (!txt) throw new Error('Gemini returned no text: ' + res.getContentText().slice(0, 500));
+      return JSON.parse(txt);
+    }
+    lastError = new Error('Gemini HTTP ' + code + ': ' + res.getContentText().slice(0, 500));
+    const retryable = code === 503 || code === 429;
+    if (!retryable || attempt === RETRY_DELAYS_MS.length) throw lastError;
+    Utilities.sleep(RETRY_DELAYS_MS[attempt]);
   }
-  const out = JSON.parse(res.getContentText());
-  const txt = out.candidates && out.candidates[0].content.parts[0].text;
-  if (!txt) throw new Error('Gemini returned no text: ' + res.getContentText().slice(0, 500));
-  return JSON.parse(txt);
+  throw lastError;
 }
 
 /* ============================ EMAIL BODY ============================= */
