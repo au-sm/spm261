@@ -33,7 +33,7 @@ const GEMINI_MODEL     = 'gemini-3.6-flash';   // 2.5-flash is retired for new k
 const GEMINI_MODEL_FALLBACKS = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite'];
 const INSTRUCTOR_EMAIL = 'kimjw@arcadia.edu';   // gets error reports
 const COPY_INSTRUCTOR  = false;                 // CC instructor on every student email
-const LOG_SHEET_ID     = '';                    // '' = no log; else a spreadsheet ID
+const LOG_SHEET_ID     = '12AS0aiCbkyBQZxzjxxruqgvyRFyqk1ES-UyuG5q9ptA'; // "SPM 261 Assignment Feedback — Log"
 const SUBJECT_PREFIX   = 'SPM 261 — Assignment Feedback';
 const SENDER_NAME      = 'SPM 261 Assignment Feedback';
 
@@ -167,6 +167,12 @@ function onFormSubmit(e) {
 // so without this, that student simply never gets anything unless
 // someone notices and manually resends it.
 function reprocessResponseId_(responseId) {
+  if (isProcessed_(responseId)) {
+    Logger.log('SKIPPED -- ' + responseId + ' already sent successfully once. ' +
+      'Nothing to do (this guard exists so re-running this function, or ' +
+      'TEMP_resend, twice by accident never double-emails a student).');
+    return;
+  }
   const form = FormApp.getActiveForm();
   const resp = form.getResponse(responseId);
   if (!resp) throw new Error('No response found for id "' + responseId + '" on this form.');
