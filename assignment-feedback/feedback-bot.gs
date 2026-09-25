@@ -25,6 +25,12 @@
 
 /* ================================ CONFIG ================================ */
 const GEMINI_MODEL     = 'gemini-3.6-flash';   // 2.5-flash is retired for new keys
+// gemini-3.6-flash has been hitting a sustained (multi-day, not transient)
+// 503 "high demand" outage -- confirmed independently on Google's own AI
+// Developer Forum. A same-model retry can't fix that; callGemini_ falls
+// through this list in order (each with its own short retry) whenever the
+// current model is the one that's down, rather than giving up entirely.
+const GEMINI_MODEL_FALLBACKS = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite'];
 const INSTRUCTOR_EMAIL = 'kimjw@arcadia.edu';   // gets error reports
 const COPY_INSTRUCTOR  = false;                 // CC instructor on every student email
 const LOG_SHEET_ID     = '';                    // '' = no log; else a spreadsheet ID
@@ -345,33 +351,46 @@ function callGemini_(rubric, sub, material) {
     generationConfig: { temperature: 0.3, responseMimeType: 'application/json' }
   };
 
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL +
-      ':generateContent?key=' + encodeURIComponent(key);
-
   // Gemini's 503 "This model is currently experiencing high demand" and 429
-  // rate-limit responses are TRANSIENT -- they clear up within seconds to a
-  // couple minutes on their own. Without a retry, one of these meant the
-  // student got NOTHING (this happened for real, three separate times).
+  // rate-limit responses can be a brief blip (self-heals within a retry
+  // loop on the SAME model) or a sustained outage of that specific model
+  // lasting hours to days (confirmed independently on Google's own AI
+  // Developer Forum for gemini-3.6-flash around this exact time) -- a
+  // same-model retry alone cannot fix the second case. So: retry the
+  // primary model with backoff first (handles a brief blip), then fall
+  // through GEMINI_MODEL_FALLBACKS in order, each with a couple of quick
+  // attempts (handles a sustained outage of one specific model). Without
+  // this, a student got NOTHING (this happened for real, four times).
   // onFormSubmit only ever fires once per submission, so this is the only
   // chance to self-heal -- there's no separate retry pass later.
-  const RETRY_DELAYS_MS = [5000, 15000, 45000];
+  const candidates = [
+    { model: GEMINI_MODEL, delaysMs: [5000, 15000, 45000] },
+  ].concat(GEMINI_MODEL_FALLBACKS.map(function (m) { return { model: m, delaysMs: [5000] }; }));
+
   let lastError;
-  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
-    const res = UrlFetchApp.fetch(url, {
-      method: 'post', contentType: 'application/json',
-      payload: JSON.stringify(payload), muteHttpExceptions: true,
-    });
-    const code = res.getResponseCode();
-    if (code === 200) {
-      const out = JSON.parse(res.getContentText());
-      const txt = out.candidates && out.candidates[0].content.parts[0].text;
-      if (!txt) throw new Error('Gemini returned no text: ' + res.getContentText().slice(0, 500));
-      return JSON.parse(txt);
+  for (let c = 0; c < candidates.length; c++) {
+    const model = candidates[c].model;
+    const delays = candidates[c].delaysMs;
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model +
+        ':generateContent?key=' + encodeURIComponent(key);
+
+    for (let attempt = 0; attempt <= delays.length; attempt++) {
+      const res = UrlFetchApp.fetch(url, {
+        method: 'post', contentType: 'application/json',
+        payload: JSON.stringify(payload), muteHttpExceptions: true,
+      });
+      const code = res.getResponseCode();
+      if (code === 200) {
+        const out = JSON.parse(res.getContentText());
+        const txt = out.candidates && out.candidates[0].content.parts[0].text;
+        if (!txt) throw new Error('Gemini (' + model + ') returned no text: ' + res.getContentText().slice(0, 500));
+        return JSON.parse(txt);
+      }
+      lastError = new Error('Gemini ' + model + ' HTTP ' + code + ': ' + res.getContentText().slice(0, 500));
+      const retryable = code === 503 || code === 429;
+      if (!retryable || attempt === delays.length) break; // move to the next model, if any
+      Utilities.sleep(delays[attempt]);
     }
-    lastError = new Error('Gemini HTTP ' + code + ': ' + res.getContentText().slice(0, 500));
-    const retryable = code === 503 || code === 429;
-    if (!retryable || attempt === RETRY_DELAYS_MS.length) throw lastError;
-    Utilities.sleep(RETRY_DELAYS_MS[attempt]);
   }
   throw lastError;
 }
