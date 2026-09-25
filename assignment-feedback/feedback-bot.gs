@@ -111,7 +111,8 @@ Formatting rules (hard):
  - No more than 5 slides TOTAL, including the title page (so the title page
    plus up to 4 more slides).
  - No more than 3 sentences on any slide.
- - Failure to follow the formatting rules = minimum points for the assignment.
+ - A formatting violation costs the Adherence to Format points (below) -- it
+   does NOT zero out Content or Style. Score every category on its own merits.
 
 Ideas must be the student's own; insight and creativity are the main focus.
 Sources should be news or scholarly articles.`,
@@ -124,14 +125,17 @@ Sources should be news or scholarly articles.`,
   2 — Addresses the topic but missing key elements (rationale or outcomes);
       limited or weak sourcing.
   0 — Incomplete or off-topic; no clear tie to the required elements.
+  Score Content ONLY on the quality/depth of the idea, rationale, and outcomes
+  -- a formatting violation is graded below, in Adherence to Format, and must
+  NEVER reduce the Content score by itself.
 
 Adherence to Format (max 2):
   2 — No more than 5 slides TOTAL, including the title page (so 5 is fine, so is
       fewer; only MORE than 5 total is a violation). No slide over 3 sentences.
       Title page present.
   0 — Any violation of the above (more than 5 slides total, any slide over 3
-      sentences, or no title page). Per the rules this also caps the whole
-      assignment at minimum points. In "whatToChange", name SPECIFICALLY which
+      sentences, or no title page). This costs ONLY these 2 points -- it does
+      NOT reduce Content or Style. In "whatToChange", name SPECIFICALLY which
       rule was violated and how (e.g. "Slide 3 has 4 sentences, one over the
       3-sentence limit") -- never cite slide count as the problem unless the
       deck actually has MORE than 5 slides total, counting the title page.
