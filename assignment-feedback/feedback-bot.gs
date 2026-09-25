@@ -108,7 +108,8 @@ Must include: Title Page, Your Idea, Rationale, Expected outcome/impact
 (financial, safety, improvement, etc.), and References (cited sources).
 
 Formatting rules (hard):
- - No more than 5 slides NOT including the title page (so <= 6 slides total).
+ - No more than 5 slides TOTAL, including the title page (so the title page
+   plus up to 4 more slides).
  - No more than 3 sentences on any slide.
  - Failure to follow the formatting rules = minimum points for the assignment.
 
@@ -125,15 +126,15 @@ Sources should be news or scholarly articles.`,
   0 — Incomplete or off-topic; no clear tie to the required elements.
 
 Adherence to Format (max 2):
-  2 — No more than 5 content slides (excluding title) -- 5 is fine, so is fewer;
-      only MORE than 5 is a violation. No slide over 3 sentences. Title page
-      present.
-  0 — Any violation of the above (more than 5 content slides, any slide over 3
+  2 — No more than 5 slides TOTAL, including the title page (so 5 is fine, so is
+      fewer; only MORE than 5 total is a violation). No slide over 3 sentences.
+      Title page present.
+  0 — Any violation of the above (more than 5 slides total, any slide over 3
       sentences, or no title page). Per the rules this also caps the whole
       assignment at minimum points. In "whatToChange", name SPECIFICALLY which
       rule was violated and how (e.g. "Slide 3 has 4 sentences, one over the
-      3-sentence limit") -- never cite slide COUNT as the problem unless the
-      deck actually has more than 5 content slides.
+      3-sentence limit") -- never cite slide count as the problem unless the
+      deck actually has MORE than 5 slides total, counting the title page.
 
 Professionalism & Presentation Style (max 3) — assessed live, not from the file.`
   }
