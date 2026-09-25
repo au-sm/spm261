@@ -125,11 +125,15 @@ Sources should be news or scholarly articles.`,
   0 — Incomplete or off-topic; no clear tie to the required elements.
 
 Adherence to Format (max 2):
-  2 — Exactly 5 content slides (excluding title), <= 3 sentences per slide,
-      title page present.
-  0 — Any violation (more than 5 content slides, a slide over 3 sentences, or no
-      title page). Per the rules this also caps the whole assignment at minimum
-      points — say so explicitly.
+  2 — No more than 5 content slides (excluding title) -- 5 is fine, so is fewer;
+      only MORE than 5 is a violation. No slide over 3 sentences. Title page
+      present.
+  0 — Any violation of the above (more than 5 content slides, any slide over 3
+      sentences, or no title page). Per the rules this also caps the whole
+      assignment at minimum points. In "whatToChange", name SPECIFICALLY which
+      rule was violated and how (e.g. "Slide 3 has 4 sentences, one over the
+      3-sentence limit") -- never cite slide COUNT as the problem unless the
+      deck actually has more than 5 content slides.
 
 Professionalism & Presentation Style (max 3) — assessed live, not from the file.`
   }
