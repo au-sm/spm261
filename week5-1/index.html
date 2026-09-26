@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sports Betting &mdash; SPM 261 Week 5-1</title>
+<style>
+/* ============================================================
+   TOKENS — "Sportsbook" theme: near-black base,
+   money green / odds-board amber / vig crimson accents.
+   ============================================================ */
+:root{
+  --bg:            #05070b;
+  --bg-raised:     #0d1219;
+  --ink:           #f2f5fa;
+  --ink-dim:       #a9b4c8;
+  --ink-faint:     #5c6a84;
+  --line:          rgba(242,245,250,.12);
+  --line-soft:     rgba(242,245,250,.06);
+
+  --money:         #22d47a;
+  --money-dim:     #0d3a22;
+  --money-glow:    rgba(34,212,122,.32);
+
+  --odds:          #f2a93c;
+  --odds-dim:      #4a3407;
+  --odds-glow:     rgba(242,169,60,.30);
+
+  --vig:           #e2324a;
+  --vig-dim:       #4a0f1c;
+  --vig-glow:      rgba(226,50,74,.28);
+
+  --font-display:  'Futura', 'Century Gothic', 'Avenir Next', 'Arial Narrow', Helvetica, Arial, sans-serif;
+  --font-body:     -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:     ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+
+  --ease:          cubic-bezier(.22,.68,.16,1);
+  --dur-fast:      .45s;
+  --dur-med:       .8s;
+  --dur-slow:      1.4s;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;}
+h1,h2,h3,h4,p,ul,ol{margin:0;}
+
+/* ambient background glow */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.ambient::before,.ambient::after{
+  content:'';position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;
+  animation:drift 26s ease-in-out infinite alternate;
+}
+.ambient::before{
+  width:52vw;height:52vw;top:-18vw;left:-14vw;
+  background:radial-gradient(circle at 30% 30%,var(--money-glow),transparent 70%);
+}
+.ambient::after{
+  width:46vw;height:46vw;bottom:-16vw;right:-12vw;
+  background:radial-gradient(circle at 60% 60%,var(--odds-glow),transparent 70%);
+  animation-delay:-13s;
+}
+@keyframes drift{
+  from{transform:translate(0,0) scale(1);}
+  to{transform:translate(3vw,2vw) scale(1.08);}
+}
+
+/* top chrome */
+.home-link,.pdf-link-fixed{
+  position:fixed;top:1.6vh;z-index:60;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-faint);text-decoration:none;
+  transition:color .2s ease;
+}
+.home-link{left:4.5vw;}
+.pdf-link-fixed{right:4.5vw;}
+.home-link:hover,.pdf-link-fixed:hover{color:var(--ink);}
+
+.zoom-controls{
+  position:fixed;bottom:2.4vh;left:50%;transform:translateX(-50%);z-index:20;
+  display:flex;align-items:center;
+}
+.zoom-btn{
+  pointer-events:auto;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;
+  font-family:var(--font-mono);font-size:13px;line-height:1;
+  padding:6px 11px;transition:border-color .2s ease,color .2s ease,background .2s ease;
+}
+.zoom-btn:hover{background:rgba(255,255,255,.09);color:var(--ink);}
+.zoom-controls .zoom-btn+.zoom-btn{margin-left:-1px;}
+.zoom-controls .zoom-btn:first-child{border-radius:999px 0 0 999px;}
+.zoom-controls .zoom-btn:last-child{border-radius:0 999px 999px 0;}
+.zoom-reset{min-width:48px;text-align:center;font-size:10px;letter-spacing:.03em;}
+.zoom-btn:disabled{opacity:.3;cursor:default;}
+.zoom-btn:disabled:hover{background:rgba(255,255,255,.04);color:var(--ink-dim);}
+
+.progress-rail{position:fixed;top:0;left:0;right:0;height:2px;background:var(--line-soft);z-index:20;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--money),var(--odds));width:2.7%;transition:width .5s var(--ease);}
+
+.dots{
+  position:fixed;left:4.5vw;top:50%;transform:translateY(-50%);z-index:20;
+  display:flex;flex-direction:column;gap:6px;
+  max-height:78vh;overflow:hidden;
+}
+.dot{
+  width:6px;height:6px;border-radius:50%;background:var(--line);border:none;padding:0;cursor:pointer;flex:none;
+  transition:background .3s var(--ease),transform .3s var(--ease);
+}
+.dot:hover{transform:scale(1.3);}
+.dot.on{background:var(--ink);transform:scale(1.3);}
+
+.navbtn{
+  position:fixed;top:50%;transform:translateY(-50%);z-index:20;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--ink-dim);transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease);
+}
+.navbtn:hover{background:rgba(255,255,255,.09);color:var(--ink);border-color:var(--line);}
+.navbtn svg{width:16px;height:16px;fill:currentColor;}
+.navbtn.prev{left:4vw;}
+.navbtn.next{right:4vw;}
+.navbtn[disabled]{opacity:.25;cursor:default;pointer-events:none;}
+
+.click-zone{position:fixed;top:0;bottom:0;width:14%;z-index:15;cursor:pointer;}
+.click-zone.left{left:0;} .click-zone.right{right:0;}
+
+/* deck / slides */
+.deck{position:fixed;inset:0;z-index:1;}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
+  pointer-events:none;
+  will-change:opacity,transform;
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto;}
+
+.slide-inner{
+  position:relative;z-index:2;
+  flex:1;
+  display:flex;flex-direction:column;
+  padding:13vh 7vw 7vh;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:thin;
+  scrollbar-color:var(--line) transparent;
+  zoom:var(--zoom,1);
+}
+.slide-inner::-webkit-scrollbar{width:7px;}
+.slide-inner::-webkit-scrollbar-track{background:transparent;}
+.slide-inner::-webkit-scrollbar-thumb{background:rgba(242,245,250,.18);border-radius:4px;}
+.slide-inner::-webkit-scrollbar-thumb:hover{background:rgba(242,245,250,.32);}
+
+.chrome-top{
+  position:absolute;top:0;left:0;right:0;z-index:5;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:4.2vh 4.5vw 3vh;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(5,7,11,.62) 0%,rgba(5,7,11,.28) 65%,transparent 100%);
+}
+.eyebrow{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-dim);
+  opacity:0;transform:translateY(-8px);
+  transition:opacity .6s var(--ease),transform .6s var(--ease);
+}
+.slide.active .eyebrow{opacity:1;transform:translateY(0);transition-delay:.15s;}
+.eyebrow .dot{color:var(--accent,var(--money));}
+.slide-count{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.15em;color:var(--ink-faint);
+  opacity:0;transition:opacity .6s var(--ease);
+}
+.slide.active .slide-count{opacity:1;transition-delay:.2s;}
+
+/* per-slide accent theme */
+.slide[data-theme="money"]{--accent:var(--money);--accent-dim:var(--money-dim);}
+.slide[data-theme="odds"]{--accent:var(--odds);--accent-dim:var(--odds-dim);}
+.slide[data-theme="vig"]{--accent:var(--vig);--accent-dim:var(--vig-dim);}
+
+/* ============================================================
+   REVEAL PRIMITIVES (auto-staggered on slide activation)
+   ============================================================ */
+.rz{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+.slide.active .rz{opacity:1;transform:translateY(0);}
+.rz1{transition-delay:.05s;} .rz2{transition-delay:.18s;} .rz3{transition-delay:.32s;}
+.rz4{transition-delay:.46s;} .rz5{transition-delay:.60s;} .rz6{transition-delay:.74s;}
+.rz7{transition-delay:.88s;} .rz8{transition-delay:1.02s;} .rz9{transition-delay:1.16s;}
+.rz10{transition-delay:1.30s;}
+
+/* ============================================================
+   TYPOGRAPHY / GENERIC CONTENT COMPONENTS
+   ============================================================ */
+.kicker{
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 1.4vh;
+}
+.disp{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:.005em;color:var(--ink);line-height:1.04;}
+.disp.xl{font-size:clamp(36px,5.8vw,92px);}
+.disp.lg{font-size:clamp(26px,3.9vw,52px);}
+.disp.md{font-size:clamp(21px,2.6vw,34px);}
+.lede{font-family:var(--font-body);font-weight:400;font-size:clamp(15.5px,1.6vw,20px);line-height:1.55;color:var(--ink-dim);max-width:70ch;margin:1.8vh 0 0;}
+.lede b,.lede strong{color:var(--ink);font-weight:600;}
+
+.rule{width:60px;height:3px;background:var(--accent);border-radius:2px;margin:2vh 0 0;}
+
+.cite-block{border-left:3px solid var(--accent);padding:1.4vh 0 1.4vh 2.2vw;margin:2.6vh 0 0;max-width:76ch;}
+.cite-text{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,2.2vw,28px);line-height:1.34;color:var(--ink);margin:0;text-transform:none;}
+.cite-text mark{background:none;color:var(--accent);}
+.cite-attr{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.05em;color:var(--ink-faint);margin:1.6vh 0 0;}
+
+.bullet-list{list-style:none;margin:2.6vh 0 0;padding:0;display:flex;flex-direction:column;gap:1.4vh;max-width:78ch;}
+.bullet-list li{position:relative;padding-left:2.1em;font-size:clamp(14.5px,1.42vw,18.5px);line-height:1.5;color:var(--ink-dim);}
+.bullet-list li::before{content:'';position:absolute;left:0;top:.5em;width:9px;height:9px;border-radius:50%;background:var(--accent);}
+.bullet-list li b,.bullet-list li strong{color:var(--ink);font-weight:600;}
+.bullet-list.tight{gap:.9vh;}
+.bullet-list.tight li{font-size:clamp(13.5px,1.28vw,16.5px);}
+
+.callout{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:2.2vh 2.4vw;margin-top:2.8vh;max-width:78ch;background:rgba(255,255,255,.02);}
+.callout p{margin:0;font-size:clamp(15.5px,1.6vw,19px);line-height:1.5;color:var(--ink);}
+.callout .src{margin-top:1vh;font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);}
+
+.source-link{display:inline-block;margin-top:1.6vh;font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);word-break:break-all;}
+.source-link a{color:var(--ink-faint);text-decoration:underline;text-decoration-color:var(--line);}
+.source-link a:hover{color:var(--accent);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2.6vw;margin-top:auto;margin-bottom:auto;}
+.col-card{border:1px solid var(--line);border-radius:12px;padding:2.6vh 2.2vw;background:rgba(255,255,255,.02);display:flex;flex-direction:column;}
+.col-card h3{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;font-size:clamp(16px,1.7vw,21px);color:var(--accent);margin:0 0 1.2vh;}
+.col-card p{color:var(--ink-dim);font-size:clamp(13.5px,1.25vw,16px);line-height:1.55;margin:0 0 1vh;}
+.col-card p:last-child{margin-bottom:0;}
+
+/* definition layout w/ side photo or logo */
+.def-layout{display:flex;align-items:center;gap:4vw;flex:1;min-height:0;}
+.def-text{flex:1 1 56%;min-width:0;}
+.def-photo{flex:1 1 38%;min-width:0;max-width:480px;margin-left:auto;height:min(32vh,300px);}
+.def-text .bullet-list li{font-size:clamp(14.5px,1.42vw,18px);}
+@media (max-width:820px){.def-layout{flex-direction:column;}.def-photo{margin-left:0;max-width:100%;}}
+
+/* tables */
+.table-clean{width:100%;border-collapse:collapse;margin-top:2vh;font-size:clamp(12px,1.05vw,14.5px);}
+.table-clean th{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+  text-align:left;padding:1vh 1vw;border-bottom:1px solid var(--line);}
+.table-clean td{padding:1.1vh 1vw;border-bottom:1px solid var(--line-soft);color:var(--ink-dim);vertical-align:top;}
+.table-clean tr:last-child td{border-bottom:none;}
+.table-clean td.hl,.table-clean th.hl{color:var(--ink);font-weight:600;}
+.table-clean tr.total td{color:var(--ink);font-weight:700;background:rgba(255,255,255,.03);}
+.table-clean tr.highlight td{color:var(--ink);font-weight:700;background:var(--accent-dim);}
+.table-clean tbody tr{opacity:0;transform:translateY(10px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
+.slide.active .table-clean tbody tr{opacity:1;transform:translateY(0);}
+.table-clean tbody tr:nth-child(1){transition-delay:.15s;}
+.table-clean tbody tr:nth-child(2){transition-delay:.24s;}
+.table-clean tbody tr:nth-child(3){transition-delay:.33s;}
+.table-clean tbody tr:nth-child(4){transition-delay:.42s;}
+.table-clean tbody tr:nth-child(5){transition-delay:.51s;}
+.table-clean tbody tr:nth-child(6){transition-delay:.60s;}
+.table-clean tbody tr:nth-child(7){transition-delay:.69s;}
+.table-clean tbody tr:nth-child(8){transition-delay:.78s;}
+.table-clean tbody tr:nth-child(9){transition-delay:.87s;}
+.table-clean tbody tr:nth-child(10){transition-delay:.96s;}
+.table-clean tbody tr:nth-child(11){transition-delay:1.05s;}
+.table-clean tbody tr:nth-child(12){transition-delay:1.14s;}
+.table-source{margin-top:1vh;font-family:var(--font-mono);font-size:10px;color:var(--ink-faint);letter-spacing:.02em;}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.table-wrap::-webkit-scrollbar{height:5px;}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
+
+/* image display — no mat / no card, sits directly on background */
+.img-frame{position:relative;overflow:hidden;border-radius:10px;}
+.img-frame img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 6s var(--ease);}
+.slide.active .img-frame img{transform:scale(1);}
+.img-frame.contain{background:none;}
+.img-frame.contain img{object-fit:contain;transform:none;}
+.img-frame.banner-figure::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,7,11,.55) 0%,rgba(5,7,11,.12) 55%,rgba(5,7,11,.05) 100%);pointer-events:none;}
+.gallery-strip{display:flex;gap:1.6vw;}
+.gallery-strip .img-frame{flex:1;min-width:0;}
+.img-cap{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-faint);margin-top:1vh;}
+
+/* full-bleed infographic frame (contain, centered, no crop) */
+.full-figure{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;margin-top:1.6vh;}
+.full-figure img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:8px;background:#fff;padding:1.2vh 1vw;}
+
+/* stat hero — big number emphasis */
+.stat-hero{text-align:center;margin:auto;}
+.stat-hero .num{font-family:var(--font-display);font-weight:800;font-size:clamp(56px,9.5vw,150px);color:var(--accent);line-height:1;letter-spacing:.01em;font-variant-numeric:tabular-nums;}
+.stat-hero .label{margin-top:2vh;font-size:clamp(15px,1.6vw,20px);color:var(--ink-dim);max-width:52ch;margin-left:auto;margin-right:auto;}
+
+/* badge chips */
+.chip-row{display:flex;gap:1vw;flex-wrap:wrap;margin-top:2vh;}
+.chip{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.05em;color:var(--ink);
+  border:1px solid var(--line);border-radius:999px;padding:6px 14px;background:rgba(255,255,255,.03);}
+.chip b{color:inherit;}
+
+/* discussion / activity card */
+.activity-card{border:1px solid var(--accent);border-radius:16px;padding:4vh 4vw;text-align:center;margin:auto;max-width:780px;background:rgba(255,255,255,.03);}
+.activity-card .kicker{justify-content:center;}
+.activity-card .q{font-family:var(--font-display);font-weight:700;text-transform:none;font-size:clamp(20px,2.4vw,30px);line-height:1.25;color:var(--ink);margin-top:1vh;}
+
+/* reading callout */
+.read-card{border:1px dashed var(--accent);border-radius:16px;padding:4vh 4.5vw;margin:auto;max-width:720px;text-align:center;background:rgba(255,255,255,.02);}
+.read-card p{font-family:var(--font-display);font-weight:700;font-size:clamp(19px,2.2vw,27px);text-transform:none;color:var(--ink);line-height:1.35;}
+
+/* ============================================================
+   WATCH CARD (video) — clickable poster + play button
+   ============================================================ */
+.s-watch .slide-inner{justify-content:center;align-items:center;}
+.watch-wrap{width:min(880px,84vw);text-align:center;}
+.watch-wrap.sm{width:min(560px,64vw);}
+.watch-eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin:0 0 1.6vh;}
+.watch-title{font-family:var(--font-display);font-size:clamp(24px,3.8vw,46px);line-height:1.05;text-transform:uppercase;margin:0 0 3vh;}
+.watch-card{display:block;position:relative;border-radius:10px;overflow:hidden;text-decoration:none;background:#000;
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.7);}
+.watch-thumb{position:relative;aspect-ratio:16/9;overflow:hidden;}
+.watch-card.portrait{width:fit-content;margin:0 auto;}
+.watch-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease);}
+.watch-card:hover .watch-thumb img{transform:scale(1.045);}
+.watch-thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.55) 100%);}
+.play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%;
+  background:rgba(5,7,11,.55);border:1.5px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;z-index:2;
+  backdrop-filter:blur(3px);transition:transform .35s var(--ease),background .35s var(--ease),border-color .35s var(--ease);}
+.play-btn.sm{width:52px;height:52px;}
+.watch-card:hover .play-btn{transform:translate(-50%,-50%) scale(1.1);background:var(--accent);border-color:var(--accent);}
+.play-btn svg{width:22px;height:22px;fill:#fff;margin-left:4px;}
+.play-btn.sm svg{width:16px;height:16px;}
+.watch-meta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;}
+.watch-meta .badge{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#fff;
+  background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.35);padding:4px 9px;border-radius:20px;white-space:nowrap;}
+.watch-url{font-family:var(--font-mono);font-size:11.5px;color:#dfe3ea;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.watch-inline{display:flex;align-items:center;gap:1.6vw;margin-top:2.6vh;}
+.watch-inline .watch-card{flex:none;width:min(280px,32vw);}
+.watch-inline .watch-thumb{aspect-ratio:16/9;}
+
+/* content + watch split layout */
+.content-watch{display:flex;gap:3.4vw;flex:1;min-height:0;align-items:flex-start;padding-top:1vh;}
+.content-watch > .cw-text{flex:1;min-width:0;}
+.content-watch > .cw-watch{flex:none;}
+@media (max-width:900px){.content-watch{flex-direction:column;align-items:stretch;}}
+
+/* decorative outro mark */
+.outro-wrap{position:relative;flex:1;display:flex;align-items:center;justify-content:center;border-radius:16px;overflow:hidden;}
+.outro-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 7s var(--ease);}
+.slide.active .outro-wrap img{transform:scale(1);}
+.outro-wrap::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,7,11,.55),rgba(5,7,11,.82) 70%);z-index:1;}
+.outro-content{position:relative;z-index:2;text-align:center;}
+
+/* ============================================================
+   SPEAKER NOTES PANEL
+   ============================================================ */
+.notes-panel{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  max-height:34vh;overflow:auto;
+  background:rgba(5,7,11,.96);border-top:1px solid var(--line);
+  padding:3vh 6vw;
+  transform:translateY(100%);transition:transform .4s var(--ease);
+}
+.notes-panel.open{transform:translateY(0);}
+.notes-kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--money);margin:0 0 1.2vh;}
+.notes-body{font-family:var(--font-body);font-size:15px;line-height:1.6;color:var(--ink-dim);}
+.notes-body a{color:var(--money);}
+
+.kbd-hint{
+  position:fixed;right:4.5vw;bottom:2vh;z-index:31;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--ink-faint);
+}
+.kbd-hint kbd{border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-family:var(--font-mono);}
+.kbd-hint-btn{background:none;border:none;padding:0;margin:0;color:inherit;font:inherit;letter-spacing:inherit;cursor:pointer;}
+.kbd-hint-btn:hover{color:var(--ink);}
+.kbd-hint-btn:hover kbd{border-color:var(--accent);}
+
+/* ============================================================
+   ASK A QUESTION
+   ============================================================ */
+.ask-btn{
+  position:fixed;right:4.5vw;top:calc(4.2vh + 30px);z-index:20;
+  height:32px;padding:0 15px;border-radius:18px;white-space:nowrap;
+  border:1px solid var(--line);background:rgba(5,7,11,.6);backdrop-filter:blur(6px);
+  color:var(--ink-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-family:var(--font-body);font-weight:600;font-size:12.5px;
+  transition:color .2s ease,border-color .2s ease,transform .2s ease;
+}
+.ask-btn:hover{color:var(--money);border-color:var(--money);transform:translateY(-2px);}
+.ask-backdrop{
+  position:fixed;inset:0;z-index:40;background:rgba(3,4,8,.75);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.ask-backdrop.open{opacity:1;pointer-events:auto;}
+.ask-panel{
+  width:min(480px,100%);background:var(--bg-raised);border:1px solid var(--line);border-radius:10px;
+  padding:26px 26px 22px;box-shadow:0 40px 90px -30px rgba(0,0,0,.8);
+  transform:translateY(14px) scale(.98);opacity:0;transition:transform .3s var(--ease),opacity .3s var(--ease);
+}
+.ask-backdrop.open .ask-panel{transform:translateY(0) scale(1);opacity:1;}
+.ask-title{font-family:var(--font-display);font-size:22px;letter-spacing:.01em;color:var(--ink);margin:0 0 4px;text-transform:uppercase;}
+.ask-context{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;color:var(--money);margin:0 0 16px;}
+.ask-panel textarea{
+  width:100%;min-height:96px;resize:vertical;background:var(--bg);color:var(--ink);
+  border:1px solid var(--line);border-radius:6px;padding:12px 14px;font:14px/1.5 var(--font-body);
+  outline:none;transition:border-color .2s ease;box-sizing:border-box;
+}
+.ask-panel textarea:focus{border-color:var(--money);}
+.ask-panel input[type=text]{
+  width:100%;margin-top:10px;background:var(--bg);color:var(--ink);
+  border:1px solid var(--line);border-radius:6px;padding:10px 14px;font:13px var(--font-body);
+  outline:none;transition:border-color .2s ease;box-sizing:border-box;
+}
+.ask-panel input[type=text]:focus{border-color:var(--money);}
+.ask-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;}
+.ask-hint{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);}
+.ask-actions{display:flex;gap:10px;}
+.ask-btn-cancel,.ask-btn-send{
+  font-family:var(--font-body);font-size:13px;font-weight:600;border-radius:6px;padding:9px 16px;
+  cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink-dim);
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.ask-btn-cancel:hover{color:var(--ink);border-color:var(--ink-dim);}
+.ask-btn-send{background:var(--money);border-color:var(--money);color:#04140a;}
+.ask-btn-send:hover{filter:brightness(1.08);}
+.ask-btn-send:disabled{opacity:.5;cursor:default;filter:none;}
+.ask-status{font-family:var(--font-mono);font-size:12px;margin-top:12px;min-height:16px;}
+.ask-status.err{color:var(--vig);}
+.ask-status.ok{color:var(--money);}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;transition-delay:0s !important;}
+  .slide{transform:none !important;}
+  .img-frame img,.outro-wrap img{transform:none !important;}
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:900px){
+  .two-col{grid-template-columns:1fr;}
+  .watch-inline{flex-direction:column;}
+  .dots{display:none;}
+  .navbtn{width:38px;height:38px;}
+}
+
+/* ============================================================
+   PRINT (PDF EXPORT)
+   ============================================================ */
+@media print{
+  html,body{overflow:visible !important;height:auto !important;background:var(--bg);}
+  .ambient,.progress-rail,.dots,.navbtn,.click-zone,.notes-panel,.kbd-hint,.home-link,.pdf-link-fixed,.ask-btn,.ask-backdrop,.zoom-controls,.pulse-wrap,.poll-card{display:none !important;}
+  .deck{position:static !important;}
+  .slide{
+    position:relative !important;
+    inset:auto !important;
+    opacity:1 !important;
+    transform:none !important;
+    pointer-events:auto !important;
+    width:100vw;height:100vh;
+    page-break-after:always;break-after:page;
+    overflow:hidden;
+  }
+  .slide:last-child{page-break-after:auto;}
+  .slide-inner{overflow:visible !important;}
+  .rz,.eyebrow,.slide-count,.table-clean tbody tr,.img-frame img,.outro-wrap img{
+    opacity:1 !important;transform:none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true"></div>
+
+<a class="home-link" href="../" title="Back to course home">&larr; Home</a>
+<a class="pdf-link-fixed" href="SPM261_Week5-1_Slides.pdf" download title="Download this deck as a PDF">PDF &darr;</a>
+<div class="zoom-controls" role="group" aria-label="Zoom controls">
+  <button class="zoom-btn" id="zoomOutBtn" title="Zoom out (&minus;)" aria-label="Zoom out">&minus;</button>
+  <button class="zoom-btn zoom-reset" id="zoomResetBtn" title="Reset zoom (0)" aria-label="Reset zoom">100%</button>
+  <button class="zoom-btn" id="zoomInBtn" title="Zoom in (+)" aria-label="Zoom in">+</button>
+</div>
+
+<div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+
+<main class="deck" id="deck">
+
+  <!-- 1 — TITLE -->
+  <section class="slide s-title" data-theme="money" aria-label="Title">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> SPM 261 &mdash; Introduction to Sport Management</div>
+      <div class="slide-count"><span class="cur">01</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="outro-wrap" style="border-radius:0;">
+      <img src="assets/title-bg-tennis.jpg" alt="Close-up of tennis balls and a racket on court, decorative background">
+      <div class="outro-content" style="text-align:left;max-width:900px;padding:0 7vw;width:100%;">
+        <p class="kicker rz rz1" style="justify-content:flex-start;">Week 5-1</p>
+        <h1 class="disp xl rz rz2">Sports<br>Betting</h1>
+        <p class="lede rz rz3" style="color:var(--ink-dim);">SPM261 Intro to Sport Management &middot; Arcadia University</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 — DISNEY / ESPN -->
+  <section class="slide s-def" data-theme="money" aria-label="Disney prepares sports betting push">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> The Landscape</div>
+      <div class="slide-count"><span class="cur">02</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="def-layout">
+        <div class="def-text">
+          <p class="disp lg rz rz1" style="color:var(--accent);">Disney prepares sports betting push</p>
+          <ul class="bullet-list rz rz2">
+            <li>Mouse will be more aggressive in sports betting, namely by exploring partnerships for ESPN.</li>
+            <li>ESPN has so far avoided operating its own sportsbook, but is reportedly seeking around <b>$3 billion</b> in a multiyear deal to attach its name to an existing sportsbook.</li>
+            <li>The U.S. sports betting market could grow to <b>$37 billion</b> by 2025, according to investment manager Ark Invest.</li>
+            <li>Disney&rsquo;s broadcast rights include NFL, MLB, NBA, NHL, Wimbledon, PGA Tour, and LaLiga. The company is spreading its sports broadcasts beyond ESPN to ABC and Hulu.</li>
+          </ul>
+        </div>
+        <div class="img-frame contain rz rz3 def-photo">
+          <img src="assets/photo-espnbet-phone.jpg" alt="A hand holding a phone displaying the ESPN Bet logo, with a blurred stock-ticker board in the background">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 — PENN / ESPN BET -->
+  <section class="slide s-def" data-theme="money" aria-label="Penn Entertainment to rebrand sportsbook as ESPN BET">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> The Landscape Cont.</div>
+      <div class="slide-count"><span class="cur">03</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="disp lg rz rz1" style="color:var(--accent);">Penn Entertainment to rebrand sportsbook as ESPN BET</p>
+      <div class="def-layout" style="margin-top:1vh;">
+        <div class="def-text">
+          <ul class="bullet-list rz rz2">
+            <li>ESPN has signed a licensing deal with Penn Entertainment to create ESPN BET</li>
+            <li>Penn agreed to pay ESPN <b>$1.5 billion</b> in cash over 10 years</li>
+            <li>Grant ESPN <b>$500 million</b> of warrants to purchase 31.8 million common shares of Penn</li>
+            <li>In the US sports betting market, DraftKings and FanDuel command most of the sportsbook outside of Nevada, with <b>37%</b> and <b>35%</b>, respectively.</li>
+            <li>ESPN Bet has <b>3.2%</b> market share</li>
+            <li>BetMGM <b>8%</b></li>
+            <li>Caesars Entertainment <b>5%</b></li>
+          </ul>
+        </div>
+        <div class="img-frame rz rz3 def-photo" style="height:min(30vh,280px);">
+          <img src="assets/promo-penn-espnbet.jpg" alt="Penn Entertainment and ESPN Bet logos side by side over a sportsbook screen background, with a hand holding a phone showing a football broadcast">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 — MARKET SHARE CHART -->
+  <section class="slide s-figure" data-theme="money" aria-label="Sports Betting Mobile Handle Market Share outside of Nevada">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Market Share Today</div>
+      <div class="slide-count"><span class="cur">04</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Sports Betting Mobile Handle Market Share (outside of NV)</p>
+      <div class="full-figure rz rz2" style="max-height:60vh;">
+        <img src="assets/chart-mobile-handle-share.png" alt="Line chart of sports betting mobile handle market share outside Nevada from June 2022 to June 2026: DKNG ends at 36.7%, FD at 31.8%, FAN at 9.0%, BetMGM at 7.1%, bet365 at 5.4%, CZR at 4.8%, RSI at 1.2%">
+      </div>
+      <p class="source-link rz rz3">Source: casinoreports.com/us-sports-betting-market-stats-database</p>
+    </div>
+  </section>
+
+  <!-- 5 — HANDLE/GGR/TAX TABLE -->
+  <section class="slide s-table" data-theme="money" aria-label="Handle, GGR, and Tax Rate by State — Top 5">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> State-by-State</div>
+      <div class="slide-count"><span class="cur">05</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Handle, GGR &amp; Tax Rate by State (Top 5)</p>
+      <div class="table-wrap rz rz2">
+      <table class="table-clean">
+        <thead><tr><th>State</th><th>Online Launch</th><th>2025 Handle</th><th>2025 GGR</th><th>GGR Tax Rate (2026)</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">New York</td><td>Jan 2022</td><td>$26.3B</td><td>$2.56B</td><td>51%</td></tr>
+          <tr><td class="hl">Illinois</td><td>Jun 2020</td><td>$15.5B</td><td>$1.60B</td><td>20&ndash;40% graduated + per-wager fee</td></tr>
+          <tr><td class="hl">New Jersey</td><td>Aug 2018</td><td>$12.2B</td><td>$1.19B</td><td>19.75% (raised from 13% in 2025)</td></tr>
+          <tr><td class="hl">Ohio</td><td>Jan 2023</td><td>$9.5B</td><td>$1.10B</td><td>20%</td></tr>
+          <tr><td class="hl">Pennsylvania</td><td>May 2019</td><td>$9.0B</td><td>$0.86B</td><td>36%</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="lede rz rz3" style="margin-top:2.2vh;font-family:var(--font-mono);font-size:13px;color:var(--ink);">US Total &mdash; 39 Jurisdictions: Handle <b>$166.9B</b> &amp; GGR <b>$16.96B</b></p>
+      <p class="source-link rz rz4">Source: track360.io/blog/sports-betting-statistics-2026-us-handle-revenue-by-state</p>
+    </div>
+  </section>
+
+  <!-- 6 — PASPA INTRO -->
+  <section class="slide s-def" data-theme="odds" aria-label="Sports Betting — PASPA and the future of sports business">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> A Brief History</div>
+      <div class="slide-count"><span class="cur">06</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="def-layout">
+        <div class="def-text">
+          <p class="disp lg rz rz1" style="color:var(--accent);">Sports Betting</p>
+          <ul class="bullet-list rz rz2">
+            <li>Professional and Amateur Sports Protection Act (PASPA, 1992&ndash;2018)</li>
+            <li>Individual states do determine whether and how to legalize sports betting</li>
+            <li>Is this future of sports business?</li>
+            <li>Sports analytics, technology, etc.</li>
+          </ul>
+          <p class="source-link rz rz3">marketwatch.com/press-release/online-sports-betting-market-sizegrowth-2021-global-trend-industry-news-industry-demand-business-top-key-players-update-business-statistics-and-research-methodology-by-forecast-to-2027-2021-07-22</p>
+        </div>
+        <div class="img-frame rz rz4 def-photo" style="height:min(46vh,420px);max-width:520px;">
+          <img src="assets/photo-sportsbook-vegas.jpg" alt="Wide view of a Las Vegas sportsbook wall of screens with rows of betting stations below, decorative">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 — PRIOR TO 1992 -->
+  <section class="slide s-banner" data-theme="odds" aria-label="Prior to 1992 — Murphy v. NCAA and the repeal of PASPA">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> A Brief History Cont.</div>
+      <div class="slide-count"><span class="cur">07</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="img-frame banner-figure rz rz1" style="height:26vh;border-radius:0;flex:none;">
+      <img src="assets/photo-westgate-superbook.jpg" alt="Wide-angle view of the Westgate SuperBook sportsbook in Las Vegas, screens showing March Madness and live odds boards, decorative banner">
+    </div>
+    <div class="slide-inner" style="padding-top:4vh;">
+      <p class="disp lg rz rz2" style="color:var(--accent);">Prior to 1992</p>
+      <ul class="bullet-list rz rz3">
+        <li>Nevada was the only state in the US with full-scale legal sports wagering</li>
+        <li>Prior to 1992, sports betting was not allowed in Atlantic City, NJ.</li>
+        <li>For decades, Atlantic City was the only US location outside Nevada to have legal casinos.</li>
+        <li>2011&ndash;2018: NJ voters and lawmakers repeatedly attempted to legalize sports betting</li>
+        <li><b>Murphy vs NCAA (2018)</b> &mdash; NJ wanted to legalize it vs PASPA prevented it from doing so</li>
+        <li>The Supreme Court addressed the principles of federalism, particularly the Tenth Amendment, which reserves powers not delegated to the federal government to the states.</li>
+        <li>PASPA violated the anti-commandeering doctrine</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 8 — VIDEO: NJ DOCUMENTARY -->
+  <section class="slide s-watch" data-theme="odds" aria-label="Video: Betting On New Jersey — A NJ Sports Betting Documentary">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Case Study &mdash; New Jersey</div>
+      <div class="slide-count"><span class="cur">08</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="watch-wrap rz rz1">
+        <p class="watch-eyebrow">A NJ Sports Betting Documentary</p>
+        <h2 class="watch-title">Betting On New Jersey</h2>
+        <a class="watch-card" href="https://www.youtube.com/watch?v=NmelX4L3H0Q" target="_blank" rel="noopener">
+          <div class="watch-thumb">
+            <img src="assets/video-nj-documentary-poster.jpg" alt="Betting On New Jersey documentary thumbnail: the Absecon Lighthouse at dusk in Atlantic City">
+            <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="watch-meta">
+              <span class="badge">Documentary &middot; 24:07</span>
+              <span class="watch-url">youtube.com/watch?v=NmelX4L3H0Q</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 — NJ SPORTS BETTING MARKET TABLE -->
+  <section class="slide s-table" data-theme="odds" aria-label="NJ Sports Betting Market — handle, revenue, hold, and tax by year">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Case Study &mdash; New Jersey Cont.</div>
+      <div class="slide-count"><span class="cur">09</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:2vw;flex-wrap:wrap;">
+        <p class="disp lg rz rz1" style="color:var(--accent);margin:0;">NJ Sports Betting Market</p>
+        <div class="img-frame contain rz rz2" style="width:min(160px,20vw);height:min(9vh,80px);flex:none;">
+          <img src="assets/badge-nj-sports-betting.jpg" alt="New Jersey Sports Betting graphic badge, state outline over an odds board">
+        </div>
+      </div>
+      <div class="table-wrap rz rz3" style="margin-top:1vh;">
+      <table class="table-clean">
+        <thead><tr><th>Year</th><th>Total Handle</th><th>Revenue</th><th>Hold %</th><th>State Tax Revenue</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">2018</td><td>$1,247,307,720</td><td>$94,022,392</td><td>7.54%</td><td>$11,597,775</td></tr>
+          <tr><td class="hl">2019</td><td>$4,582,898,150</td><td>$299,326,239</td><td>6.53%</td><td>$39,594,127</td></tr>
+          <tr><td class="hl">2020</td><td>$6,016,968,399</td><td>$398,521,093</td><td>6.62%</td><td>$50,891,397</td></tr>
+          <tr class="highlight"><td>2024</td><td>$12,811,517,804</td><td>$1,094,630,340</td><td>8.4%</td><td>$141,200,000</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <ul class="bullet-list tight rz rz4" style="margin-top:2.4vh;">
+        <li><b>Handle</b> refers to the total amount wagered on sports.</li>
+        <li><b>Revenue</b> reflects the gross gaming revenue kept by sportsbooks after paying out winning bets.</li>
+        <li><b>Hold percentage</b> shows how much revenue sportsbooks kept as a function of the betting handle.</li>
+        <li><b>State tax revenue</b> displays taxes collected by the state and local jurisdictions.</li>
+      </ul>
+      <p class="source-link rz rz5">Source: nj.com/news/2025/01/nj-bettors-dropped-13b-in-wagers-last-year-but-has-the-market-hit-its-peak.html</p>
+    </div>
+  </section>
+
+  <!-- 10 — NFL FIRST PARTNERS -->
+  <section class="slide s-content-watch" data-theme="vig" aria-label="NFL announces Caesars, DraftKings, FanDuel as first sports betting partners">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> League &amp; Team Deals</div>
+      <div class="slide-count"><span class="cur">10</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="disp md rz rz1" style="color:var(--accent);">NFL announces Caesars, DraftKings, FanDuel as first sports betting partners</p>
+      <div class="content-watch" style="margin-top:1vh;">
+        <div class="cw-text">
+          <div class="img-frame contain rz rz2" style="height:min(22vh,190px);max-width:220px;">
+            <img src="assets/photo-draftkings-nfl-phone.jpg" alt="A hand holding a phone showing the DraftKings logo and NFL shield, reading Official Daily Fantasy Partner of the NFL">
+          </div>
+          <p class="lede rz rz3" style="margin-top:1.6vh;font-family:var(--font-mono);font-size:12px;">One source cites a $1B total figure for the arrangement.</p>
+          <p class="source-link rz rz3">theathletic.com &mdash; NFL announces Caesars, DraftKings, FanDuel as first sports betting partners<br>sportspromedia.com/news/nfl-sports-betting-sponsor-draftkings-fanduel-caesars-fox-bet</p>
+        </div>
+        <div class="cw-watch">
+          <a class="watch-card" href="https://www.youtube.com/watch?v=CmhQni_cKKY" target="_blank" rel="noopener" style="width:min(340px,38vw);display:block;">
+            <div class="watch-thumb">
+              <img src="assets/video-caesars-manning-poster.jpg" alt="Caesars Sportsbook commercial thumbnail featuring Peyton Manning at a dinner table">
+              <div class="play-btn sm"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+              <div class="watch-meta"><span class="badge">Caesars</span></div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 — NFL FOUR MORE PARTNERS -->
+  <section class="slide s-def" data-theme="vig" aria-label="NFL adds four more approved sportsbook partners">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> League &amp; Team Deals Cont.</div>
+      <div class="slide-count"><span class="cur">11</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <p class="disp lg rz rz1" style="color:var(--accent);">NFL adds four more approved sportsbook partners</p>
+      <ul class="bullet-list rz rz2" style="max-width:80ch;">
+        <li>The NFL landed secondary deals with <b>PointsBet</b>, <b>BetMGM</b>, <b>FOX Bet</b>, and <b>Wynnbet</b>.</li>
+        <li>Partnership deals with the NFL usually run from three to seven years and cost a minimum of <b>$10 million per year</b> for smaller companies. More prominent firms could pay more than <b>$200 million per year</b>.</li>
+      </ul>
+      <p class="source-link rz rz3">profootballtalk.nbcsports.com/2021/08/30/nfl-adds-four-more-approved-sportsbook-partners</p>
+    </div>
+  </section>
+
+  <!-- 12 — ARIZONA / SUNS / TPC SCOTTSDALE -->
+  <section class="slide s-content-watch" data-theme="vig" aria-label="Sports betting becomes legal in Arizona — Phoenix Suns and TPC Scottsdale sportsbooks">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> League &amp; Team Deals Cont.</div>
+      <div class="slide-count"><span class="cur">12</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="disp md rz rz1" style="color:var(--accent);">Sports betting becomes legal in Arizona; Phoenix Suns, TPC Scottsdale to build sportsbooks inside venues</p>
+      <div class="content-watch" style="margin-top:1.4vh;">
+        <div class="cw-text">
+          <ul class="bullet-list rz rz2">
+            <li>DraftKings announced a partnership with the PGA Tour and TPC Scottsdale, which will see the sportsbook open a retail location on-site at the home of the PGA Tour&rsquo;s Waste Management Phoenix Open and its rowdy 16th hole.</li>
+            <li>The Phoenix Suns announced a partnership with FanDuel that will see the two team up to offer a luxury sportsbook inside Phoenix Suns Arena starting next season.</li>
+          </ul>
+        </div>
+        <div class="cw-watch">
+          <a class="watch-card" href="https://www.youtube.com/watch?v=Fa8EpAEC5C0" target="_blank" rel="noopener" style="width:min(340px,38vw);display:block;">
+            <div class="watch-thumb">
+              <img src="assets/video-draftkings-arizona-poster.jpg" alt="ABC15 Arizona news segment thumbnail: DraftKings Sportsbook sign at TPC Scottsdale, open to the public">
+              <div class="play-btn sm"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+              <div class="watch-meta"><span class="badge">ABC15 Arizona</span></div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 — NFL OWNERS VOTE -->
+  <section class="slide s-def" data-theme="vig" aria-label="NFL owners vote to allow physical sportsbooks at stadiums to take bets during games">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> League &amp; Team Deals Cont.</div>
+      <div class="slide-count"><span class="cur">13</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="def-layout">
+        <div class="def-text">
+          <ul class="bullet-list rz rz1">
+            <li>With 33 states currently allowing legal sports gambling, roughly 17 NFL franchises will be permitted to host on-site sportsbooks, the revenue from which they will be able to keep up to a certain threshold &mdash; believed to be up to <b>$20 million</b> &mdash; before the revenue is pooled and shared with the league&rsquo;s other 31 teams.</li>
+            <li>Presently, the Washington Commanders are the only team in the NFL that has a physical sportsbook within their stadium. However, the Arizona Cardinals have a sportsbook just outside of their venue, as does MetLife Stadium, which is home to both the New York Giants and New York Jets.</li>
+          </ul>
+        </div>
+        <div class="img-frame contain rz rz2 def-photo" style="height:min(46vh,420px);background:#fff;border-radius:12px;padding:1.6vh 1.2vw;">
+          <img src="assets/article-nfl-sportsbooks.jpg" alt="NFL.com article: NFL owners vote to allow physical sportsbooks at stadiums to take bets during games. With 33 states currently allowing legal sports gambling, roughly 17 NFL franchises will be permitted to host on-site sportsbooks. By Steven Taranto, Mar 29 2023, with a photo of a crowded Westgate SuperBook sportsbook">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 — VIDEO: FEDEX FIELD -->
+  <section class="slide s-watch" data-theme="vig" aria-label="Video: First ever sportsbook in an NFL stadium opens at FedEx Field">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> League &amp; Team Deals Cont.</div>
+      <div class="slide-count"><span class="cur">14</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <div class="watch-wrap rz rz1">
+        <p class="watch-eyebrow">Watch</p>
+        <h2 class="watch-title">First Ever Sportsbook in NFL Stadium Opens at FedEx Field</h2>
+        <a class="watch-card" href="https://www.youtube.com/watch?v=Vla6v1WQ9DY" target="_blank" rel="noopener">
+          <div class="watch-thumb">
+            <img src="assets/video-fedexfield-sportsbook-poster.jpg" alt="Sports with Sharla McBride segment thumbnail: a Washington Commanders fan in team gear interviewed inside the FedEx Field sportsbook">
+            <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="watch-meta">
+              <span class="badge">Sports with Sharla McBride</span>
+              <span class="watch-url">youtube.com/watch?v=Vla6v1WQ9DY</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 — WRIGLEY FIELD -->
+  <section class="slide s-gallery" data-theme="vig" aria-label="DraftKings moves forward with in-stadium sportsbook project at Wrigley Field, later shut down">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> League &amp; Team Deals Cont.</div>
+      <div class="slide-count"><span class="cur">15</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="disp md rz rz1" style="color:var(--accent);">DraftKings moves forward with in-stadium sportsbook project at Chicago Cubs&rsquo; Wrigley Field</p>
+      <div class="gallery-strip rz rz2" style="flex:1;min-height:0;margin-top:1.6vh;">
+        <div class="img-frame" style="height:min(38vh,340px);"><img src="assets/photo-wrigley-beam-signing.jpg" alt="Executives from the Cubs, DraftKings, and other partners signing a steel beam bearing the logos of Levy, Peapod, Cubs, DraftKings, Gallagher, and MDev, at the Wrigleyville construction site"></div>
+        <div class="img-frame" style="height:min(38vh,340px);"><img src="assets/render-wrigley-sportsbook.jpg" alt="Architectural rendering of the DraftKings Sportsbook bar and lounge with a wall of screens showing live games, next to Wrigley Field"></div>
+      </div>
+      <ul class="bullet-list tight rz rz3" style="margin-top:2vh;">
+        <li>DraftKings shut down in-person sports betting at its Wrigley Field Sportsbook on <b>May 31, 2026</b></li>
+        <li>High operating costs (high taxes)</li>
+        <li>Shift to mobile</li>
+        <li>Low retail demand</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 16 — CONSUMER MOVEMENT: LANDSCAPE -->
+  <section class="slide s-figure" data-theme="money" aria-label="Consumer Movement toward Sports Betting 2019 — market landscape">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Who&rsquo;s Betting?</div>
+      <div class="slide-count"><span class="cur">16</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Consumer Movement toward Sports Betting (2019)</p>
+      <div class="full-figure rz rz2">
+        <img src="assets/infographic-landscape.png" alt="Landscape infographic: the size of the sports betting market is significant and diverse. Of the 234.6 million Total 21+ Census Population, 39% represent a sports betting opportunity — 14%/32.8M Core, 8%/18.8M Casual, 12%/28.2M Potential, 5%/11.7M Interested, 61%/143.1M Uninterested. Core sports bettors skew 45% ages 23-34, 69% male, 41% multi-cultural, 69% income $50K+, 53% bachelor's degree or higher">
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 — CONSUMER MOVEMENT: PARTICIPATION -->
+  <section class="slide s-figure" data-theme="money" aria-label="Consumer Movement toward Sports Betting 2019 cont. — participation and the bettor/fan loop">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Who&rsquo;s Betting? Cont.</div>
+      <div class="slide-count"><span class="cur">17</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Consumer Movement toward Sports Betting (2019) cont.</p>
+      <div class="full-figure rz rz2">
+        <img src="assets/infographic-participation.png" alt="Participation infographic: hearing about repeal and legalization increases the percentage of consumers who expect to bet on sports. Core bettors on casino sportsbooks go from 81% to 84% (+3), online sportsbook 73% to 77% (+4); Casual bettors casino 40% to 53% (+13), online 30% to 42% (+12); Potential bettors casino 26% to 31% (+5), online 17% to 23% (+6). 46% have placed more bets since legalization in their state, 69% would place more bets if legalized. Diagram shows a cycle: sports bettors are nearly twice as likely to be fans, and sports fans are more than twice as likely to be core bettors than non-bettors">
+      </div>
+    </div>
+  </section>
+
+  <!-- 18 — CONSUMER MOVEMENT: LEAGUE INTEREST & SOCIAL -->
+  <section class="slide s-figure" data-theme="money" aria-label="Consumer Movement toward Sports Betting 2019 cont. — league interest and social media use">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Who&rsquo;s Betting? Cont.</div>
+      <div class="slide-count"><span class="cur">18</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Consumer Movement toward Sports Betting (2019) cont.</p>
+      <div class="full-figure rz rz2">
+        <img src="assets/infographic-league-social.png" alt="Chart: Core bettor sports league interest — NFL 93%, MLB 88%, NCAA College Football 84%, NBA 83%, NCAA College Basketball 79%, NHL 73%, Boxing 71%, Horse Racing 68%, Professional Soccer 63%. Social media used weekly by sports bettor: Facebook 81/76/72%, YouTube 69/58/56%, Twitter 50/29/26%, Instagram 47/32/29%, Snapchat 28/17/12%, Pinterest 27/35/22% for Core/Casual/Potential bettors">
+      </div>
+    </div>
+  </section>
+
+  <!-- 19 — TAX RATES TABLE -->
+  <section class="slide s-table" data-theme="money" aria-label="Sport Betting Tax Rates by state">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Tax Rates by State</div>
+      <div class="slide-count"><span class="cur">19</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="kicker rz rz1">Sport Betting Tax Rates</p>
+      <div class="table-wrap rz rz2">
+      <table class="table-clean">
+        <thead><tr><th>State</th><th>Tax Rate</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Arkansas</td><td>13% (first $150 million); 20% (above $150 million)</td></tr>
+          <tr><td class="hl">Delaware</td><td>43.75%</td></tr>
+          <tr><td class="hl">District of Columbia</td><td>10% on private operators; DC Lottery collects revenue minus expenses</td></tr>
+          <tr><td class="hl">Indiana</td><td>9.5%</td></tr>
+          <tr><td class="hl">Iowa</td><td>6.75%</td></tr>
+          <tr><td class="hl">Mississippi</td><td>12%</td></tr>
+          <tr><td class="hl">Montana</td><td>Montana Lottery collects revenue minus expenses</td></tr>
+          <tr><td class="hl">Nevada</td><td>6.75%</td></tr>
+          <tr><td class="hl">New Jersey</td><td>9.75% in-person bet; 14.25% online bet</td></tr>
+          <tr><td class="hl">Pennsylvania</td><td>36%</td></tr>
+          <tr><td class="hl">Rhode Island</td><td>51%</td></tr>
+          <tr><td class="hl">Tennessee</td><td>20%</td></tr>
+          <tr><td class="hl">West Virginia</td><td>10%</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="table-source rz rz3" style="margin-top:1.8vh;max-width:80ch;">Source: State websites and legislation. Notes: Each state&rsquo;s tax is levied on gaming revenue, which is the operator&rsquo;s take after paying winners. Mississippi&rsquo;s and Pennsylvania&rsquo;s rates include local taxes. New Jersey&rsquo;s rates include the state&rsquo;s 1.25% investment alternative tax, which is levied on both in-person and online sports wagers.</p>
+      <p class="source-link rz rz3">ncsl.org/research/fiscal-policy/the-early-bets-are-in-is-sports-betting-paying-off.aspx</p>
+    </div>
+  </section>
+
+  <!-- 20 — ODDS 101 -->
+  <section class="slide s-def" data-theme="odds" aria-label="Sports Betting 101 — reading Money Line, Point Spread, and Total Points odds">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Sports Betting 101</div>
+      <div class="slide-count"><span class="cur">20</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="disp lg rz rz1" style="color:var(--accent);">Sports Betting 101: Odds</p>
+      <div class="img-frame contain rz rz2" style="height:min(20vh,180px);background:#fff;border-radius:10px;padding:1.4vh 1vw;margin-top:1.2vh;">
+        <img src="assets/screenshot-odds-yahoo.png" alt="Yahoo Sportsbook powered by BetMGM screenshot: Kansas City Chiefs money line -350, point spread -7 (-110), total O 54.5 (-110); Philadelphia Eagles money line +270, point spread +7 (-110), total U 54.5 (-110). Full game public bet percentages show 97% of bets and no data available for money on the Chiefs money line, 95%/96% on the spread, and 24%/43% under on the total">
+      </div>
+      <div class="two-col" style="margin-top:2vh;">
+        <div class="col-card rz rz3">
+          <h3>Money Line</h3>
+          <p><b>&minus;350</b>: the odds for favorites have a minus (&minus;) sign in front, and indicate the money you need to risk to win $100</p>
+          <p><b>+270</b>: the odds for underdogs will have a plus (+) sign in front, and indicate the money you will win for every $100 risked.</p>
+          <h3 style="margin-top:1.6vh;">Point Spread</h3>
+          <p><b>&minus;7</b>: Chiefs must win the game by more than 7 points for you to win your bet.</p>
+          <p><b>+7</b>: Eagles must win the game, or lose by less than 7 points for you to win your bet</p>
+        </div>
+        <div class="col-card rz rz4">
+          <h3>Total Points</h3>
+          <p><b>O 54.5</b>: In order to win $100, you must bet $110 on the overall combined score to be higher than 54.5.</p>
+          <p><b>U 54.5</b>: In order to win $100, you must wager $110 on the total combined score to be less than 54.5.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 21 — ODDS 101 CONT. -->
+  <section class="slide s-def" data-theme="odds" aria-label="Sports Betting 101 cont. — a betting scenario against the actual game outcome">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> Sports Betting 101 Cont.</div>
+      <div class="slide-count"><span class="cur">21</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="disp lg rz rz1" style="color:var(--accent);">Sports Betting 101: Odds cont.</p>
+      <div class="img-frame contain rz rz2" style="height:min(16vh,140px);background:#fff;border-radius:10px;padding:1.2vh 1vw;margin-top:1vh;">
+        <img src="assets/screenshot-odds-yahoo.png" alt="Yahoo Sportsbook powered by BetMGM screenshot showing the same Chiefs vs Eagles odds: money line -350/+270, point spread -7/+7, total 54.5">
+      </div>
+      <div class="two-col" style="margin-top:1.6vh;">
+        <div class="col-card rz rz3">
+          <h3>Scenario</h3>
+          <p>Betting $100 on Eagles win</p>
+          <p>Betting $110 on Eagles losing the game by less than 7 points</p>
+          <p>Betting $110 on the overall combined score to be higher than 54</p>
+        </div>
+        <div class="col-card rz rz4">
+          <h3>Game Outcome</h3>
+          <p style="font-family:var(--font-display);font-size:clamp(20px,2.4vw,30px);color:var(--ink);text-transform:uppercase;">Eagles 30 &mdash; Chiefs 42</p>
+        </div>
+      </div>
+      <div class="activity-card rz rz5" style="margin:2.6vh auto 0;">
+        <p class="kicker">Discussion</p>
+        <p class="q">What is the TOTAL amount of money you win or lose?</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 22 — HOW BOOKMAKERS MAKE MONEY -->
+  <section class="slide s-def" data-theme="vig" aria-label="How Do Bookmakers Make Money? — the vig">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> How Bookmakers Profit</div>
+      <div class="slide-count"><span class="cur">22</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner">
+      <p class="disp lg rz rz1" style="color:var(--accent);">How Do Bookmakers Make Money?</p>
+      <ul class="bullet-list rz rz2">
+        <li>Bookmakers try to set the line so half the money is bet on each side. If this is the case, the bookmaker cannot lose.</li>
+        <li>Eagles &minus;6 (&minus;110) &nbsp;&middot;&nbsp; Cowboys +6 (&minus;110)</li>
+        <li><b>&minus;110</b>: the money you need to risk to win $100</li>
+        <li>Bookie pays one bettor $100 and collects $110 from the other ($220 total)</li>
+        <li>Bookmaker wins $10, so the vig is 10/220 = 0.045 = <b>4.5%</b></li>
+        <li><b>Vig</b> &mdash; &lsquo;Vigorish&rsquo;; a typical spread bet (&minus;110) carries around a 4.5% vig.</li>
+      </ul>
+      <p class="source-link rz rz3">gamblingsites.org/sports-betting/essentials/why-odds-lines-change</p>
+    </div>
+  </section>
+
+  <!-- 23 — WHY ODDS CHANGE CONT. -->
+  <section class="slide s-def" data-theme="vig" aria-label="Why odds and lines change — balancing the book">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> How Bookmakers Profit Cont.</div>
+      <div class="slide-count"><span class="cur">23</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="slide-inner" style="justify-content:center;">
+      <p class="kicker rz rz1" style="text-align:center;justify-content:center;">Why Odds and Lines Change? Cont.</p>
+      <div class="cite-block rz rz2" style="margin-left:auto;margin-right:auto;">
+        <p class="cite-text">Sportsbooks like to get the same amount of money on both sides of a bet so they never lose any money.</p>
+      </div>
+      <p class="source-link rz rz3" style="text-align:center;">gamblingsites.org/sports-betting/essentials/why-odds-lines-change</p>
+    </div>
+  </section>
+
+  <!-- 24 — QUESTIONS -->
+  <section class="slide s-outro" data-theme="vig" aria-label="Questions">
+    <div class="chrome-top">
+      <div class="eyebrow"><span class="dot">&#9679;</span> SPM 261 &mdash; Week 5-1</div>
+      <div class="slide-count"><span class="cur">24</span> / <span class="tot">24</span></div>
+    </div>
+    <div class="outro-wrap" style="border-radius:0;">
+      <img src="assets/bg-questions.jpg" alt="3D rendering of dark question marks scattered across a soft gradient background, decorative">
+      <div class="outro-content">
+        <h1 class="disp xl rz rz1">Questions?</h1>
+        <div class="rule rz rz2" style="margin-left:auto;margin-right:auto;"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<button class="navbtn prev" id="btnPrev" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15.4 6.6 9 12l6.4 5.4"/></svg></button>
+<button class="navbtn next" id="btnNext" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M8.6 6.6 15 12l-6.4 5.4"/></svg></button>
+<div class="click-zone left" id="zoneLeft"></div>
+<div class="click-zone right" id="zoneRight"></div>
+
+<nav class="dots" id="dots" aria-label="Slide navigation"></nav>
+
+<div class="kbd-hint"><button class="kbd-hint-btn" id="notesToggleBtn" type="button"><kbd>N</kbd> notes</button> &nbsp; <kbd>&larr;</kbd><kbd>&rarr;</kbd> navigate</div>
+
+<div class="notes-panel" id="notesPanel">
+  <p class="notes-kicker">Speaker Notes &mdash; press N to close</p>
+  <div class="notes-body" id="notesBody"></div>
+</div>
+
+<button class="ask-btn" id="askBtn" title="Ask a question about this slide" aria-label="Ask a question about this slide">Question?</button>
+<div class="ask-backdrop" id="askBackdrop">
+  <div class="ask-panel">
+    <p class="ask-title">Ask a question or leave a comment</p>
+    <p class="ask-context" id="askContext"></p>
+    <textarea id="askText" placeholder="What's on your mind about this slide?" maxlength="4000"></textarea>
+    <input type="text" id="askName" placeholder="Your name" maxlength="120">
+    <div class="ask-row">
+      <span class="ask-hint">Goes straight to Dr. Kim.</span>
+      <div class="ask-actions">
+        <button class="ask-btn-cancel" id="askCancel">Cancel</button>
+        <button class="ask-btn-send" id="askSend">Send</button>
+      </div>
+    </div>
+    <div class="ask-status" id="askStatus"></div>
+  </div>
+</div>
+
+<script src="../questions/config.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var idx = 0;
+  var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var NOTES = {
+    3: 'https://www.casinoreports.com/us-sports-betting-market-stats-database/',
+    4: 'https://track360.io/blog/sports-betting-statistics-2026-us-handle-revenue-by-state',
+    7: 'https://www.youtube.com/watch?v=NmelX4L3H0Q',
+    8: 'https://www.nj.com/news/2025/01/nj-bettors-dropped-13b-in-wagers-last-year-but-has-the-market-hit-its-peak.html',
+    9: 'https://www.youtube.com/watch?v=CmhQni_cKKY',
+    10: 'Additional NFL sportsbook video: https://www.youtube.com/watch?v=2NmlijeBIPo',
+    11: 'https://www.youtube.com/watch?v=Fa8EpAEC5C0',
+    13: 'https://www.youtube.com/watch?v=Vla6v1WQ9DY'
+  };
+
+  var progressFill = document.getElementById('progressFill');
+  var dotsWrap = document.getElementById('dots');
+  var btnPrev = document.getElementById('btnPrev');
+  var btnNext = document.getElementById('btnNext');
+  var notesPanel = document.getElementById('notesPanel');
+  var notesBody = document.getElementById('notesBody');
+  var notesToggleBtn = document.getElementById('notesToggleBtn');
+  if (notesToggleBtn) notesToggleBtn.addEventListener('click', function(){ notesPanel.classList.toggle('open'); });
+
+  for (var i = 0; i < total; i++){
+    var d = document.createElement('button');
+    d.className = 'dot';
+    d.setAttribute('aria-label', 'Go to slide ' + (i+1));
+    d.addEventListener('click', (function(n){ return function(){ goTo(n); }; })(i));
+    dotsWrap.appendChild(d);
+  }
+  var dotEls = Array.prototype.slice.call(dotsWrap.children);
+
+  function renderNotes(entry){
+    if (!entry){
+      notesBody.textContent = 'No speaker notes for this slide.';
+      return;
+    }
+    var list = Array.isArray(entry) ? entry : [entry];
+    notesBody.innerHTML = list.map(function(text){
+      if (/^https?:\/\//.test(text)){
+        return '<div><a href="'+text+'" target="_blank" rel="noopener">'+text+'</a></div>';
+      }
+      var m = text.match(/^(.*?)(https?:\/\/\S+)$/);
+      if (m){
+        return '<div>'+m[1]+'<a href="'+m[2]+'" target="_blank" rel="noopener">'+m[2]+'</a></div>';
+      }
+      return '<div>'+text+'</div>';
+    }).join('');
+  }
+
+  function setActive(newIdx){
+    slides.forEach(function(s, i){
+      s.classList.toggle('active', i === newIdx);
+    });
+    idx = newIdx;
+    progressFill.style.width = ((idx+1)/total*100) + '%';
+    dotEls.forEach(function(d,i){ d.classList.toggle('on', i===idx); });
+    btnPrev.disabled = (idx === 0);
+    btnNext.disabled = (idx === total-1);
+    renderNotes(NOTES[idx]);
+  }
+
+  function goTo(n){
+    n = Math.max(0, Math.min(total-1, n));
+    if (n === idx) return;
+    setActive(n);
+  }
+  function next(){ if (idx < total-1) setActive(idx+1); }
+  function prev(){ if (idx > 0) setActive(idx-1); }
+
+  btnNext.addEventListener('click', next);
+  btnPrev.addEventListener('click', prev);
+  document.getElementById('zoneLeft').addEventListener('click', prev);
+  document.getElementById('zoneRight').addEventListener('click', next);
+
+  document.addEventListener('keydown', function(e){
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'TEXTAREA' || tag === 'INPUT' || (e.target && e.target.isContentEditable)) return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if (e.key === 'Home'){ goTo(0); }
+    else if (e.key === 'End'){ goTo(total-1); }
+    else if (e.key === 'n' || e.key === 'N'){ notesPanel.classList.toggle('open'); }
+    else if (e.key === '+' || e.key === '='){ e.preventDefault(); zoomIn(); }
+    else if (e.key === '-' || e.key === '_'){ e.preventDefault(); zoomOut(); }
+    else if (e.key === '0'){ e.preventDefault(); zoomReset(); }
+  });
+
+  var zoomOutBtn = document.getElementById('zoomOutBtn');
+  var zoomInBtn = document.getElementById('zoomInBtn');
+  var zoomResetBtn = document.getElementById('zoomResetBtn');
+  var ZOOM_MIN = 0.75, ZOOM_MAX = 2, ZOOM_STEP = 0.1;
+  var zoomLevel = 1;
+  var ZOOM_KEY = 'spm261_zoom_' + location.pathname;
+  try {
+    var savedZoom = parseFloat(localStorage.getItem(ZOOM_KEY));
+    if (!isNaN(savedZoom) && savedZoom >= ZOOM_MIN && savedZoom <= ZOOM_MAX) zoomLevel = savedZoom;
+  } catch (e) {}
+  function applyZoom(){
+    document.documentElement.style.setProperty('--zoom', zoomLevel.toFixed(2));
+    zoomResetBtn.textContent = Math.round(zoomLevel*100)+'%';
+    zoomOutBtn.disabled = zoomLevel<=ZOOM_MIN;
+    zoomInBtn.disabled = zoomLevel>=ZOOM_MAX;
+    try { localStorage.setItem(ZOOM_KEY, zoomLevel); } catch (e) {}
+  }
+  function zoomIn(){ zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel+ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomOut(){ zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel-ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomReset(){ zoomLevel = 1; applyZoom(); }
+  zoomInBtn.addEventListener('click', function(e){ e.stopPropagation(); zoomIn(); });
+  zoomOutBtn.addEventListener('click', function(e){ e.stopPropagation(); zoomOut(); });
+  zoomResetBtn.addEventListener('click', function(e){ e.stopPropagation(); zoomReset(); });
+  applyZoom();
+
+  // touch swipe
+  var touchX = null;
+  document.addEventListener('touchstart', function(e){ touchX = e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if (touchX === null) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50){ dx < 0 ? next() : prev(); }
+    touchX = null;
+  }, {passive:true});
+
+  // initial state
+  setActive(0);
+
+  // print / PDF export hook — forces every slide + all staged reveals to
+  // their finished state before the browser prints.
+  window.forceFinalState = function(){
+    slides.forEach(function(s){ s.classList.add('active'); });
+  };
+
+  // ask a question / leave a comment
+  (function(){
+    var askBtn = document.getElementById('askBtn');
+    var backdrop = document.getElementById('askBackdrop');
+    var context = document.getElementById('askContext');
+    var textEl = document.getElementById('askText');
+    var nameEl = document.getElementById('askName');
+    var sendBtn = document.getElementById('askSend');
+    var cancelBtn = document.getElementById('askCancel');
+    var statusEl = document.getElementById('askStatus');
+    var DECK = 'SPM261 Week 5-1 — Sports Betting';
+
+    function open(){
+      var slide = slides[idx];
+      var title = (slide && slide.getAttribute('aria-label')) || '(untitled)';
+      context.textContent = 'Slide ' + (idx+1) + ' of ' + total + ' — ' + title;
+      statusEl.textContent = ''; statusEl.className = 'ask-status';
+      sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      backdrop.classList.add('open');
+      setTimeout(function(){ textEl.focus(); }, 50);
+    }
+    function close(){
+      backdrop.classList.remove('open');
+      textEl.value=''; nameEl.value='';
+    }
+    function send(){
+      var question = textEl.value.trim();
+      var name = nameEl.value.trim();
+      if(!name){
+        statusEl.textContent = 'Please enter your name.';
+        statusEl.className = 'ask-status err';
+        nameEl.focus();
+        return;
+      }
+      if(!question){
+        statusEl.textContent = 'Please enter a question or comment.';
+        statusEl.className = 'ask-status err';
+        textEl.focus();
+        return;
+      }
+      if(!window.QUESTIONS_API){
+        statusEl.textContent = "This form isn't connected yet — let your professor know.";
+        statusEl.className = 'ask-status err';
+        return;
+      }
+      sendBtn.disabled = true; sendBtn.textContent = 'Sending…';
+      statusEl.textContent = ''; statusEl.className = 'ask-status';
+      var slide = slides[idx];
+      var title = (slide && slide.getAttribute('aria-label')) || '';
+      fetch(window.QUESTIONS_API, {
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({ deck: DECK, slideIndex: idx+1, slideTitle: title, question: question, name: name })
+      }).then(function(){
+        statusEl.textContent = 'Sent — thanks!';
+        statusEl.className = 'ask-status ok';
+        setTimeout(close, 1100);
+      }).catch(function(){
+        statusEl.textContent = "Couldn't send — check your connection and try again.";
+        statusEl.className = 'ask-status err';
+        sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      });
+    }
+    askBtn.addEventListener('click', open);
+    cancelBtn.addEventListener('click', close);
+    sendBtn.addEventListener('click', send);
+    backdrop.addEventListener('click', function(e){ if(e.target === backdrop) close(); });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && backdrop.classList.contains('open')) close();
+    });
+  })();
+})();
+</script>
+<script>
+window.SLIDE_POLLS = {
+  5: { id: 'week5-1-poll-future', question: 'Is legalized sports betting the future of sports business?', options: ['Yes', 'No', 'Not sure'] }
+};
+</script>
+<script src="../questions/widgets.js"></script>
+</body>
+</html>
