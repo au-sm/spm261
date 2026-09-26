@@ -154,13 +154,14 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
   min-height:0;
   overflow-y:auto;
   overflow-x:hidden;
-  scrollbar-width:thin;
-  scrollbar-color:var(--line) transparent;
+  scrollbar-width:auto;
+  scrollbar-color:rgba(242,245,250,.45) rgba(242,245,250,.06);
   zoom:var(--zoom,1);
 }
-.slide-inner::-webkit-scrollbar{width:7px;}
-.slide-inner::-webkit-scrollbar-track{background:transparent;}
-.slide-inner::-webkit-scrollbar-thumb{background:rgba(242,245,250,.18);border-radius:4px;}
+.slide-inner::-webkit-scrollbar{width:11px;}
+.slide-inner::-webkit-scrollbar-track{background:rgba(242,245,250,.06);border-radius:4px;}
+.slide-inner::-webkit-scrollbar-thumb{background:rgba(242,245,250,.45);border-radius:4px;}
+.slide-inner::-webkit-scrollbar-thumb:hover{background:rgba(242,245,250,.65);}
 .slide-inner::-webkit-scrollbar-thumb:hover{background:rgba(242,245,250,.32);}
 
 .chrome-top{
@@ -915,7 +916,7 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
     </div>
     <div class="slide-inner">
       <p class="disp lg rz rz1" style="color:var(--accent);">Sports Betting 101: Odds</p>
-      <div class="img-frame contain rz rz2" style="height:min(20vh,180px);background:#fff;border-radius:10px;padding:1.4vh 1vw;margin-top:1.2vh;">
+      <div class="img-frame contain rz rz2" style="height:min(42vh,380px);background:#fff;border-radius:10px;padding:1.4vh 1vw;margin-top:1.2vh;">
         <img src="assets/screenshot-odds-yahoo.png" alt="Yahoo Sportsbook powered by BetMGM screenshot: Kansas City Chiefs money line -350, point spread -7 (-110), total O 54.5 (-110); Philadelphia Eagles money line +270, point spread +7 (-110), total U 54.5 (-110). Full game public bet percentages show 97% of bets and no data available for money on the Chiefs money line, 95%/96% on the spread, and 24%/43% under on the total">
       </div>
       <div class="two-col" style="margin-top:2vh;">
@@ -944,7 +945,7 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
     </div>
     <div class="slide-inner">
       <p class="disp lg rz rz1" style="color:var(--accent);">Sports Betting 101: Odds cont.</p>
-      <div class="img-frame contain rz rz2" style="height:min(16vh,140px);background:#fff;border-radius:10px;padding:1.2vh 1vw;margin-top:1vh;">
+      <div class="img-frame contain rz rz2" style="height:min(38vh,340px);background:#fff;border-radius:10px;padding:1.2vh 1vw;margin-top:1vh;">
         <img src="assets/screenshot-odds-yahoo.png" alt="Yahoo Sportsbook powered by BetMGM screenshot showing the same Chiefs vs Eagles odds: money line -350/+270, point spread -7/+7, total 54.5">
       </div>
       <div class="two-col" style="margin-top:1.6vh;">
