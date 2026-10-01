@@ -24,16 +24,10 @@
  */
 
 /* ================================ CONFIG ================================ */
-const GEMINI_MODEL     = 'gemini-3.6-flash';   // 2.5-flash is retired for new keys
-// gemini-3.6-flash has been hitting a sustained (multi-day, not transient)
-// 503 "high demand" outage -- confirmed independently on Google's own AI
-// Developer Forum. A same-model retry can't fix that; callGemini_ falls
-// through this list in order (each with its own short retry) whenever the
-// current model is the one that's down, rather than giving up entirely.
-const GEMINI_MODEL_FALLBACKS = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite'];
+const GEMINI_MODEL     = 'gemini-3.1-flash-lite';   // matches the model the live deployment is actually calling (2.5-flash is retired for new keys)
 const INSTRUCTOR_EMAIL = 'kimjw@arcadia.edu';   // gets error reports
 const COPY_INSTRUCTOR  = false;                 // CC instructor on every student email
-const LOG_SHEET_ID     = '12AS0aiCbkyBQZxzjxxruqgvyRFyqk1ES-UyuG5q9ptA'; // "SPM 261 Assignment Feedback — Log"
+const LOG_SHEET_ID     = '';                    // '' = no log; else a spreadsheet ID
 const SUBJECT_PREFIX   = 'SPM 261 — Assignment Feedback';
 const SENDER_NAME      = 'SPM 261 Assignment Feedback';
 
@@ -114,11 +108,9 @@ Must include: Title Page, Your Idea, Rationale, Expected outcome/impact
 (financial, safety, improvement, etc.), and References (cited sources).
 
 Formatting rules (hard):
- - No more than 5 slides TOTAL, including the title page (so the title page
-   plus up to 4 more slides).
+ - No more than 5 slides NOT including the title page (so <= 6 slides total).
  - No more than 3 sentences on any slide.
- - A formatting violation costs the Adherence to Format points (below) -- it
-   does NOT zero out Content or Style. Score every category on its own merits.
+ - Failure to follow the formatting rules = minimum points for the assignment.
 
 Ideas must be the student's own; insight and creativity are the main focus.
 Sources should be news or scholarly articles.`,
@@ -131,20 +123,13 @@ Sources should be news or scholarly articles.`,
   2 — Addresses the topic but missing key elements (rationale or outcomes);
       limited or weak sourcing.
   0 — Incomplete or off-topic; no clear tie to the required elements.
-  Score Content ONLY on the quality/depth of the idea, rationale, and outcomes
-  -- a formatting violation is graded below, in Adherence to Format, and must
-  NEVER reduce the Content score by itself.
 
 Adherence to Format (max 2):
-  2 — No more than 5 slides TOTAL, including the title page (so 5 is fine, so is
-      fewer; only MORE than 5 total is a violation). No slide over 3 sentences.
-      Title page present.
-  0 — Any violation of the above (more than 5 slides total, any slide over 3
-      sentences, or no title page). This costs ONLY these 2 points -- it does
-      NOT reduce Content or Style. In "whatToChange", name SPECIFICALLY which
-      rule was violated and how (e.g. "Slide 3 has 4 sentences, one over the
-      3-sentence limit") -- never cite slide count as the problem unless the
-      deck actually has MORE than 5 slides total, counting the title page.
+  2 — Exactly 5 content slides (excluding title), <= 3 sentences per slide,
+      title page present.
+  0 — Any violation (more than 5 content slides, a slide over 3 sentences, or no
+      title page). Per the rules this also caps the whole assignment at minimum
+      points — say so explicitly.
 
 Professionalism & Presentation Style (max 3) — assessed live, not from the file.`
   }
@@ -155,36 +140,9 @@ function onFormSubmit(e) {
   const resp = e.response;                 // FormResponse (form-bound trigger)
   const responseId = resp.getId();
   if (isProcessed_(responseId)) return;
-  processResponse_(resp, responseId);
-}
 
-// Manually resend feedback for ONE past submission by its Response ID --
-// run this from the Script editor's function dropdown (select
-// reprocessResponseId_, then Run) after pasting a Response ID from an
-// ERROR email below. Needed because a submission that failed (a
-// transient Gemini overload, for example) is NEVER automatically
-// retried -- onFormSubmit only fires once, at the moment of submission --
-// so without this, that student simply never gets anything unless
-// someone notices and manually resends it.
-function reprocessResponseId_(responseId) {
-  if (isProcessed_(responseId)) {
-    Logger.log('SKIPPED -- ' + responseId + ' already sent successfully once. ' +
-      'Nothing to do (this guard exists so re-running this function, or ' +
-      'TEMP_resend, twice by accident never double-emails a student).');
-    return;
-  }
-  const form = FormApp.getActiveForm();
-  const resp = form.getResponse(responseId);
-  if (!resp) throw new Error('No response found for id "' + responseId + '" on this form.');
-  processResponse_(resp, responseId);
-}
-
-function processResponse_(resp, responseId) {
-  let sub; // declared here (not just inside the try) so the catch block below
-           // can still report WHO this submission was, instead of just an
-           // opaque Response ID nobody can act on.
   try {
-    sub = parseResponse_(resp);
+    const sub = parseResponse_(resp);
     if (!sub.assignmentKey) throw new Error('Could not tell which assignment: "' + sub.assignment + '"');
     const rubric = RUBRICS[sub.assignmentKey];
 
@@ -202,16 +160,10 @@ function processResponse_(resp, responseId) {
           ai.expectedScore + ' / ' + ai.maxScore, 'sent']);
     markProcessed_(responseId);
   } catch (err) {
-    const who = sub
-      ? (sub.name || '(name not given)') + ' <' + (sub.email || 'email not given') + '> -- ' + (sub.assignment || '(assignment unclear)')
-      : '(could not even parse who this was)';
     GmailApp.sendEmail(INSTRUCTOR_EMAIL,
       SUBJECT_PREFIX + ' — ERROR on a submission',
-      'Student: ' + who + '\nResponse ID: ' + responseId +
-      '\n\nThe student did NOT receive any feedback email. Once the problem below ' +
-      'is resolved, resend it by running this from the Script editor:\n' +
-      '  reprocessResponseId_("' + responseId + '")\n\n' + (err.stack || err));
-    log_([new Date(), sub ? sub.name : '', sub ? sub.email : '', sub ? sub.assignment : '', '', 'ERROR: ' + err.message]);
+      'Response ID: ' + responseId + '\n\n' + (err.stack || err));
+    log_([new Date(), '', '', '', '', 'ERROR: ' + err.message]);
   }
 }
 
@@ -357,48 +309,38 @@ function callGemini_(rubric, sub, material) {
     generationConfig: { temperature: 0.3, responseMimeType: 'application/json' }
   };
 
-  // Gemini's 503 "This model is currently experiencing high demand" and 429
-  // rate-limit responses can be a brief blip (self-heals within a retry
-  // loop on the SAME model) or a sustained outage of that specific model
-  // lasting hours to days (confirmed independently on Google's own AI
-  // Developer Forum for gemini-3.6-flash around this exact time) -- a
-  // same-model retry alone cannot fix the second case. So: retry the
-  // primary model with backoff first (handles a brief blip), then fall
-  // through GEMINI_MODEL_FALLBACKS in order, each with a couple of quick
-  // attempts (handles a sustained outage of one specific model). Without
-  // this, a student got NOTHING (this happened for real, four times).
-  // onFormSubmit only ever fires once per submission, so this is the only
-  // chance to self-heal -- there's no separate retry pass later.
-  const candidates = [
-    { model: GEMINI_MODEL, delaysMs: [5000, 15000, 45000] },
-  ].concat(GEMINI_MODEL_FALLBACKS.map(function (m) { return { model: m, delaysMs: [5000] }; }));
+  // Gemini occasionally returns a transient error (503 "model overloaded",
+  // 429 rate limit, or a bare 500) that clears up on its own within seconds.
+  // Retry those a few times with backoff before giving up; a genuine 4xx
+  // (bad key, bad request) is never transient, so fail immediately on those.
+  const RETRYABLE_CODES = [429, 500, 503];
+  const MAX_ATTEMPTS = 4;
+  const BACKOFF_MS = [1000, 3000, 8000]; // wait before attempts 2, 3, 4
 
-  let lastError;
-  for (let c = 0; c < candidates.length; c++) {
-    const model = candidates[c].model;
-    const delays = candidates[c].delaysMs;
-    const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model +
-        ':generateContent?key=' + encodeURIComponent(key);
+  let res;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    res = UrlFetchApp.fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL +
+        ':generateContent?key=' + encodeURIComponent(key),
+      { method: 'post', contentType: 'application/json',
+        payload: JSON.stringify(payload), muteHttpExceptions: true });
 
-    for (let attempt = 0; attempt <= delays.length; attempt++) {
-      const res = UrlFetchApp.fetch(url, {
-        method: 'post', contentType: 'application/json',
-        payload: JSON.stringify(payload), muteHttpExceptions: true,
-      });
-      const code = res.getResponseCode();
-      if (code === 200) {
-        const out = JSON.parse(res.getContentText());
-        const txt = out.candidates && out.candidates[0].content.parts[0].text;
-        if (!txt) throw new Error('Gemini (' + model + ') returned no text: ' + res.getContentText().slice(0, 500));
-        return JSON.parse(txt);
-      }
-      lastError = new Error('Gemini ' + model + ' HTTP ' + code + ': ' + res.getContentText().slice(0, 500));
-      const retryable = code === 503 || code === 429;
-      if (!retryable || attempt === delays.length) break; // move to the next model, if any
-      Utilities.sleep(delays[attempt]);
+    const code = res.getResponseCode();
+    if (code === 200) break;
+
+    const isLastAttempt = attempt === MAX_ATTEMPTS;
+    const isRetryable = RETRYABLE_CODES.indexOf(code) !== -1;
+    if (!isRetryable || isLastAttempt) {
+      throw new Error('Gemini HTTP ' + code + ' (attempt ' + attempt + '/' + MAX_ATTEMPTS + '): ' +
+        res.getContentText().slice(0, 500));
     }
+    Utilities.sleep(BACKOFF_MS[attempt - 1]);
   }
-  throw lastError;
+
+  const out = JSON.parse(res.getContentText());
+  const txt = out.candidates && out.candidates[0].content.parts[0].text;
+  if (!txt) throw new Error('Gemini returned no text: ' + res.getContentText().slice(0, 500));
+  return JSON.parse(txt);
 }
 
 /* ============================ EMAIL BODY ============================= */
