@@ -391,6 +391,23 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
   transition:color .2s ease,border-color .2s ease,transform .2s ease;
 }
 .ask-btn:hover{color:var(--money);border-color:var(--money);transform:translateY(-2px);}
+.img-frame img{cursor:zoom-in;}
+.lightbox-backdrop{
+  position:fixed;inset:0;z-index:50;background:rgba(3,4,8,.9);
+  opacity:0;pointer-events:none;transition:opacity .25s var(--ease);
+  display:flex;align-items:center;justify-content:center;padding:4vh 4vw;cursor:zoom-out;
+}
+.lightbox-backdrop.open{opacity:1;pointer-events:auto;}
+.lightbox-backdrop img{
+  max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 40px 90px -20px rgba(0,0,0,.85);
+  transform:scale(.96);transition:transform .25s var(--ease);
+}
+.lightbox-backdrop.open img{transform:scale(1);}
+.lightbox-close{
+  position:absolute;top:24px;right:28px;width:40px;height:40px;border-radius:50%;
+  background:var(--bg-raised);border:1px solid var(--line);color:var(--ink);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;line-height:1;
+}
 .ask-backdrop{
   position:fixed;inset:0;z-index:40;background:rgba(3,4,8,.75);backdrop-filter:blur(3px);
   opacity:0;pointer-events:none;transition:opacity .3s var(--ease);
@@ -599,8 +616,8 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
             <li>theScore Bet doesn&rsquo;t have a deal with ESPN</li>
           </ul>
         </div>
-        <div class="img-frame contain rz rz3 def-photo" style="height:min(46vh,420px);background:#fff;border-radius:12px;padding:1.6vh 1.2vw;">
-          <img src="assets/screenshot-espn-draftkings-odds.png" alt="ESPN.com MLB game page showing a Game Odds module labeled 'Odds by DraftKings', reflecting ESPN's new sportsbook partnership after ESPN BET's shutdown">
+        <div class="img-frame rz rz3 def-photo" style="width:min(48vw,620px);height:auto;aspect-ratio:1397/666;">
+          <img src="assets/screenshot-espn-draftkings-odds.png" alt="ESPN.com MLB game page showing a Game Odds module labeled 'Odds by DraftKings', reflecting ESPN's new sportsbook partnership after ESPN BET's shutdown" style="object-fit:contain;">
         </div>
       </div>
     </div>
@@ -1044,6 +1061,11 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
   <div class="notes-body" id="notesBody"></div>
 </div>
 
+<div class="lightbox-backdrop" id="lightboxBackdrop">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close enlarged image">&times;</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
 <button class="ask-btn" id="askBtn" title="Ask a question about this slide" aria-label="Ask a question about this slide">Question?</button>
 <div class="ask-backdrop" id="askBackdrop">
   <div class="ask-panel">
@@ -1073,14 +1095,14 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
   var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var NOTES = {
-    3: 'https://www.casinoreports.com/us-sports-betting-market-stats-database/',
-    4: 'https://track360.io/blog/sports-betting-statistics-2026-us-handle-revenue-by-state',
-    7: 'https://www.youtube.com/watch?v=NmelX4L3H0Q',
-    8: 'https://www.nj.com/news/2025/01/nj-bettors-dropped-13b-in-wagers-last-year-but-has-the-market-hit-its-peak.html',
-    9: 'https://www.youtube.com/watch?v=CmhQni_cKKY',
-    10: 'Additional NFL sportsbook video: https://www.youtube.com/watch?v=2NmlijeBIPo',
-    11: 'https://www.youtube.com/watch?v=Fa8EpAEC5C0',
-    13: 'https://www.youtube.com/watch?v=Vla6v1WQ9DY'
+    5: 'https://www.casinoreports.com/us-sports-betting-market-stats-database/',
+    6: 'https://track360.io/blog/sports-betting-statistics-2026-us-handle-revenue-by-state',
+    9: 'https://www.youtube.com/watch?v=NmelX4L3H0Q',
+    10: 'https://www.nj.com/news/2025/01/nj-bettors-dropped-13b-in-wagers-last-year-but-has-the-market-hit-its-peak.html',
+    11: 'https://www.youtube.com/watch?v=CmhQni_cKKY',
+    12: 'Additional NFL sportsbook video: https://www.youtube.com/watch?v=2NmlijeBIPo',
+    13: 'https://www.youtube.com/watch?v=Fa8EpAEC5C0',
+    15: 'https://www.youtube.com/watch?v=Vla6v1WQ9DY'
   };
 
   var progressFill = document.getElementById('progressFill');
@@ -1091,6 +1113,26 @@ h1,h2,h3,h4,p,ul,ol{margin:0;}
   var notesBody = document.getElementById('notesBody');
   var notesToggleBtn = document.getElementById('notesToggleBtn');
   if (notesToggleBtn) notesToggleBtn.addEventListener('click', function(){ notesPanel.classList.toggle('open'); });
+
+  var lightboxBackdrop = document.getElementById('lightboxBackdrop');
+  var lightboxImg = document.getElementById('lightboxImg');
+  var lightboxClose = document.getElementById('lightboxClose');
+  function openLightbox(img){
+    lightboxImg.src = img.src;
+    lightboxImg.alt = img.alt || '';
+    lightboxBackdrop.classList.add('open');
+  }
+  function closeLightbox(){
+    lightboxBackdrop.classList.remove('open');
+  }
+  document.querySelectorAll('.img-frame img').forEach(function(img){
+    img.addEventListener('click', function(){ openLightbox(img); });
+  });
+  lightboxBackdrop.addEventListener('click', closeLightbox);
+  lightboxClose.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && lightboxBackdrop.classList.contains('open')) closeLightbox();
+  });
 
   for (var i = 0; i < total; i++){
     var d = document.createElement('button');
