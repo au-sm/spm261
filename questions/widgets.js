@@ -46,9 +46,19 @@
     });
   }
 
+  var isLightBg = (function(){
+    var m = getComputedStyle(document.body).backgroundColor.match(/\d+(\.\d+)?/g);
+    if (!m || m.length < 3) return false;
+    return (0.299*m[0] + 0.587*m[1] + 0.114*m[2]) / 255 > 0.6;
+  })();
+  if (isLightBg) document.documentElement.classList.add('widgets-light');
+
   // ---------- inject styles ----------
   var style = document.createElement('style');
   style.textContent =
+    '.widgets-light .pulse-label{color:#fff;background:#201c16;font-weight:700;padding:5px 9px;border-radius:999px;}' +
+    '.widgets-light .pulse-btn{border-color:rgba(32,28,22,.18);background:rgba(255,255,255,.75);box-shadow:0 2px 10px rgba(32,28,22,.1);}' +
+    '.widgets-light .pulse-status{color:rgba(32,28,22,.65);}' +
     '.pulse-wrap{position:fixed;left:50%;transform:translateX(-50%);top:54px;z-index:21;display:flex;align-items:center;gap:6px;pointer-events:none;}' +
     '.pulse-label{pointer-events:none;font:600 10.5px/1 system-ui,-apple-system,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-right:2px;user-select:none;}' +
     '.pulse-btn{pointer-events:auto;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.22);background:rgba(12,13,18,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s ease,border-color .15s ease,opacity .3s ease;}' +
