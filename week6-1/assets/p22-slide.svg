@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="256 168 760 400" role="img" aria-label="Three stacked boxes: Increased Community Visibility, Enhanced Community Image, Psychic Income">
+<rect x="256" y="168" width="760" height="400" fill="#ffffff"/>
+<g font-family="Calibri, Carlito, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-weight="700">
+<rect x="264" y="176" width="744" height="88" fill="#003300"/>
+<text x="636" y="231.95" font-size="37.33" fill="#FFFFFF" text-anchor="middle" textLength="480.61" lengthAdjust="spacingAndGlyphs">Increased Community Visibility</text>
+<rect x="264" y="328" width="744" height="88" fill="#000066"/>
+<text x="636" y="383.95" font-size="37.33" fill="#FFFFFF" text-anchor="middle" textLength="443.75" lengthAdjust="spacingAndGlyphs">Enhanced Community Image</text>
+<g aria-hidden="true">
+<text x="632" y="500.05" font-size="42.67" fill="#FFFFFF" text-anchor="middle" textLength="689.04" lengthAdjust="spacingAndGlyphs">Agree or Disagree with the large public</text>
+<text x="632" y="551.25" font-size="42.67" fill="#FFFFFF" text-anchor="middle" textLength="181.96" lengthAdjust="spacingAndGlyphs">subsidies?</text>
+</g>
+<rect x="264" y="472" width="744" height="88" fill="#CC3300"/>
+<text x="636" y="527.95" font-size="37.33" fill="#FFFFFF" text-anchor="middle" textLength="236.18" lengthAdjust="spacingAndGlyphs">Psychic Income</text>
+</g></svg>

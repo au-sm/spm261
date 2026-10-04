@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="184 112 888 552" role="img" aria-label="Ex-ante analysis: (1) The number of visitors an event is expected to draw + (2) The number of days each visitor is expected to stay + (3) The amount each visitor will spend each day, bracketed as the Direct Effect. A red arrow points to Crowding out effect; below it, Leakages.">
+<rect x="184" y="112" width="888" height="552" fill="#ffffff"/>
+<g font-family="Calibri, Carlito, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-weight="700">
+<rect x="206.53" y="141.6" width="19.2" height="19.2" fill="#000000"/>
+<rect x="203.17" y="138.24" width="19.2" height="19.2" fill="#ffffff" stroke="#000000" stroke-width="2.16"/>
+<text x="241.8" y="168" font-size="48" fill="#000000" text-anchor="start" textLength="319.03" lengthAdjust="spacingAndGlyphs">Ex-ante analysis</text>
+<text x="201.6" y="231.19" font-size="32" fill="#000000" text-anchor="start" textLength="756.78" lengthAdjust="spacingAndGlyphs">(1) The number of visitors an event is expected to draw +</text>
+<text x="201.6" y="269.98" font-size="32" fill="#000000" text-anchor="start" textLength="745.41" lengthAdjust="spacingAndGlyphs">(2) The number of days each visitor is expected to stay +</text>
+<text x="201.6" y="308.77" font-size="32" fill="#000000" text-anchor="start" textLength="631.8" lengthAdjust="spacingAndGlyphs">(3) The amount each visitor will spend each day</text>
+<path d="M944,192 A32,5.33 0 0 1 976,197.33 L976,252.45 A32,5.33 0 0 0 1008,257.78 A32,5.33 0 0 0 976,263.12 L976,318.24 A32,5.33 0 0 1 944,323.57" fill="none" stroke="#000000" stroke-width="3" stroke-linejoin="round"/>
+<text x="972" y="380.74" font-size="26.67" fill="#000000" text-anchor="middle" textLength="136.41" lengthAdjust="spacingAndGlyphs">Direct Effect</text>
+<path d="M205.65,443.55 L269.65,443.55 L269.65,429.55 L325.65,457.55 L269.65,485.55 L269.65,471.55 L205.65,471.55 Z" fill="#FF0000"/>
+<rect x="368" y="416" width="384" height="94.78" fill="#00B050"/>
+<text x="560" y="470.92" font-size="32" fill="#FFFFFF" text-anchor="middle" textLength="263.62" lengthAdjust="spacingAndGlyphs">Crowding out effect</text>
+<rect x="368" y="561.22" width="384" height="94.78" fill="#002060"/>
+<text x="560" y="616.14" font-size="32" fill="#FFFFFF" text-anchor="middle" textLength="120.64" lengthAdjust="spacingAndGlyphs">Leakages</text>
+</g></svg>

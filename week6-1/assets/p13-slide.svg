@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="136 82 502 292" role="img" aria-label="Ex-post analysis: (1) Per capita income, (2) Employment, (3) Sales tax collection. Arrow pointing to: More appropriate for the mega-sporting events.">
+<rect x="136" y="82" width="502" height="292" fill="#ffffff"/>
+<g font-family="Calibri, Carlito, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-weight="700">
+<!-- Wingdings "q" bullet (shadowed hollow square) -->
+<rect x="156.2" y="109.4" width="15" height="15" fill="#000000"/>
+<rect x="153.2" y="106.4" width="15" height="15" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+<text x="178.2" y="115.2" font-size="36" fill="#000000" dominant-baseline="middle">Ex-post analysis</text>
+<text font-size="24" fill="#000000" dominant-baseline="middle">
+<tspan x="151.2" y="180">(1) Per capita income</tspan>
+<tspan x="151.2" y="208.8">(2) Employment</tspan>
+<tspan x="151.2" y="237.6">(3) Sales tax collection</tspan>
+</text>
+<!-- Right Arrow 15 -->
+<path d="M162,315.58 H231 V305.08 L252,326.08 L231,347.08 V336.58 H162 Z" fill="#FF0000"/>
+<!-- Group 16 (child offset +148.95, +1.59 pt) -->
+<rect x="283.77" y="294.92" width="346.24" height="71.08" fill="#4F6228"/>
+<text font-size="24" fill="#FFFFFF" text-anchor="middle" dominant-baseline="middle">
+<tspan x="461.12" y="318.0">More appropriate for the</tspan>
+<tspan x="461.12" y="346.8">mega-sporting events</tspan>
+</text>
+</g>
+</svg>
