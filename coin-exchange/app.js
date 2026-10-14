@@ -64,7 +64,12 @@
       if(i===series.length-1) return '';
       return '<circle class="pt" cx="'+x(i).toFixed(2)+'" cy="'+y(h.index).toFixed(2)+'" r="3.5" fill="'+lineColor+'"></circle>';
     }).join('');
+    // Label only every Nth point so dates never overlap (~70 viewBox units each);
+    // always keep the first and last, and drop one that would crowd the last.
+    var last=series.length-1, maxLabels=Math.max(2,Math.floor(plotW/70));
+    var step=Math.max(1,Math.ceil(last/(maxLabels-1)));
     var axisLabels = series.map(function(h,i){
+      if(i!==last && (i%step!==0 || (i>0 && last-i<step*0.6))) return '';
       var label = i===0 ? 'Start' : fmtWhen(h.date);
       var anchor = i===0 ? 'start' : (i===series.length-1 ? 'end' : 'middle');
       return '<text class="axis-label" x="'+x(i).toFixed(2)+'" y="'+(H-6)+'" text-anchor="'+anchor+'">'+label+'</text>';
