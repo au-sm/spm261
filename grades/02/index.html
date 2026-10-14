@@ -98,7 +98,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
       <div class="tile"><div class="k">Points earned</div><div class="v" id="t-earned"></div><div class="d" id="t-earned-d"></div></div>
       <div class="tile"><div class="k">Current grade</div><div class="v" id="t-cur"></div><div class="d">Points earned (with bonus) ÷ points graded, rounded</div></div>
       <div class="tile"><div class="k">Bonus points</div><div class="v" id="t-bonus"></div><div class="d" id="t-bonus-d"></div></div>
-      <div class="tile"><div class="k">Expected final</div><div class="v" id="t-proj"></div><div class="d">If you keep your current pace</div></div>
+      <div class="tile"><div class="k">Expected final</div><div class="v" id="t-proj"></div><div class="d">If you keep your current pace</div><div class="d" id="t-proj-all" style="margin-top:6px;color:var(--green);font-weight:600"></div></div>
     </div>
     <div class="grid2">
       <div class="card">
@@ -119,7 +119,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
       <h2>More bonus points you can still earn</h2>
       <div class="opps">
         <div class="opp"><span class="tag">Season-long</span><h3>Soccer League Simulation</h3>
-          <p>Bonus points are awarded at the end of the season based on your club's Season Scorecard.</p>
+          <p><b>About 5 bonus points</b>, awarded at the end of the season based on your club's Season Scorecard.</p>
           <ul><li>League ranking (40%)</li><li>Playoff qualification (5%)</li><li>Business revenue: tickets, sponsorship and TV deals (35%)</li><li>Decision rationale scores from your weekly feedback (20%)</li><li>Submit a complete lineup with a rationale every round; missed rounds lose both the match and the rationale score.</li></ul></div>
         <div class="opp"><span class="tag">Ongoing</span><h3>Social Media Following</h3>
           <p>Follow the course&rsquo;s social media accounts announced in class.</p>
@@ -166,6 +166,10 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
     const rate = gPoss ? earned / gPoss : 0;
     const curPct = gPoss ? (earned + bonus) / gPoss * 100 : 0;   // bonus is already earned, so it counts now
     const proj = earned + bonus + rate * remaining;
+    const has = re => d.bonus.some(b => re.test(b.name) && b.points > 0);
+    const socialLeft = (has(/instagram/i) ? 0 : 2) + (has(/twitter|\bx\b/i) ? 0 : 2);
+    const soccerLeft = has(/soccer/i) ? 0 : 5;
+    const projAll = proj + socialLeft + soccerLeft;
 
     $('nm').textContent = d.name;
     $('meta').textContent = (d.section || '') + (d.updated ? ' · Grades last updated ' + d.updated : '');
@@ -175,6 +179,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
     $('t-bonus').innerHTML = '+' + f1(bonus) + ' <small>pts</small>';
     $('t-bonus-d').textContent = d.bonus.length ? d.bonus.map(b => (/coin/i.test(b.name) ? 'Coins' : /question/i.test(b.name) ? 'Questions' : b.name) + ' ' + f1(b.points)).join(' · ') : 'None yet';
     $('t-proj').innerHTML = Math.round(proj) + '%<span class="letter">' + letter(proj) + '</span>';
+    $('t-proj-all').textContent = (socialLeft + soccerLeft) ? 'With Social Media (+' + socialLeft + ') and Soccer League (about +' + soccerLeft + ') bonus: ' + Math.round(projAll) + '% ' + letter(projAll) : '';
 
     const projLetter = letter(proj);
     $('need').innerHTML = SCALE.map(([l,cut]) => {
