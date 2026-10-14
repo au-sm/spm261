@@ -1,7 +1,7 @@
 /**
- * SPM 261 — My Grade (student grade lookup)
- * ------------------------------------------
- * Backend for au-sm.github.io/spm261/grades/. A student enters their Arcadia
+ * SPM 261.02 — My Grade (student grade lookup, Section 02)
+ * ---------------------------------------------------------
+ * Backend for au-sm.github.io/spm261/grades/02/. A student enters their Arcadia
  * username + grade PIN; this script returns ONLY that student's row from the
  * private gradebook Sheet. The public page holds no grade data at all.
  *
@@ -20,7 +20,7 @@
  *  2. script.google.com -> New project. Paste this file in. Save.
  *  3. Project Settings -> Script Properties -> add  SHEET_ID = <the Sheet ID>
  *  4. Deploy -> New deployment -> Web app. Execute as: Me. Who has access: Anyone.
- *     Copy the /exec URL and send it to Claude (it goes in grades/config.js).
+ *     Copy the /exec URL and send it to Claude (it goes in grades/02/config.js).
  *
  * UPDATING GRADES: export the Canvas gradebook again and paste it over the
  * "Gradebook" tab (keep the tab name). No redeploy needed.
