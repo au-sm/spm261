@@ -1,2 +1,2 @@
-// Apps Script /exec URL for grades/backend.gs (Sections 01 and 02 grade lookup).
-window.GRADES_API = "https://script.google.com/macros/s/AKfycbw4Jow2-7MZoGqPtxluRAJQJTHMJMy6C5QoPy1Mw5U1SSQb5TP3eJw3BLGzVDqDYPG-Jw/exec";
+// Apps Script /exec URL for the Section 01 grade lookup (separate project from Section 02).
+window.GRADES_API = "https://script.google.com/macros/s/AKfycbxbKFhNGH2TrV31zu1Yul9t1qGWsoS0hShNsyrtKvrp3VLSIsPlGL9Y_RCS_URO-puOTw/exec";
