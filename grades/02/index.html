@@ -230,7 +230,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
     btn.disabled = true; btn.textContent = 'Checking…'; msg.textContent = '';
     try {
       const u = $('u').value.trim().replace(/@.*$/, '');
-      const r = await fetch(window.GRADES_API + '?action=grade&login=' + encodeURIComponent(u) + '&pin=' + encodeURIComponent($('p').value.trim()));
+      const r = await fetch(window.GRADES_API + '?action=grade&section=02&login=' + encodeURIComponent(u) + '&pin=' + encodeURIComponent($('p').value.trim()));
       const d = await r.json();
       if (!d.ok) msg.textContent = d.error || 'Could not load your grade.';
       else { $('p').value = ''; render(d); }

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>SPM 261.01 · My Grade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6fa;--card:#fff;--ink:#16213a;--muted:#5f6b85;--line:#e3e7ef;--navy:#1f2a44;--accent:#c8102e;--green:#1f8a5b;--amber:#c27c0e;--red:#c8102e;--blue:#2f6fb5;
+  --font:'Inter',system-ui,-apple-system,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--font)}
+header.top{background:var(--navy);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--accent)}
+header.top a{color:#fff;text-decoration:none;font-weight:600;font-size:13px;border:1px solid rgba(255,255,255,.3);padding:5px 11px;border-radius:999px}
+header.top .t{font-weight:700;letter-spacing:.02em}
+main{max-width:1040px;margin:0 auto;padding:24px 16px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:0 8px 24px -18px rgba(22,33,58,.35)}
+h1{font-size:26px;margin:0 0 4px}
+h2{font-size:16px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sub{color:var(--muted);font-size:13px;margin:0}
+/* login */
+#login{max-width:420px;margin:40px auto}
+#login label{display:block;font-weight:600;font-size:13px;margin:14px 0 6px}
+#login input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font:15px var(--font)}
+#login input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,181,.15)}
+#login button{margin-top:18px;width:100%;padding:12px;border:0;border-radius:9px;background:var(--navy);color:#fff;font:600 15px var(--font);cursor:pointer}
+#login button:disabled{opacity:.6}
+#msg{min-height:20px;margin-top:12px;font-size:13px;color:var(--red)}
+.note{font-size:12.5px;color:var(--muted);margin-top:14px}
+/* dashboard */
+#dash{display:none}
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.hdr button{background:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font:600 13px var(--font);cursor:pointer;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.tile .k{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.tile .v{font:700 30px/1.15 var(--font);margin-top:6px}
+.tile .v small{font-size:15px;color:var(--muted);font-weight:600}
+.tile .d{font-size:12.5px;color:var(--muted);margin-top:4px}
+.letter{display:inline-block;min-width:38px;text-align:center;padding:2px 9px;border-radius:8px;background:var(--navy);color:#fff;font:700 18px var(--font);margin-left:6px;vertical-align:4px}
+.grid2{display:grid;grid-template-columns:1.05fr 1fr;gap:18px;margin-bottom:18px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+#items table{table-layout:fixed} #items th:nth-child(2),#items td:nth-child(2){width:96px} #items th:nth-child(3),#items td:nth-child(3){width:70px}
+td{overflow-wrap:anywhere}
+th,td{padding:8px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.ok{background:#e4f4ec;color:var(--green)} .need{background:#fdf2df;color:var(--amber)} .no{background:#f9e3e6;color:var(--red)}
+tr.cur td{background:#f0f5fc}
+.bar{height:8px;background:#edf0f6;border-radius:6px;overflow:hidden;margin-top:5px}
+.bar i{display:block;height:100%;background:var(--blue);border-radius:6px}
+.cat{padding:10px 0;border-bottom:1px solid var(--line)}
+.cat:last-child{border-bottom:0}
+.cat .row{display:flex;justify-content:space-between;gap:10px;font-weight:600}
+.cat .row span:last-child{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:500}
+details{border-top:1px solid var(--line)}
+details summary{cursor:pointer;padding:10px 0;font-weight:600}
+.pending{color:var(--muted);font-style:italic}
+.foot{font-size:12.5px;color:var(--muted);margin-top:18px;line-height:1.6}
+.opps{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.opp{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fbfcfe}
+.opp h3{margin:0 0 6px;font-size:15px}
+.opp p{margin:0 0 6px;font-size:13.5px;color:var(--ink)}
+.opp ul{margin:0;padding-left:18px;font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:4px}
+@media (max-width:820px){.opps{grid-template-columns:1fr}}
+@media (max-width:820px){.tiles{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+@media (max-width:460px){.tiles{grid-template-columns:1fr} .card{padding:16px 14px} #items th:nth-child(2),#items td:nth-child(2){width:78px} #items th:nth-child(3),#items td:nth-child(3){width:52px} th,td{padding:7px 5px}}
+</style>
+</head>
+<body>
+<header class="top"><span class="t">SPM 261.01 · My Grade</span></header>
+<main>
+  <section id="login" class="card">
+    <h1>Check your grade</h1><p class="sub" style="margin-bottom:6px"><b>Section 01</b> (SPM 261.01 Introduction to Sport Management)</p>
+    <p class="sub">Only you can see your grade. Enter your Arcadia username and your 4-digit Soccer League team PIN.</p>
+    <form id="f">
+      <label for="u">Arcadia username</label>
+      <input id="u" autocomplete="username" placeholder="e.g. jsmith_01" required>
+      <label for="p">Soccer League team PIN</label>
+      <input id="p" type="password" inputmode="numeric" autocomplete="current-password" required>
+      <button id="go" type="submit">View my grade</button>
+      <div id="msg" role="alert"></div>
+    </form>
+    <p class="note">Your username is the part of your Arcadia email before the @. Grades shown here are copied from Canvas and may lag behind it by a few days; Canvas is the official record.</p>
+  </section>
+
+  <section id="dash">
+    <div class="hdr">
+      <div><h1 id="nm"></h1><p class="sub" id="meta"></p></div>
+      <button id="out" type="button">Sign out</button>
+    </div>
+    <div class="tiles">
+      <div class="tile"><div class="k">Points earned</div><div class="v" id="t-earned"></div><div class="d" id="t-earned-d"></div></div>
+      <div class="tile"><div class="k">Current grade</div><div class="v" id="t-cur"></div><div class="d">Points earned (with bonus) ÷ points graded, rounded</div></div>
+      <div class="tile"><div class="k">Bonus points</div><div class="v" id="t-bonus"></div><div class="d" id="t-bonus-d"></div></div>
+      <div class="tile"><div class="k">Expected final</div><div class="v" id="t-proj"></div><div class="d" id="t-proj-d"></div><div class="d" id="t-proj-all"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h2>What you need on the rest of the course</h2>
+        <table><thead><tr><th>Grade</th><th class="num">Final total</th><th class="num">Average needed</th><th></th></tr></thead><tbody id="need"></tbody></table>
+        <p class="foot" id="need-note"></p>
+      </div>
+      <div class="card">
+        <h2>Points by syllabus category</h2>
+        <div id="cats"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Points per assignment</h2>
+      <div id="items"></div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h2>More bonus points you can still earn</h2>
+      <div class="opps">
+        <div class="opp"><span class="tag">Season-long</span><h3>Soccer League Simulation</h3>
+          <p><b>About 5 bonus points</b>, awarded at the end of the season based on your club's Season Scorecard.</p>
+          <ul><li>League ranking (40%)</li><li>Playoff qualification (5%)</li><li>Business revenue: tickets, sponsorship and TV deals (35%)</li><li>Decision rationale scores from your weekly feedback (20%)</li><li>Submit a complete lineup with a rationale every round; missed rounds lose both the match and the rationale score.</li></ul></div>
+        <div class="opp"><span class="tag">Ongoing</span><h3>Social Media Following</h3>
+          <p>Follow the course&rsquo;s social media accounts announced in class.</p>
+          <ul><li><b>Instagram page: 2 bonus points</b></li><li><b>X (Twitter): 2 bonus points</b></li><li>Up to 4 bonus points in total.</li></ul>
+</div>
+        <div class="opp"><span class="tag">Every class</span><h3>Asking Questions on the Slide Decks</h3>
+          <p>0.1 point for every question you submit with the &ldquo;Question?&rdquo; button on a lecture slide (already counted above).</p>
+          <ul><li>Enter your full name so the question is credited to you.</li></ul></div>
+        <div class="opp"><span class="tag">Live</span><h3>Class Coin Exchange</h3>
+          <p>Coins granted in class ride Bitcoin at 10&times; leverage; your current total is already counted above and keeps moving until your coins are sold.</p></div>
+      </div>
+      <p class="foot" style="margin-top:12px">Bonus points from the Soccer League and Social Media are added to this page once they are recorded.</p>
+    </div>
+    <p class="foot">How this is calculated: the course is worth 100 points (Syllabus: Career Planning Portfolio 5, YouTube Interview Project 10, Sports Technology Presentation 10, Sports Betting Contest 5, Quizzes 10, Class Participation 20, Exam 1 20, Exam 2 20). Bonus points (asking questions on the slide decks, plus your Coin Exchange total) are extra credit added on top. The Coin Exchange value is live and moves with Bitcoin until your coins are sold. "Current grade" divides the points you have earned, including bonus points, by the points graded so far. "Expected final" adds your bonus to the points you have earned, then projects Exam 2 at your exam average and all other remaining work at your average on non-exam assignments. The second (green) expectation adds the Social Media (+4) and Soccer League (about +5) bonuses you can still earn; question and coin points you have already earned are included in both. "Average needed" is the percentage you would need on all remaining points to reach each grade. Grades are rounded to the nearest whole number (for example, 89.5% rounds to 90%). Grade scale: A 94+, A&minus; 90&ndash;93, B+ 87&ndash;89, B 84&ndash;86, B&minus; 80&ndash;83, C+ 77&ndash;79, C 74&ndash;76, C&minus; 70&ndash;73, D 60&ndash;69, F 59 and below.</p>
+  </section>
+</main>
+<script src="config.js"></script>
+<script>
+(function(){
+  const TOTAL = 100;
+  const SCALE = [['A',94],['A-',90],['B+',87],['B',84],['B-',80],['C+',77],['C',74],['C-',70],['D',60]];
+  const CATS = [
+    ['Career Planning Portfolio',5,/career plan|resume/i],
+    ['YouTube Interview Project',10,/interview/i],
+    ['Sports Technology Presentation',10,/ppt slide|technology presentation/i],
+    ['Sports Betting Contest',5,/sports betting/i],
+    ['Quizzes',10,/quiz/i],
+    ['Class Participation',20,/handwritten|class note|in class activity|participation/i],
+    ['Exam 1',20,/exam\s*#?\s*1/i],
+    ['Exam 2',20,/exam\s*#?\s*2/i]
+  ];
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const f1 = x => (Math.round(x*10)/10).toFixed(1);
+  const letter = pct => { const r = Math.round(pct); for (const [l,c] of SCALE) if (r >= c) return l; return 'F'; };   // grades round to the nearest whole number (89.5 -> 90)
+  const catOf = n => { for (const c of CATS) if (c[2].test(n)) return c[0]; return 'Other'; };
+
+  function render(d){
+    const graded = d.items.filter(i => i.points !== null);
+    const earned = graded.reduce((s,i) => s + i.points, 0);
+    const gPoss = graded.reduce((s,i) => s + i.possible, 0);
+    const bonus = d.bonus.reduce((s,b) => s + (b.points||0), 0);
+    const remaining = Math.max(0, TOTAL - gPoss);
+    const rate = gPoss ? earned / gPoss : 0;
+    const curPct = gPoss ? (earned + bonus) / gPoss * 100 : 0;   // bonus is already earned, so it counts now
+    // Project exams and other work separately: Exam 2 at your exam average, everything else at your other-work average.
+    const isExam = i => /exam/i.test(i.name);
+    const gE = graded.filter(isExam), gO = graded.filter(i => !isExam(i));
+    const eE = gE.reduce((s,i) => s + i.points, 0), pE = gE.reduce((s,i) => s + i.possible, 0);
+    const eO = gO.reduce((s,i) => s + i.points, 0), pO = gO.reduce((s,i) => s + i.possible, 0);
+    const remExam = Math.min(remaining, Math.max(0, 40 - pE));
+    const remOther = remaining - remExam;
+    const examRate = pE ? eE / pE : rate, otherRate = pO ? eO / pO : rate;
+    const proj = earned + bonus + examRate * remExam + otherRate * remOther;
+    const has = re => d.bonus.some(b => re.test(b.name) && b.points > 0);
+    const socialLeft = (has(/instagram/i) ? 0 : 2) + (has(/twitter|\bx\b/i) ? 0 : 2);
+    const soccerLeft = has(/soccer/i) ? 0 : 5;
+    const projAll = proj + socialLeft + soccerLeft;
+
+    $('nm').textContent = d.name;
+    $('meta').textContent = (d.section || '') + (d.updated ? ' · Grades last updated ' + d.updated : '');
+    $('t-earned').innerHTML = f1(earned + bonus) + ' <small>/ ' + f1(gPoss) + ' graded</small>';
+    $('t-earned-d').textContent = 'Includes +' + f1(bonus) + ' bonus · ' + f1(remaining) + ' of 100 course points still to come';
+    $('t-cur').innerHTML = Math.round(curPct) + '%<span class="letter">' + letter(curPct) + '</span>';
+    $('t-bonus').innerHTML = '+' + f1(bonus) + ' <small>pts</small>';
+    $('t-bonus-d').textContent = d.bonus.length ? d.bonus.map(b => (/coin/i.test(b.name) ? 'Coins' : /question/i.test(b.name) ? 'Questions' : b.name) + ' ' + f1(b.points)).join(' · ') : 'None yet';
+    $('t-proj').innerHTML = '<div style="font-size:13px;color:var(--muted);font-weight:600">With what you have</div>' + Math.round(proj) + '%<span class="letter">' + letter(proj) + '</span>';
+    $('t-proj-d').textContent = 'Exam 2 at your exam average (' + Math.round(examRate*100) + '%), other work at your assignment average (' + Math.round(otherRate*100) + '%)';
+    $('t-proj-all').innerHTML = (socialLeft + soccerLeft) ? '<div style="font-size:13px;color:var(--muted);font-weight:600;margin-top:10px">With Soccer League, Social Media &amp; question bonuses</div><span style="font:700 30px/1.15 var(--font);color:var(--green)">' + Math.round(projAll) + '%</span><span class="letter" style="background:var(--green)">' + letter(projAll) + '</span><div class="d">+' + socialLeft + ' Social Media, about +' + soccerLeft + ' Soccer League; question points you already earned are included</div>' : '';
+
+    const projLetter = letter(proj);
+    $('need').innerHTML = SCALE.map(([l,cut]) => {
+      const need = remaining ? (cut - 0.5 - earned - bonus) / remaining * 100 : (earned + bonus >= cut - 0.5 ? -1 : Infinity);
+      let chip;
+      if (need <= 0) chip = '<span class="chip ok">Already secured</span>';
+      else if (need > 100) chip = '<span class="chip no">Out of reach</span>';
+      else chip = '<span class="chip need">' + f1(need) + '%</span>';
+      return '<tr' + (l === projLetter ? ' class="cur"' : '') + '><td><b>' + l + '</b></td><td class="num">' + cut + '+</td><td class="num">' + chip + '</td><td>' + (l === projLetter ? '<span class="sub">on pace</span>' : '') + '</td></tr>';
+    }).join('');
+    $('need-note').textContent = 'Based on ' + f1(remaining) + ' remaining points, including Exam 2 (20 points). Your ' + f1(bonus) + ' bonus points are already counted.';
+
+    const byCat = {};
+    d.items.forEach(i => { const c = catOf(i.name); (byCat[c] = byCat[c] || []).push(i); });
+    $('cats').innerHTML = CATS.concat([['Other',0]]).filter(c => c[1] || byCat[c[0]]).map(([c,max]) => {
+      const list = byCat[c] || [];
+      const g = list.filter(i => i.points !== null);
+      const e = g.reduce((s,i) => s + i.points, 0), p = g.reduce((s,i) => s + i.possible, 0);
+      const pct = p ? e / p * 100 : 0;
+      return '<div class="cat"><div class="row"><span>' + esc(c) + (max ? ' <span class="sub">(' + max + ' pts)</span>' : '') + '</span><span>' +
+        (p ? f1(e) + ' / ' + f1(p) + ' graded' : '<span class="pending">not graded yet</span>') + '</span></div><div class="bar"><i style="width:' + Math.min(100,pct) + '%"></i></div></div>';
+    }).join('');
+
+    $('items').innerHTML = CATS.concat([['Other',0]]).filter(c => byCat[c[0]]).map(([c]) => {
+      const rows = byCat[c].map(i => '<tr><td>' + esc(i.name) + '</td><td class="num">' +
+        (i.excused ? '<span class="pending">excused</span>' : i.points === null ? '<span class="pending">not graded</span>' : f1(i.points)) +
+        '</td><td class="num">' + f1(i.possible) + '</td></tr>').join('');
+      return '<details open><summary>' + esc(c) + '</summary><table><thead><tr><th>Assignment</th><th class="num">Score</th><th class="num">Out of</th></tr></thead><tbody>' + rows + '</tbody></table></details>';
+    }).join('') + (d.bonus.length ? '<details open><summary>Bonus (extra credit)</summary><table><tbody>' +
+      d.bonus.map(b => '<tr><td>' + esc(b.name) + '</td><td class="num">+' + f1(b.points) + '</td><td class="num"></td></tr>').join('') + '</tbody></table></details>' : '');
+
+    $('login').style.display = 'none'; $('dash').style.display = 'block';
+  }
+
+  $('f').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const msg = $('msg'), btn = $('go');
+    if (!window.GRADES_API) { msg.textContent = 'Grade lookup is not connected yet.'; return; }
+    btn.disabled = true; btn.textContent = 'Checking…'; msg.textContent = '';
+    try {
+      const u = $('u').value.trim().replace(/@.*$/, '');
+      const r = await fetch(window.GRADES_API + '?action=grade&section=01&login=' + encodeURIComponent(u) + '&pin=' + encodeURIComponent($('p').value.trim()));
+      const d = await r.json();
+      if (!d.ok) msg.textContent = d.error || 'Could not load your grade.';
+      else { $('p').value = ''; render(d); }
+    } catch (e) { msg.textContent = 'Could not reach the grade server. Check your connection and try again.'; }
+    btn.disabled = false; btn.textContent = 'View my grade';
+  });
+  $('out').addEventListener('click', () => { location.reload(); });
+  window.SPM_GRADES_RENDER = render;   // used only by local preview tests
+})();
+</script>
+</body>
+</html>

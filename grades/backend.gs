@@ -1,7 +1,9 @@
 /**
- * SPM 261.02 — My Grade (student grade lookup, Section 02)
- * ---------------------------------------------------------
- * Backend for au-sm.github.io/spm261/grades/02/. A student enters their Arcadia
+ * SPM 261 — My Grade (student grade lookup, Sections 01 and 02)
+ * --------------------------------------------------------------
+ * Backend for au-sm.github.io/spm261/grades/01/ and /grades/02/ (?section=01|02).
+ * Each section has its own private Sheet: Script Properties SHEET_ID_01 and
+ * SHEET_ID_02 (SHEET_ID is still accepted for Section 02). A student enters their Arcadia
  * username + grade PIN; this script returns ONLY that student's row from the
  * private gradebook Sheet. The public page holds no grade data at all.
  *
@@ -36,25 +38,28 @@
 
 var MAX_FAILS = 5, LOCK_SECONDS = 900;
 var COIN_API = 'https://script.google.com/macros/s/AKfycbwDxIRDAcZru9LEvOoVpWWNfZptKGBaXSUF0QNSMLZFPRSAuGpuKndl2Pm9Tz1MIbUM/exec';
-var COIN_SECTION = '02';
 
 function doGet(e) {
   var p = (e && e.parameter) || {};
   try {
     if (p.action !== 'grade') return json_({ ok: false, error: 'unknown action' });
-    return json_(lookup_(String(p.login || '').trim().toLowerCase(), String(p.pin || '').trim()));
+    var section = p.section === '01' ? '01' : '02';
+    return json_(lookup_(String(p.login || '').trim().toLowerCase(), String(p.pin || '').trim(), section));
   } catch (err) {
     return json_({ ok: false, error: 'server error' });
   }
 }
 
-function lookup_(login, pin) {
+function lookup_(login, pin, section) {
   if (!login || !pin) return { ok: false, error: 'Enter your username and PIN.' };
-  var cache = CacheService.getScriptCache(), key = 'fail_' + login;
+  var cache = CacheService.getScriptCache(), key = 'fail_' + section + '_' + login;
   var fails = Number(cache.get(key) || 0);
   if (fails >= MAX_FAILS) return { ok: false, error: 'Too many attempts. Try again in 15 minutes.' };
 
-  var ss = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty('SHEET_ID'));
+  var props = PropertiesService.getScriptProperties();
+  var sheetId = props.getProperty('SHEET_ID_' + section) || (section === '02' ? props.getProperty('SHEET_ID') : null);
+  if (!sheetId) return { ok: false, error: 'Grades for this section are not available yet.' };
+  var ss = SpreadsheetApp.openById(sheetId);
   var pins = ss.getSheetByName('PINs').getDataRange().getDisplayValues();
   var good = false, coinName = '';
   for (var i = 1; i < pins.length; i++) {
@@ -91,7 +96,7 @@ function lookup_(login, pin) {
     var excused = /^ex$/i.test(val);
     items.push({ name: name, possible: pp, points: (val === '' || excused) ? null : Number(val), excused: excused });
   }
-  var coin = coinBonus_(coinName);
+  var coin = coinBonus_(coinName, section);
   if (coin !== null) bonus.push({ name: 'Coin Exchange (live, moves with Bitcoin)', points: coin });
   var parts = String(row[0]).split(',');
   return {
@@ -104,10 +109,10 @@ function lookup_(login, pin) {
   };
 }
 
-function coinBonus_(coinName) {
+function coinBonus_(coinName, section) {
   if (!coinName) return null;
   try {
-    var d = JSON.parse(UrlFetchApp.fetch(COIN_API + '?section=' + COIN_SECTION, { muteHttpExceptions: true }).getContentText());
+    var d = JSON.parse(UrlFetchApp.fetch(COIN_API + '?section=' + section, { muteHttpExceptions: true }).getContentText());
     var L = Number(d.leverage) || 10, idx = Number(d.index);
     for (var i = 0; i < d.students.length; i++) {
       var s = d.students[i];
