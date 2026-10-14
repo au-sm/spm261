@@ -61,6 +61,13 @@ details{border-top:1px solid var(--line)}
 details summary{cursor:pointer;padding:10px 0;font-weight:600}
 .pending{color:var(--muted);font-style:italic}
 .foot{font-size:12.5px;color:var(--muted);margin-top:18px;line-height:1.6}
+.opps{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.opp{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fbfcfe}
+.opp h3{margin:0 0 6px;font-size:15px}
+.opp p{margin:0 0 6px;font-size:13.5px;color:var(--ink)}
+.opp ul{margin:0;padding-left:18px;font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:4px}
+@media (max-width:820px){.opps{grid-template-columns:1fr}}
 @media (max-width:820px){.tiles{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
 @media (max-width:460px){.tiles{grid-template-columns:1fr} .card{padding:16px 14px} #items th:nth-child(2),#items td:nth-child(2){width:78px} #items th:nth-child(3),#items td:nth-child(3){width:52px} th,td{padding:7px 5px}}
 </style>
@@ -107,6 +114,23 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
     <div class="card">
       <h2>Points per assignment</h2>
       <div id="items"></div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h2>More bonus points you can still earn</h2>
+      <div class="opps">
+        <div class="opp"><span class="tag">Season-long</span><h3>Soccer League Simulation</h3>
+          <p>Bonus points are awarded at the end of the season based on your club's Season Scorecard.</p>
+          <ul><li>League ranking (40%)</li><li>Playoff qualification (5%)</li><li>Business revenue: tickets, sponsorship and TV deals (35%)</li><li>Decision rationale scores from your weekly feedback (20%)</li><li>Submit a complete lineup with a rationale every round; missed rounds lose both the match and the rationale score.</li></ul></div>
+        <div class="opp"><span class="tag">Ongoing</span><h3>Social Media Following</h3>
+          <p>Earn bonus points by following the course&rsquo;s social media accounts announced in class.</p>
+</div>
+        <div class="opp"><span class="tag">Every class</span><h3>Asking Questions on the Slide Decks</h3>
+          <p>0.1 point for every question you submit with the &ldquo;Question?&rdquo; button on a lecture slide (already counted above).</p>
+          <ul><li>Enter your full name so the question is credited to you.</li></ul></div>
+        <div class="opp"><span class="tag">Live</span><h3>Class Coin Exchange</h3>
+          <p>Coins granted in class ride Bitcoin at 10&times; leverage; your current total is already counted above and keeps moving until your coins are sold.</p></div>
+      </div>
+      <p class="foot" style="margin-top:12px">Bonus points from the Soccer League and Social Media are added to this page once they are recorded.</p>
     </div>
     <p class="foot">How this is calculated: the course is worth 100 points (Syllabus: Career Planning Portfolio 5, YouTube Interview Project 10, Sports Technology Presentation 10, Sports Betting Contest 5, Quizzes 10, Class Participation 20, Exam 1 20, Exam 2 20). Bonus points (asking questions on the slide decks, plus your Coin Exchange total) are extra credit added on top. The Coin Exchange value is live and moves with Bitcoin until your coins are sold. "Current grade" divides the points you have earned, including bonus points, by the points graded so far. "Expected final" adds your bonus to the points you have earned and assumes you keep your assignment percentage (without bonus) on every remaining point. "Average needed" is the percentage you would need on all remaining points to reach each grade. Grade scale: A 94+, A&minus; 90&ndash;93, B+ 87&ndash;89, B 84&ndash;86, B&minus; 80&ndash;83, C+ 77&ndash;79, C 74&ndash;76, C&minus; 70&ndash;73, D 60&ndash;69, F 59 and below.</p>
   </section>
