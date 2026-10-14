@@ -108,7 +108,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
       <h2>Points per assignment</h2>
       <div id="items"></div>
     </div>
-    <p class="foot">How this is calculated: the course is worth 100 points (Syllabus: Career Planning Portfolio 5, YouTube Interview Project 10, Sports Technology Presentation 10, Sports Betting Contest 5, Quizzes 10, Class Participation 20, Exam 1 20, Exam 2 20). Bonus points are extra credit added on top. "Current grade" divides the points you have earned by the points graded so far. "Expected final" assumes you keep that same percentage on every remaining point. "Average needed" is the percentage you would need on all remaining points to reach each grade. Grade scale: A 94+, A&minus; 90&ndash;93, B+ 87&ndash;89, B 84&ndash;86, B&minus; 80&ndash;83, C+ 77&ndash;79, C 74&ndash;76, C&minus; 70&ndash;73, D 60&ndash;69, F 59 and below.</p>
+    <p class="foot">How this is calculated: the course is worth 100 points (Syllabus: Career Planning Portfolio 5, YouTube Interview Project 10, Sports Technology Presentation 10, Sports Betting Contest 5, Quizzes 10, Class Participation 20, Exam 1 20, Exam 2 20). Bonus points (asking questions on the slide decks, plus your Coin Exchange total) are extra credit added on top. The Coin Exchange value is live and moves with Bitcoin until your coins are sold. "Current grade" divides the points you have earned by the points graded so far. "Expected final" assumes you keep that same percentage on every remaining point. "Average needed" is the percentage you would need on all remaining points to reach each grade. Grade scale: A 94+, A&minus; 90&ndash;93, B+ 87&ndash;89, B 84&ndash;86, B&minus; 80&ndash;83, C+ 77&ndash;79, C 74&ndash;76, C&minus; 70&ndash;73, D 60&ndash;69, F 59 and below.</p>
   </section>
 </main>
 <script src="config.js"></script>
@@ -148,7 +148,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
     $('t-earned-d').textContent = f1(remaining) + ' of 100 course points still to come';
     $('t-cur').innerHTML = f1(curPct) + '%<span class="letter">' + letter(curPct) + '</span>';
     $('t-bonus').innerHTML = '+' + f1(bonus) + ' <small>pts</small>';
-    $('t-bonus-d').textContent = d.bonus.length ? d.bonus.map(b => b.name.replace(/\s*-\s*Slide Decks.*$/i,'')).join(', ') : 'None yet';
+    $('t-bonus-d').textContent = d.bonus.length ? d.bonus.map(b => (/coin/i.test(b.name) ? 'Coins' : /question/i.test(b.name) ? 'Questions' : b.name) + ' ' + f1(b.points)).join(' · ') : 'None yet';
     $('t-proj').innerHTML = f1(proj) + '<span class="letter">' + letter(proj) + '</span>';
 
     const projLetter = letter(proj);

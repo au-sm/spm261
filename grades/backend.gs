@@ -12,7 +12,13 @@
  *      rows 3+ = one row per student
  *    Extra-credit columns: any header containing "Asking Questions" or "Bonus"
  *    is treated as bonus (added on top of the 100-point course total).
- *  - Tab "PINs": columns  login | pin   (login = SIS Login ID, e.g. pbates_01)
+ *  - Tab "PINs": columns  login | pin | student | coin_name
+ *      login = SIS Login ID (e.g. pbates_01); pin = Soccer League team PIN;
+ *      coin_name = the student's name exactly as it appears on the Coin Exchange page.
+ *
+ * COIN EXCHANGE BONUS: each student's current coin total (banked + live value of
+ * coins held, same formula as coin-exchange/app.js) is fetched live from the
+ * Coin Exchange backend and shown as a bonus line, so it moves with Bitcoin.
  *
  * SETUP (one time)
  *  1. Upload SPM261.02_Grades_Data.xlsx to Google Drive -> Open with Google Sheets
@@ -29,6 +35,8 @@
  */
 
 var MAX_FAILS = 5, LOCK_SECONDS = 900;
+var COIN_API = 'https://script.google.com/macros/s/AKfycbwDxIRDAcZru9LEvOoVpWWNfZptKGBaXSUF0QNSMLZFPRSAuGpuKndl2Pm9Tz1MIbUM/exec';
+var COIN_SECTION = '02';
 
 function doGet(e) {
   var p = (e && e.parameter) || {};
@@ -48,9 +56,9 @@ function lookup_(login, pin) {
 
   var ss = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty('SHEET_ID'));
   var pins = ss.getSheetByName('PINs').getDataRange().getDisplayValues();
-  var good = false;
+  var good = false, coinName = '';
   for (var i = 1; i < pins.length; i++) {
-    if (String(pins[i][0]).trim().toLowerCase() === login && String(pins[i][1]).trim() === pin) { good = true; break; }
+    if (String(pins[i][0]).trim().toLowerCase() === login && String(pins[i][1]).trim() === pin) { good = true; coinName = String(pins[i][3] || '').trim(); break; }
   }
   if (!good) {
     cache.put(key, String(fails + 1), LOCK_SECONDS);
@@ -83,6 +91,8 @@ function lookup_(login, pin) {
     var excused = /^ex$/i.test(val);
     items.push({ name: name, possible: pp, points: (val === '' || excused) ? null : Number(val), excused: excused });
   }
+  var coin = coinBonus_(coinName);
+  if (coin !== null) bonus.push({ name: 'Coin Exchange (live, moves with Bitcoin)', points: coin });
   var parts = String(row[0]).split(',');
   return {
     ok: true,
@@ -92,6 +102,25 @@ function lookup_(login, pin) {
     items: items,
     bonus: bonus
   };
+}
+
+function coinBonus_(coinName) {
+  if (!coinName) return null;
+  try {
+    var d = JSON.parse(UrlFetchApp.fetch(COIN_API + '?section=' + COIN_SECTION, { muteHttpExceptions: true }).getContentText());
+    var L = Number(d.leverage) || 10, idx = Number(d.index);
+    for (var i = 0; i < d.students.length; i++) {
+      var s = d.students[i];
+      if (String(s.name).trim().toLowerCase() !== coinName.toLowerCase()) continue;
+      var held = 0;
+      for (var j = 0; j < s.coins.length; j++) {
+        var base = Number(s.coins[j].base) > 0 ? Number(s.coins[j].base) : 2;
+        held += Math.max(0, base * (1 + L * (idx / s.coins[j].entryIndex - 1)));
+      }
+      return Math.round((Number(s.banked || 0) + held) * 100) / 100;
+    }
+  } catch (e) {}
+  return null;
 }
 
 function json_(o) {
