@@ -97,7 +97,7 @@
 
   function buildHistoryList(history){
     if(!history.length) return '';
-    var items = history.slice(-14).map(function(h){
+    var items = history.map(function(h){
       var cls = h.pct > 0.005 ? 'up' : (h.pct < -0.005 ? 'down' : '');
       var sign = h.pct > 0 ? '+' : '';
       return '<span class="history-item">'+fmtWhen(h.date)+' <span class="hi-pct '+cls+'">'+sign+(h.pct||0).toFixed(2)+'%</span></span>';
