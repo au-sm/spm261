@@ -96,7 +96,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
     </div>
     <div class="tiles">
       <div class="tile"><div class="k">Points earned</div><div class="v" id="t-earned"></div><div class="d" id="t-earned-d"></div></div>
-      <div class="tile"><div class="k">Current grade</div><div class="v" id="t-cur"></div><div class="d">Points earned (with bonus) ÷ points graded</div></div>
+      <div class="tile"><div class="k">Current grade</div><div class="v" id="t-cur"></div><div class="d">Points earned (with bonus) ÷ points graded, rounded</div></div>
       <div class="tile"><div class="k">Bonus points</div><div class="v" id="t-bonus"></div><div class="d" id="t-bonus-d"></div></div>
       <div class="tile"><div class="k">Expected final</div><div class="v" id="t-proj"></div><div class="d">If you keep your current pace</div></div>
     </div>
@@ -132,7 +132,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
       </div>
       <p class="foot" style="margin-top:12px">Bonus points from the Soccer League and Social Media are added to this page once they are recorded.</p>
     </div>
-    <p class="foot">How this is calculated: the course is worth 100 points (Syllabus: Career Planning Portfolio 5, YouTube Interview Project 10, Sports Technology Presentation 10, Sports Betting Contest 5, Quizzes 10, Class Participation 20, Exam 1 20, Exam 2 20). Bonus points (asking questions on the slide decks, plus your Coin Exchange total) are extra credit added on top. The Coin Exchange value is live and moves with Bitcoin until your coins are sold. "Current grade" divides the points you have earned, including bonus points, by the points graded so far. "Expected final" adds your bonus to the points you have earned and assumes you keep your assignment percentage (without bonus) on every remaining point. "Average needed" is the percentage you would need on all remaining points to reach each grade. Grade scale: A 94+, A&minus; 90&ndash;93, B+ 87&ndash;89, B 84&ndash;86, B&minus; 80&ndash;83, C+ 77&ndash;79, C 74&ndash;76, C&minus; 70&ndash;73, D 60&ndash;69, F 59 and below.</p>
+    <p class="foot">How this is calculated: the course is worth 100 points (Syllabus: Career Planning Portfolio 5, YouTube Interview Project 10, Sports Technology Presentation 10, Sports Betting Contest 5, Quizzes 10, Class Participation 20, Exam 1 20, Exam 2 20). Bonus points (asking questions on the slide decks, plus your Coin Exchange total) are extra credit added on top. The Coin Exchange value is live and moves with Bitcoin until your coins are sold. "Current grade" divides the points you have earned, including bonus points, by the points graded so far. "Expected final" adds your bonus to the points you have earned and assumes you keep your assignment percentage (without bonus) on every remaining point. "Average needed" is the percentage you would need on all remaining points to reach each grade. Grades are rounded to the nearest whole number (for example, 89.5% rounds to 90%). Grade scale: A 94+, A&minus; 90&ndash;93, B+ 87&ndash;89, B 84&ndash;86, B&minus; 80&ndash;83, C+ 77&ndash;79, C 74&ndash;76, C&minus; 70&ndash;73, D 60&ndash;69, F 59 and below.</p>
   </section>
 </main>
 <script src="config.js"></script>
@@ -153,7 +153,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const f1 = x => (Math.round(x*10)/10).toFixed(1);
-  const letter = pct => { for (const [l,c] of SCALE) if (pct >= c) return l; return 'F'; };
+  const letter = pct => { const r = Math.round(pct); for (const [l,c] of SCALE) if (r >= c) return l; return 'F'; };   // grades round to the nearest whole number (89.5 -> 90)
   const catOf = n => { for (const c of CATS) if (c[2].test(n)) return c[0]; return 'Other'; };
 
   function render(d){
@@ -170,14 +170,14 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
     $('meta').textContent = (d.section || '') + (d.updated ? ' · Grades last updated ' + d.updated : '');
     $('t-earned').innerHTML = f1(earned + bonus) + ' <small>/ ' + f1(gPoss) + ' graded</small>';
     $('t-earned-d').textContent = 'Includes +' + f1(bonus) + ' bonus · ' + f1(remaining) + ' of 100 course points still to come';
-    $('t-cur').innerHTML = f1(curPct) + '%<span class="letter">' + letter(curPct) + '</span>';
+    $('t-cur').innerHTML = Math.round(curPct) + '%<span class="letter">' + letter(curPct) + '</span>';
     $('t-bonus').innerHTML = '+' + f1(bonus) + ' <small>pts</small>';
     $('t-bonus-d').textContent = d.bonus.length ? d.bonus.map(b => (/coin/i.test(b.name) ? 'Coins' : /question/i.test(b.name) ? 'Questions' : b.name) + ' ' + f1(b.points)).join(' · ') : 'None yet';
-    $('t-proj').innerHTML = f1(proj) + '<span class="letter">' + letter(proj) + '</span>';
+    $('t-proj').innerHTML = Math.round(proj) + '%<span class="letter">' + letter(proj) + '</span>';
 
     const projLetter = letter(proj);
     $('need').innerHTML = SCALE.map(([l,cut]) => {
-      const need = remaining ? (cut - earned - bonus) / remaining * 100 : (earned + bonus >= cut ? -1 : Infinity);
+      const need = remaining ? (cut - 0.5 - earned - bonus) / remaining * 100 : (earned + bonus >= cut - 0.5 ? -1 : Infinity);
       let chip;
       if (need <= 0) chip = '<span class="chip ok">Already secured</span>';
       else if (need > 100) chip = '<span class="chip no">Out of reach</span>';
