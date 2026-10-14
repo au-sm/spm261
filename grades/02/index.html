@@ -89,7 +89,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
     </div>
     <div class="tiles">
       <div class="tile"><div class="k">Points earned</div><div class="v" id="t-earned"></div><div class="d" id="t-earned-d"></div></div>
-      <div class="tile"><div class="k">Current grade</div><div class="v" id="t-cur"></div><div class="d">On work graded so far</div></div>
+      <div class="tile"><div class="k">Current grade</div><div class="v" id="t-cur"></div><div class="d">Points earned (with bonus) ÷ points graded</div></div>
       <div class="tile"><div class="k">Bonus points</div><div class="v" id="t-bonus"></div><div class="d" id="t-bonus-d"></div></div>
       <div class="tile"><div class="k">Expected final</div><div class="v" id="t-proj"></div><div class="d">If you keep your current pace</div></div>
     </div>
@@ -108,7 +108,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
       <h2>Points per assignment</h2>
       <div id="items"></div>
     </div>
-    <p class="foot">How this is calculated: the course is worth 100 points (Syllabus: Career Planning Portfolio 5, YouTube Interview Project 10, Sports Technology Presentation 10, Sports Betting Contest 5, Quizzes 10, Class Participation 20, Exam 1 20, Exam 2 20). Bonus points (asking questions on the slide decks, plus your Coin Exchange total) are extra credit added on top. The Coin Exchange value is live and moves with Bitcoin until your coins are sold. "Current grade" divides the points you have earned by the points graded so far. "Expected final" assumes you keep that same percentage on every remaining point. "Average needed" is the percentage you would need on all remaining points to reach each grade. Grade scale: A 94+, A&minus; 90&ndash;93, B+ 87&ndash;89, B 84&ndash;86, B&minus; 80&ndash;83, C+ 77&ndash;79, C 74&ndash;76, C&minus; 70&ndash;73, D 60&ndash;69, F 59 and below.</p>
+    <p class="foot">How this is calculated: the course is worth 100 points (Syllabus: Career Planning Portfolio 5, YouTube Interview Project 10, Sports Technology Presentation 10, Sports Betting Contest 5, Quizzes 10, Class Participation 20, Exam 1 20, Exam 2 20). Bonus points (asking questions on the slide decks, plus your Coin Exchange total) are extra credit added on top. The Coin Exchange value is live and moves with Bitcoin until your coins are sold. "Current grade" divides the points you have earned, including bonus points, by the points graded so far. "Expected final" adds your bonus to the points you have earned and assumes you keep your assignment percentage (without bonus) on every remaining point. "Average needed" is the percentage you would need on all remaining points to reach each grade. Grade scale: A 94+, A&minus; 90&ndash;93, B+ 87&ndash;89, B 84&ndash;86, B&minus; 80&ndash;83, C+ 77&ndash;79, C 74&ndash;76, C&minus; 70&ndash;73, D 60&ndash;69, F 59 and below.</p>
   </section>
 </main>
 <script src="config.js"></script>
@@ -139,13 +139,13 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
     const bonus = d.bonus.reduce((s,b) => s + (b.points||0), 0);
     const remaining = Math.max(0, TOTAL - gPoss);
     const rate = gPoss ? earned / gPoss : 0;
-    const curPct = rate * 100;
+    const curPct = gPoss ? (earned + bonus) / gPoss * 100 : 0;   // bonus is already earned, so it counts now
     const proj = earned + bonus + rate * remaining;
 
     $('nm').textContent = d.name;
     $('meta').textContent = (d.section || '') + (d.updated ? ' · Grades last updated ' + d.updated : '');
-    $('t-earned').innerHTML = f1(earned) + ' <small>/ ' + f1(gPoss) + ' graded</small>';
-    $('t-earned-d').textContent = f1(remaining) + ' of 100 course points still to come';
+    $('t-earned').innerHTML = f1(earned + bonus) + ' <small>/ ' + f1(gPoss) + ' graded</small>';
+    $('t-earned-d').textContent = 'Includes +' + f1(bonus) + ' bonus · ' + f1(remaining) + ' of 100 course points still to come';
     $('t-cur').innerHTML = f1(curPct) + '%<span class="letter">' + letter(curPct) + '</span>';
     $('t-bonus').innerHTML = '+' + f1(bonus) + ' <small>pts</small>';
     $('t-bonus-d').textContent = d.bonus.length ? d.bonus.map(b => (/coin/i.test(b.name) ? 'Coins' : /question/i.test(b.name) ? 'Questions' : b.name) + ' ' + f1(b.points)).join(' · ') : 'None yet';
