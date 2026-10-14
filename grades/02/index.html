@@ -68,6 +68,49 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
 .opp ul{margin:0;padding-left:18px;font-size:13px;color:var(--muted)}
 .tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:4px}
 @media (max-width:820px){.opps{grid-template-columns:1fr}}
+
+/* ---- visual summary ---- */
+.viz{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:18px;margin-bottom:18px}
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge{width:100%;max-width:420px;height:auto;overflow:visible}
+.gauge .band{transition:opacity .3s}
+.gauge .lbl{font:700 11px var(--font);fill:var(--muted);text-anchor:middle}
+.gauge .needle{transform-origin:200px 200px;transform:rotate(-90deg);transition:transform 1.6s cubic-bezier(.2,.9,.2,1.05)}
+.gauge .hub{fill:var(--navy)}
+.gauge .big{font:800 46px var(--font);fill:var(--ink);text-anchor:middle}
+.gauge .bigl{font:700 16px var(--font);fill:var(--muted);text-anchor:middle;letter-spacing:.08em}
+.gauge .mk{opacity:0;transition:opacity .5s 1.4s}
+.gauge.go .mk{opacity:1}
+.gauge .mkt{font:700 10.5px var(--font);text-anchor:middle}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:12.5px;color:var(--muted);margin-top:4px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.path h3,.rings h3{margin:0 0 4px;font-size:15px}
+.path .sub{margin-bottom:26px}
+.ptrack{position:relative;height:30px;border-radius:9px;background:#edf0f6;margin:34px 0 10px;overflow:visible}
+.pseg{position:absolute;top:0;bottom:0;width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.pseg.earned{background:var(--navy);border-radius:9px 0 0 9px}
+.pseg.bonus{background:repeating-linear-gradient(45deg,#e6a817 0 6px,#f4c654 6px 12px)}
+.pseg.exp{background:#9ec2ea}
+.pseg.pot{background:transparent;border:2px dashed var(--green);border-left:0;border-radius:0 9px 9px 0}
+.ptick{position:absolute;top:-6px;bottom:-6px;width:0;border-left:1.5px solid rgba(22,33,58,.35)}
+.ptick span{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font:700 11px var(--font);color:var(--muted);padding-bottom:3px}
+.ptick.on span{color:var(--ink)}
+.pscale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pkey{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted);margin-top:12px}
+.pkey b{color:var(--ink);font-variant-numeric:tabular-nums}
+.pkey i{display:inline-block;width:14px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.ringgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:12px;margin-top:6px}
+.ring{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.ring svg{width:92px;height:92px;transform:rotate(-90deg)}
+.ring .trk{fill:none;stroke:#edf0f6;stroke-width:9}
+.ring .val{fill:none;stroke-width:9;stroke-linecap:round;stroke-dasharray:0 999;transition:stroke-dasharray 1.3s cubic-bezier(.2,.8,.2,1)}
+.ring .rw{position:relative;width:92px;height:92px}
+.ring .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 18px var(--font);font-variant-numeric:tabular-nums}
+.ring .nm{font-size:12.5px;font-weight:600;line-height:1.25}
+.ring .pts{font-size:11.5px;color:var(--muted)}
+.ring.na .pct{color:var(--muted);font-size:12px;font-weight:600}
+@media (max-width:820px){.viz{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.gauge .needle,.pseg,.ring .val,.gauge .mk{transition:none!important}}
 @media (max-width:820px){.tiles{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
 @media (max-width:460px){.tiles{grid-template-columns:1fr} .card{padding:16px 14px} #items th:nth-child(2),#items td:nth-child(2){width:78px} #items th:nth-child(3),#items td:nth-child(3){width:52px} th,td{padding:7px 5px}}
 </style>
@@ -99,6 +142,26 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
       <div class="tile"><div class="k">Current grade</div><div class="v" id="t-cur"></div><div class="d">Points earned (with bonus) ÷ points graded, rounded</div></div>
       <div class="tile"><div class="k">Bonus points</div><div class="v" id="t-bonus"></div><div class="d" id="t-bonus-d"></div></div>
       <div class="tile"><div class="k">Expected final</div><div class="v" id="t-proj"></div><div class="d" id="t-proj-d"></div><div class="d" id="t-proj-all"></div></div>
+    </div>
+    <div class="viz">
+      <div class="card gauge-wrap">
+        <h2 style="align-self:flex-start">Your grade</h2>
+        <svg class="gauge" id="gauge" viewBox="0 0 400 286" role="img" aria-label="Grade gauge"></svg>
+        <div class="legend"><span><i style="background:var(--navy)"></i>Current</span><span><i style="background:#2f6fb5"></i>Expected final <b id="g-exp"></b></span><span><i style="background:var(--green)"></i>With bonuses <b id="g-all"></b></span></div>
+      </div>
+      <div class="card">
+        <div class="path">
+          <h3>Path to your final grade</h3>
+          <p class="sub">Out of 100 course points. Letter cutoffs are marked above the bar.</p>
+          <div class="ptrack" id="ptrack"></div>
+          <div class="pscale"><span>0</span><span>25</span><span>50</span><span>75</span><span>100 pts</span></div>
+          <div class="pkey" id="pkey"></div>
+        </div>
+        <div class="rings" style="margin-top:22px">
+          <h3>How you are doing in each category</h3>
+          <div class="ringgrid" id="rings"></div>
+        </div>
+      </div>
     </div>
     <div class="grid2">
       <div class="card">
@@ -157,6 +220,55 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
   const letter = pct => { const r = Math.round(pct); for (const [l,c] of SCALE) if (r >= c) return l; return 'F'; };   // grades round to the nearest whole number (89.5 -> 90)
   const catOf = n => { for (const c of CATS) if (c[2].test(n)) return c[0]; return 'Other'; };
 
+
+  // ---------- visual summary ----------
+  const BANDS = [[0,60,'F','#d9534f'],[60,70,'D','#ee8a3c'],[70,74,'C-','#f2b13a'],[74,77,'C','#f4c654'],[77,80,'C+','#e8d35a'],[80,84,'B-','#9fc6ea'],[84,87,'B','#6ea7dc'],[87,90,'B+','#3f85c8'],[90,94,'A-','#4fb487'],[94,100,'A','#1f8a5b']];
+  const gpos = v => { v = Math.max(0, Math.min(100, v)); return v < 60 ? v / 60 * 0.22 : 0.22 + (v - 60) / 40 * 0.78; };   // F zone compressed
+  const angle = v => Math.PI * (1 - gpos(v));
+  const pt = (r, v) => [200 + r * Math.cos(angle(v)), 200 - r * Math.sin(angle(v))];
+  const arc = (r0, r1, a, b) => { const [x0,y0] = pt(r1,a), [x1,y1] = pt(r1,b), [x2,y2] = pt(r0,b), [x3,y3] = pt(r0,a); const lg = (gpos(b)-gpos(a)) > .5 ? 1 : 0;
+    return 'M'+x0+' '+y0+' A'+r1+' '+r1+' 0 '+lg+' 1 '+x1+' '+y1+' L'+x2+' '+y2+' A'+r0+' '+r0+' 0 '+lg+' 0 '+x3+' '+y3+' Z'; };
+  function drawGauge(cur, proj, projAll){
+    const g = $('gauge'); g.classList.remove('go');
+    let s = BANDS.map(([a,b,l,col]) => '<path class="band" d="' + arc(128, 168, a, b) + '" fill="' + col + '"/>').join('');
+    s += BANDS.map(([a,b,l]) => { const [x,y] = pt(182, (a+b)/2); return '<text class="lbl" x="' + x + '" y="' + (y+4) + '">' + l + '</text>'; }).join('');
+    const mk = (v, col, txt, r) => { const [x,y] = pt(r, v), [x2,y2] = pt(r - 16, v); return '<g class="mk"><line x1="' + x + '" y1="' + y + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col + '" stroke-width="4" stroke-linecap="round"/><circle cx="' + x + '" cy="' + y + '" r="5" fill="' + col + '"/></g>'; };
+    s += mk(proj, '#2f6fb5', '', 124) + mk(projAll, '#1f8a5b', '', 124);
+    s += '<g class="needle" id="needle"><path d="M195 200 L200 84 L205 200 Z" fill="var(--navy)"/></g><circle class="hub" cx="200" cy="200" r="11"/><circle cx="200" cy="200" r="4" fill="#fff"/>';
+    s += '<text class="big" id="gnum" x="200" y="258">0%</text><text class="bigl" id="glet" x="200" y="282"></text>';
+    g.innerHTML = s;
+    const target = (gpos(cur) - 0.5) * 180;
+    requestAnimationFrame(() => requestAnimationFrame(() => { $('needle').style.transform = 'rotate(' + target + 'deg)'; g.classList.add('go'); }));
+    const end = Math.round(cur), t0 = performance.now(), dur = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1500;
+    const tick = now => { const k = dur ? Math.min(1, (now - t0) / dur) : 1, e = 1 - Math.pow(1 - k, 3);
+      $('gnum').textContent = Math.round(end * e) + '%'; if (k < 1) requestAnimationFrame(tick); else $('glet').textContent = 'CURRENT · ' + letter(cur); };
+    requestAnimationFrame(tick);
+    $('g-exp').textContent = Math.round(proj) + '% ' + letter(proj); $('g-all').textContent = Math.round(projAll) + '% ' + letter(projAll);
+  }
+  function drawPath(earned, bonus, expRest, pot){
+    const tr = $('ptrack'), clamp = v => Math.max(0, Math.min(100, v));
+    let left = 0; const segs = [['earned', earned], ['bonus', bonus], ['exp', expRest], ['pot', pot]].map(([k, v]) => { const w = Math.max(0, Math.min(100 - left, v)); const o = {k, l: left, w}; left += w; return o; });
+    const finalExp = earned + bonus + expRest, finalAll = finalExp + pot;
+    tr.innerHTML = segs.map(s => '<div class="pseg ' + s.k + '" style="left:' + s.l + '%"></div>').join('') +
+      BANDS.slice(1).map(([a,,l]) => '<div class="ptick' + (finalAll >= a - 0.5 ? ' on' : '') + '" style="left:' + a + '%"><span>' + (['D','C-','B-','A-','A'].includes(l) ? l : '') + '</span></div>').join('');
+    const els = tr.querySelectorAll('.pseg');
+    segs.forEach((s, i) => setTimeout(() => { els[i].style.width = s.w + '%'; }, 150 + i * 450));
+    $('pkey').innerHTML = '<span><i style="background:var(--navy)"></i>Earned <b>' + f1(earned) + '</b></span>' +
+      '<span><i style="background:repeating-linear-gradient(45deg,#e6a817 0 4px,#f4c654 4px 8px)"></i>Bonus <b>' + f1(bonus) + '</b></span>' +
+      '<span><i style="background:#9ec2ea"></i>Expected from remaining work <b>' + f1(expRest) + '</b></span>' +
+      (pot ? '<span><i style="border:2px dashed var(--green)"></i>Possible bonus <b>' + f1(pot) + '</b></span>' : '');
+  }
+  function drawRings(byCat){
+    const col = p => p >= 89.5 ? '#1f8a5b' : p >= 79.5 ? '#2f6fb5' : p >= 69.5 ? '#e0a020' : '#d9534f';
+    const C = 2 * Math.PI * 40;
+    $('rings').innerHTML = CATS.filter(c => byCat[c[0]]).map(([c]) => {
+      const g = byCat[c].filter(i => i.points !== null), e = g.reduce((s,i) => s + i.points, 0), p = g.reduce((s,i) => s + i.possible, 0);
+      if (!p) return '<div class="ring na"><div class="rw"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="40"/></svg><div class="pct">not yet</div></div><div class="nm">' + esc(c) + '</div></div>';
+      const pct = e / p * 100;
+      return '<div class="ring"><div class="rw"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="40"/>' + (pct > 0 ? '<circle class="val" cx="50" cy="50" r="40" stroke="' + col(pct) + '" data-len="' + (Math.min(100, pct) / 100 * C) + '"/>' : '') + '</svg><div class="pct">' + Math.round(pct) + '%</div></div><div class="nm">' + esc(c) + '</div><div class="pts">' + f1(e) + ' / ' + f1(p) + '</div></div>';
+    }).join('');
+    setTimeout(() => $('rings').querySelectorAll('.val').forEach(v => { v.style.strokeDasharray = v.dataset.len + ' 999'; }), 300);
+  }
   function render(d){
     const graded = d.items.filter(i => i.points !== null);
     const earned = graded.reduce((s,i) => s + i.points, 0);
@@ -221,6 +333,9 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
       d.bonus.map(b => '<tr><td>' + esc(b.name) + '</td><td class="num">+' + f1(b.points) + '</td><td class="num"></td></tr>').join('') + '</tbody></table></details>' : '');
 
     $('login').style.display = 'none'; $('dash').style.display = 'block';
+    drawGauge(curPct, proj, projAll);
+    drawPath(earned, bonus, Math.max(0, proj - earned - bonus), socialLeft + soccerLeft);
+    drawRings(byCat);
   }
 
   $('f').addEventListener('submit', async ev => {
