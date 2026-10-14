@@ -98,7 +98,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
       <div class="tile"><div class="k">Points earned</div><div class="v" id="t-earned"></div><div class="d" id="t-earned-d"></div></div>
       <div class="tile"><div class="k">Current grade</div><div class="v" id="t-cur"></div><div class="d">Points earned (with bonus) ÷ points graded, rounded</div></div>
       <div class="tile"><div class="k">Bonus points</div><div class="v" id="t-bonus"></div><div class="d" id="t-bonus-d"></div></div>
-      <div class="tile"><div class="k">Expected final</div><div class="v" id="t-proj"></div><div class="d">If you keep your current pace</div><div class="d" id="t-proj-all" style="margin-top:6px;color:var(--green);font-weight:600"></div></div>
+      <div class="tile"><div class="k">Expected final</div><div class="v" id="t-proj"></div><div class="d" id="t-proj-d"></div><div class="d" id="t-proj-all" style="margin-top:6px;color:var(--green);font-weight:600"></div></div>
     </div>
     <div class="grid2">
       <div class="card">
@@ -133,7 +133,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
       </div>
       <p class="foot" style="margin-top:12px">Bonus points from the Soccer League and Social Media are added to this page once they are recorded.</p>
     </div>
-    <p class="foot">How this is calculated: the course is worth 100 points (Syllabus: Career Planning Portfolio 5, YouTube Interview Project 10, Sports Technology Presentation 10, Sports Betting Contest 5, Quizzes 10, Class Participation 20, Exam 1 20, Exam 2 20). Bonus points (asking questions on the slide decks, plus your Coin Exchange total) are extra credit added on top. The Coin Exchange value is live and moves with Bitcoin until your coins are sold. "Current grade" divides the points you have earned, including bonus points, by the points graded so far. "Expected final" adds your bonus to the points you have earned and assumes you keep your assignment percentage (without bonus) on every remaining point. "Average needed" is the percentage you would need on all remaining points to reach each grade. Grades are rounded to the nearest whole number (for example, 89.5% rounds to 90%). Grade scale: A 94+, A&minus; 90&ndash;93, B+ 87&ndash;89, B 84&ndash;86, B&minus; 80&ndash;83, C+ 77&ndash;79, C 74&ndash;76, C&minus; 70&ndash;73, D 60&ndash;69, F 59 and below.</p>
+    <p class="foot">How this is calculated: the course is worth 100 points (Syllabus: Career Planning Portfolio 5, YouTube Interview Project 10, Sports Technology Presentation 10, Sports Betting Contest 5, Quizzes 10, Class Participation 20, Exam 1 20, Exam 2 20). Bonus points (asking questions on the slide decks, plus your Coin Exchange total) are extra credit added on top. The Coin Exchange value is live and moves with Bitcoin until your coins are sold. "Current grade" divides the points you have earned, including bonus points, by the points graded so far. "Expected final" adds your bonus to the points you have earned, then projects Exam 2 at your exam average and all other remaining work at your average on non-exam assignments. The green line adds the Social Media (+4) and Soccer League (about +5) bonuses you can still earn. "Average needed" is the percentage you would need on all remaining points to reach each grade. Grades are rounded to the nearest whole number (for example, 89.5% rounds to 90%). Grade scale: A 94+, A&minus; 90&ndash;93, B+ 87&ndash;89, B 84&ndash;86, B&minus; 80&ndash;83, C+ 77&ndash;79, C 74&ndash;76, C&minus; 70&ndash;73, D 60&ndash;69, F 59 and below.</p>
   </section>
 </main>
 <script src="config.js"></script>
@@ -165,7 +165,15 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
     const remaining = Math.max(0, TOTAL - gPoss);
     const rate = gPoss ? earned / gPoss : 0;
     const curPct = gPoss ? (earned + bonus) / gPoss * 100 : 0;   // bonus is already earned, so it counts now
-    const proj = earned + bonus + rate * remaining;
+    // Project exams and other work separately: Exam 2 at your exam average, everything else at your other-work average.
+    const isExam = i => /exam/i.test(i.name);
+    const gE = graded.filter(isExam), gO = graded.filter(i => !isExam(i));
+    const eE = gE.reduce((s,i) => s + i.points, 0), pE = gE.reduce((s,i) => s + i.possible, 0);
+    const eO = gO.reduce((s,i) => s + i.points, 0), pO = gO.reduce((s,i) => s + i.possible, 0);
+    const remExam = Math.min(remaining, Math.max(0, 40 - pE));
+    const remOther = remaining - remExam;
+    const examRate = pE ? eE / pE : rate, otherRate = pO ? eO / pO : rate;
+    const proj = earned + bonus + examRate * remExam + otherRate * remOther;
     const has = re => d.bonus.some(b => re.test(b.name) && b.points > 0);
     const socialLeft = (has(/instagram/i) ? 0 : 2) + (has(/twitter|\bx\b/i) ? 0 : 2);
     const soccerLeft = has(/soccer/i) ? 0 : 5;
@@ -179,6 +187,7 @@ details summary{cursor:pointer;padding:10px 0;font-weight:600}
     $('t-bonus').innerHTML = '+' + f1(bonus) + ' <small>pts</small>';
     $('t-bonus-d').textContent = d.bonus.length ? d.bonus.map(b => (/coin/i.test(b.name) ? 'Coins' : /question/i.test(b.name) ? 'Questions' : b.name) + ' ' + f1(b.points)).join(' · ') : 'None yet';
     $('t-proj').innerHTML = Math.round(proj) + '%<span class="letter">' + letter(proj) + '</span>';
+    $('t-proj-d').textContent = 'Exam 2 at your exam average (' + Math.round(examRate*100) + '%), other work at your assignment average (' + Math.round(otherRate*100) + '%)';
     $('t-proj-all').textContent = (socialLeft + soccerLeft) ? 'With Social Media (+' + socialLeft + ') and Soccer League (about +' + soccerLeft + ') bonus: ' + Math.round(projAll) + '% ' + letter(projAll) : '';
 
     const projLetter = letter(proj);
