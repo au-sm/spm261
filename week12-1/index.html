@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPM 261 &middot; Week 12-1 &mdash; NIL and the Protect College Sports Act</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style id="varsity-ledger-theme">
+/* ===== "Varsity Ledger" theme — college athletics as big business =====
+   Arcadia scarlet + deep navy ink + varsity gold on warm ledger paper.
+   Oswald (athletic display) / Inter (text) / JetBrains Mono (ledger labels).            */
+:root{
+  --paper:#f7f4ea; --paper2:#efe9d8; --card:#fffdf6;
+  --ink:#0e1b36; --ink2:#1c2c52; --ink3:#2c3f6b;
+  --scarlet:#a6192e; --scarlet2:#c5283f; --scarlet-d:#74101f;
+  --gold:#e3a72f; --gold-d:#b3800f; --gold-l:#f4d27d;
+  --muted:#56627c; --muted2:#8892a8;
+  --rule:rgba(14,27,54,.17); --rule2:rgba(14,27,54,.32);
+  --font-display:'Oswald','Arial Narrow',Impact,sans-serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --fs-body:clamp(18px,min(1.5vw,2.7vh),34px);
+  --fs-lead:clamp(20px,min(1.75vw,3.15vh),40px);
+  --fs-h:clamp(30px,min(3.8vw,6.6vh),78px);
+  --pad-t:clamp(92px,12vh,120px); --pad-b:clamp(72px,9.5vh,100px); --pad-x:clamp(48px,6vw,120px);
+  --shadow:0 18px 40px -24px rgba(14,27,54,.5);
+  --z:1; --num:"";
+}
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--font-body);}
+.bg-paper{position:fixed;inset:0;pointer-events:none;z-index:0;background:var(--paper);}
+
+/* ---------- chrome ---------- */
+.chrome-top{position:fixed;top:0;left:0;right:0;height:46px;z-index:20;display:flex;align-items:center;gap:16px;padding:0 20px;
+  background:var(--ink);color:#fff;font-size:13px;box-shadow:0 3px 0 var(--gold);}
+.brand{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:#aebbd6;white-space:nowrap;}
+.brand b{color:#fff;}
+.progress-track{flex:1;height:4px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden;min-width:60px;}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#ffe3a1 60%,var(--scarlet2));transition:width .5s var(--ease);}
+.section-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-l);white-space:nowrap;}
+.counter{font-family:var(--font-mono);font-size:12px;color:#aebbd6;white-space:nowrap;}
+.textlink{background:none;border:1px solid rgba(255,255,255,.28);color:#fff;font:600 12px var(--font-body);padding:6px 11px;border-radius:999px;cursor:pointer;text-decoration:none;white-space:nowrap;}
+.textlink:hover{border-color:var(--gold);color:var(--gold-l);}
+.zoom-controls{display:flex;gap:4px;}
+.zoom-btn{background:none;border:1px solid rgba(255,255,255,.28);color:#fff;height:28px;min-width:28px;border-radius:7px;cursor:pointer;font:600 12px var(--font-mono);}
+.zoom-btn:hover{border-color:var(--gold);}
+.chrome-bottom{position:fixed;right:22px;bottom:18px;z-index:20;display:flex;gap:10px;}
+.navbtn{width:46px;height:46px;border-radius:50%;border:1px solid var(--rule2);background:var(--card);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s,border-color .2s;box-shadow:var(--shadow);}
+.navbtn svg{width:20px;height:20px;} .navbtn:hover{border-color:var(--scarlet);color:var(--scarlet);transform:translateY(-2px);}
+.page-num{position:fixed;left:22px;bottom:24px;z-index:20;font-family:var(--font-mono);font-size:12px;color:var(--muted);transition:color .3s;}
+body:has(.slide.active.dark) .page-num,body:has(.slide.active.split-navy) .page-num{color:#9fb0d0;}
+.hint{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:20;font-family:var(--font-mono);font-size:11.5px;color:#fff;background:var(--ink);padding:7px 14px;border-radius:999px;transition:opacity .4s;white-space:nowrap;border:1px solid rgba(227,167,47,.5);}
+.hint.hide{opacity:0;pointer-events:none;}
+.notes-panel{position:fixed;top:46px;right:0;bottom:0;width:min(420px,90vw);z-index:25;background:var(--card);border-left:3px solid var(--scarlet);padding:22px 24px;transform:translateX(100%);transition:transform .35s var(--ease);overflow:auto;box-shadow:-20px 0 50px -30px rgba(14,27,54,.5);}
+.notes-panel.open{transform:none;}
+.notes-panel h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--scarlet);margin:0 0 12px;}
+.notes-panel p{font-size:15px;line-height:1.55;margin:0 0 10px;color:var(--ink);word-break:break-word;} .notes-empty{color:var(--muted)!important;}
+.notes-panel a{color:var(--ink3)!important;}
+.close-notes{position:absolute;top:12px;right:14px;background:none;border:0;color:var(--muted);font-size:24px;cursor:pointer;}
+
+/* ask */
+.ask-btn{position:fixed;right:clamp(20px,4vw,48px);top:54px;z-index:21;height:34px;padding:0 16px;border-radius:20px;border:1px solid var(--rule2);background:var(--card);color:var(--ink);font:600 13px var(--font-body);cursor:pointer;box-shadow:var(--shadow);transition:transform .2s,border-color .2s;}
+.ask-btn:hover{border-color:var(--scarlet);transform:translateY(-2px);}
+.ask-backdrop{position:fixed;inset:0;z-index:30;background:rgba(14,27,54,.4);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s var(--ease);display:flex;align-items:center;justify-content:center;padding:20px;}
+.ask-backdrop.open{opacity:1;pointer-events:auto;}
+.ask-panel{width:min(480px,100%);background:var(--card);border:1px solid var(--rule2);border-top:6px solid var(--scarlet);border-radius:10px;padding:26px 26px 22px;box-shadow:0 40px 90px -30px rgba(14,27,54,.6);}
+.ask-title{font-family:var(--font-body);font-weight:700;font-size:19px;margin:0 0 4px;}
+.ask-context{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--scarlet);margin:0 0 16px;}
+.ask-panel textarea,.ask-panel input[type=text]{width:100%;background:var(--paper);color:var(--ink);border:1px solid var(--rule2);border-radius:8px;padding:11px 14px;font:14px/1.5 var(--font-body);outline:none;}
+.ask-panel textarea{min-height:96px;resize:vertical;} .ask-panel input[type=text]{margin-top:10px;}
+.ask-panel textarea:focus,.ask-panel input:focus{border-color:var(--scarlet);}
+.ask-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;}
+.ask-hint{font-family:var(--font-mono);font-size:10.5px;color:var(--muted2);}
+.ask-actions{display:flex;gap:10px;}
+.ask-btn-cancel,.ask-btn-send{font:600 13px var(--font-body);border-radius:7px;padding:9px 16px;cursor:pointer;border:1px solid var(--rule2);background:transparent;color:var(--muted);}
+.ask-btn-send{background:var(--scarlet);border-color:var(--scarlet);color:#fff;} .ask-btn-send:disabled{opacity:.5;}
+.ask-status{font-family:var(--font-mono);font-size:12px;margin-top:12px;min-height:16px;}
+.ask-status.err{color:var(--scarlet);} .ask-status.ok{color:#1f7a4d;}
+
+/* enlarge (+) */
+.zq-btn{position:fixed;z-index:9000;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.8);background:rgba(14,27,54,.9);color:#fff;font-size:22px;line-height:1;cursor:zoom-in;display:none;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.3);}
+.zq-lb{position:fixed;inset:0;z-index:9500;background:rgba(8,14,28,.93);display:none;align-items:center;justify-content:center;cursor:zoom-out;}
+.zq-lb.open{display:flex;} .zq-lb img{max-width:94vw;max-height:92vh;object-fit:contain;box-shadow:0 20px 80px rgba(0,0,0,.6);border-radius:6px;background:#fff;}
+
+/* ---------- deck + slide shell ---------- */
+.deck{position:fixed;inset:0;z-index:1;}
+.slide{position:absolute;inset:0;padding:var(--pad-t) var(--pad-x) var(--pad-b);opacity:0;visibility:hidden;background:var(--paper);transition:opacity .5s var(--ease),visibility 0s .5s;overflow:hidden;}
+.slide.active{opacity:1;visibility:visible;transition:opacity .5s var(--ease);}
+/* ledger margin: double scarlet rule at the left edge */
+.slide::before{content:"";position:absolute;top:0;bottom:0;left:clamp(16px,2.4vw,44px);width:6px;pointer-events:none;opacity:.5;
+  background:linear-gradient(90deg,var(--scarlet) 0 2px,transparent 2px 4px,var(--scarlet) 4px 5px);}
+.slide-inner{position:relative;height:100%;width:100%;max-width:1600px;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;zoom:var(--z);}
+.slide.active .slide-inner>*:not(.step){animation:rise .7s var(--ease) backwards;}
+.slide.active .slide-inner>*:nth-child(2){animation-delay:.08s}
+.slide.active .slide-inner>*:nth-child(3){animation-delay:.16s}
+.slide.active .slide-inner>*:nth-child(4){animation-delay:.24s}
+.slide.active .grid2>*:not(.step),.slide.active .grid3>*:not(.step),.slide.active .stats>*,.slide.active ul.pts>li:not(.step),.slide.active table.dt tbody tr,.slide.active .pair>*{animation:rise .65s var(--ease) backwards;}
+.slide.active .grid2>*:nth-child(2),.slide.active .grid3>*:nth-child(2),.slide.active .stats>*:nth-child(2),.slide.active ul.pts>li:nth-child(2),.slide.active table.dt tbody tr:nth-child(2),.slide.active .pair>*:nth-child(2){animation-delay:.14s}
+.slide.active .grid3>*:nth-child(3),.slide.active .stats>*:nth-child(3),.slide.active ul.pts>li:nth-child(3),.slide.active table.dt tbody tr:nth-child(3){animation-delay:.24s}
+.slide.active ul.pts>li:nth-child(4),.slide.active table.dt tbody tr:nth-child(4){animation-delay:.34s}
+.slide.active ul.pts>li:nth-child(5),.slide.active table.dt tbody tr:nth-child(5){animation-delay:.42s}
+.slide.active ul.pts>li:nth-child(n+6),.slide.active table.dt tbody tr:nth-child(n+6){animation-delay:.5s}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.step{opacity:0;transform:translateY(14px);transition:opacity .55s var(--ease),transform .55s var(--ease);}
+.step.on{opacity:1;transform:none;}
+
+/* section numbers (jersey numerals) */
+.n1{--num:"01"} .n2{--num:"02"} .n3{--num:"03"} .n4{--num:"04"} .n5{--num:"05"}
+
+/* ---------- header ---------- */
+.hd{flex:none;position:relative;margin:0 0 clamp(14px,2.6vh,30px);padding:0 0 clamp(12px,1.9vh,22px);}
+.hd::after{content:"";position:absolute;left:0;right:0;bottom:0;height:8px;
+  background:
+    linear-gradient(var(--scarlet),var(--scarlet)) 0 0/clamp(90px,10vw,170px) 4px no-repeat,
+    linear-gradient(var(--ink),var(--ink)) 0 0/100% 4px no-repeat,
+    linear-gradient(var(--ink),var(--ink)) 0 7px/100% 1px no-repeat;}
+.kick{display:inline-flex;align-items:center;gap:10px;margin:0 0 .5em;font-family:var(--font-mono);font-weight:700;font-size:clamp(12px,1.75vh,16px);letter-spacing:.17em;text-transform:uppercase;color:var(--scarlet);}
+.kick::before{content:"";flex:none;width:.85em;height:.85em;background:var(--gold);transform:rotate(45deg);}
+.hd h1,.hd h2{margin:0;font-family:var(--font-display);font-weight:700;font-size:var(--fs-h);line-height:1.04;letter-spacing:.012em;text-transform:uppercase;color:var(--ink);text-wrap:balance;}
+.hd.long h2{font-size:calc(var(--fs-h)*.74);line-height:1.08;}
+.hd.xlong h2{font-size:calc(var(--fs-h)*.62);line-height:1.1;}
+/* jersey chip */
+.n1,.n2,.n3,.n4,.n5{--chip-w:clamp(46px,3.9vw,68px);}
+.n1 .hd,.n2 .hd,.n3 .hd,.n4 .hd,.n5 .hd{padding-right:calc(var(--chip-w) + 22px);min-height:calc(var(--chip-w)*1.16 + 16px);}
+.n1 .hd::before,.n2 .hd::before,.n3 .hd::before,.n4 .hd::before,.n5 .hd::before{content:var(--num);position:absolute;z-index:3;right:0;top:0;width:var(--chip-w);height:calc(var(--chip-w)*1.16);padding-top:calc(var(--chip-w)*.2);
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:calc(var(--chip-w)*.48);letter-spacing:.02em;color:#fff;
+  background:var(--scarlet);clip-path:polygon(0 15%,24% 0,38% 15%,62% 15%,76% 0,100% 15%,100% 100%,0 100%);
+  box-shadow:inset 0 0 0 3px var(--gold);}
+.hd+.hd{display:none}
+
+/* body copy */
+p,li{font-size:var(--fs-body);line-height:1.42;}
+.body{min-height:0;}
+.slide-inner>.body{flex:1;display:flex;flex-direction:column;}
+.body>p{margin:0 0 .7em;}
+sup{font-size:.62em;line-height:0;vertical-align:super;}
+a{color:var(--ink3);}
+.hl{font-family:var(--font-display);font-weight:700;font-size:1.4em;line-height:1;color:var(--scarlet);letter-spacing:.01em;white-space:nowrap;}
+.src{flex:none;margin:clamp(8px,1.5vh,16px) 0 0;font-family:var(--font-mono);font-size:clamp(12px,1.5vh,15px);line-height:1.4;color:var(--muted);word-break:break-word;letter-spacing:.02em;}
+.src::before{content:"";display:inline-block;width:1.6em;height:2px;background:var(--gold);vertical-align:middle;margin-right:.7em;}
+.src a{color:var(--ink3);text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px;word-break:break-all;}
+.src a:hover{color:var(--scarlet);}
+
+/* ledger bullets */
+ul.pts{list-style:none;margin:0;padding:0;}
+ul.pts>li{position:relative;margin:0;padding:.55em 0 .55em 1.9em;font-size:var(--fs-lead);line-height:1.34;border-bottom:1px solid var(--rule);}
+ul.pts>li:last-child{border-bottom:0;}
+ul.pts>li::before{content:"";position:absolute;left:.18em;top:1.05em;width:.6em;height:.6em;background:var(--scarlet);transform:rotate(45deg);}
+ul.pts ul{list-style:none;margin:.45em 0 0;padding:0;}
+ul.pts ul li{position:relative;padding:.25em 0 .25em 1.5em;font-size:.82em;line-height:1.35;color:var(--ink2);}
+ul.pts ul li::before{content:"";position:absolute;left:.1em;top:.78em;width:.5em;height:.5em;background:var(--gold);}
+
+/* ---------- figures: images sit directly on the slide, no mats ---------- */
+.fig{margin:0;min-height:0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.fig img{display:block;flex:1 1 0;min-height:0;width:100%;object-fit:contain;mix-blend-mode:multiply;background:none;}
+.slide img:not([data-nozoom]){cursor:zoom-in;}
+.fig figcaption{flex:none;width:100%;margin-top:.7em;padding-top:.55em;border-top:2px solid var(--ink);font-size:var(--fs-body);font-weight:600;line-height:1.35;color:var(--ink);text-wrap:balance;}
+.slide-inner>.body>.fig{flex:1;}
+.slide-inner>.body>.step{flex:1;display:flex;min-height:0;} .slide-inner>.body>.step>.fig{flex:1;}
+
+/* grids */
+.grid2,.grid3{display:grid;gap:clamp(20px,2.8vw,52px);flex:1;min-height:0;grid-template-rows:minmax(0,1fr);align-items:stretch;}
+.grid2{grid-template-columns:var(--cols,minmax(0,1fr) minmax(0,1fr));}
+.grid3{grid-template-columns:var(--cols,repeat(3,minmax(0,1fr)));}
+.grid2>:not(.fig):not(.step),.grid3>:not(.fig):not(.step){align-self:center;min-width:0;}
+.grid3>.step{display:flex;flex-direction:column;min-height:0;min-width:0;} .grid3>.step>.fig{flex:1;}
+/* fig-only grids: columns sized by aspect so heights match */
+.grid2.figs,.grid3.figs{gap:clamp(18px,2.2vw,40px);}
+
+/* ===== cards ===== */
+.card{background:var(--card);border:1px solid var(--rule2);border-top:7px solid var(--scarlet);padding:clamp(16px,2.6vh,30px) clamp(18px,2vw,34px);box-shadow:var(--shadow);min-width:0;}
+.card h3{margin:0 0 .5em;font-family:var(--font-display);font-weight:700;font-size:calc(var(--fs-body)*1.3);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);}
+.card p{margin:0 0 .6em;} .card p:last-child{margin-bottom:0;}
+.card.plain{background:none;border:0;box-shadow:none;padding:0;display:flex;flex-direction:column;min-height:0;}
+.card.plain h3{align-self:flex-start;margin:0 0 .7em;padding:.25em .8em;background:var(--ink);color:var(--gold-l);font-size:calc(var(--fs-body)*1.05);}
+.card.plain .fig{flex:1;}
+
+/* ===== tables ===== */
+table.dt{width:100%;border-collapse:collapse;font-size:var(--fs-body);}
+table.dt th{background:var(--ink);color:var(--gold-l);font-family:var(--font-display);font-weight:600;text-transform:uppercase;letter-spacing:.1em;text-align:left;padding:.55em .9em;font-size:.9em;}
+table.dt td{padding:.55em .9em;border-bottom:1px solid var(--rule2);vertical-align:top;line-height:1.36;}
+table.dt td:first-child{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--scarlet);font-size:1.1em;white-space:nowrap;width:1%;padding-right:1.4em;}
+table.dt tbody tr:nth-child(even){background:rgba(14,27,54,.045);}
+table.dt tbody tr:last-child td{border-bottom:3px double var(--ink);}
+
+/* ===== scoreboard stats ===== */
+.stats{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:clamp(10px,1.4vw,22px);}
+.stat{display:flex;align-items:center;gap:clamp(12px,1.4vw,24px);padding:clamp(12px,2.2vh,26px) clamp(14px,1.6vw,28px);color:#fff;border-bottom:6px solid var(--gold);
+  background:radial-gradient(rgba(255,255,255,.07) 1.1px,transparent 1.6px) 0 0/7px 7px,var(--ink);}
+.stat .num{flex:none;font-family:var(--font-display);font-weight:700;font-size:clamp(44px,min(5.6vw,10vh),110px);line-height:.9;color:var(--gold);text-shadow:0 0 18px rgba(227,167,47,.35);}
+.stat .lbl{font-weight:600;font-size:var(--fs-body);line-height:1.25;color:#e8edf8;}
+
+/* quote (inline) */
+blockquote.q{margin:0;}
+.body blockquote.q{position:relative;padding:clamp(10px,1.8vh,20px) clamp(16px,2vw,32px);border-left:8px solid var(--scarlet);background:linear-gradient(90deg,rgba(166,25,46,.07),transparent);}
+.body blockquote.q p{margin:0;font-family:var(--font-display);font-weight:400;font-size:calc(var(--fs-body)*1.12);line-height:1.28;color:var(--ink);}
+.body blockquote.q cite{display:block;margin-top:.5em;font-style:normal;font-family:var(--font-mono);font-weight:700;font-size:clamp(12px,1.7vh,16px);letter-spacing:.12em;text-transform:uppercase;color:var(--scarlet);}
+
+/* ===== video ===== */
+.vid{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;container-type:size;}
+.vbox{position:relative;width:min(100cqw,177.78cqh);aspect-ratio:16/9;background:#000;box-shadow:14px 14px 0 var(--scarlet),14px 14px 0 3px var(--ink);}
+.vbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+
+/* ======================= SLIDE TYPES ======================= */
+.dark{background:var(--ink);} .dark::before{display:none;}
+.dark .slide-inner{max-width:none;}
+.dark .hd h1,.dark .hd h2{color:#fff;}
+.dark .src,.dark .src a{color:#aebbd6;}
+
+/* ---------- cover ---------- */
+.s-title .hd::before,.s-closing .hd::before,.s-discuss.dark .hd::before,.s-quote .hd::before,.split-navy .hd::before{display:none!important;}
+.s-title .hd,.s-closing .hd,.s-discuss.dark .hd,.split-navy .hd{min-height:0!important;}
+.s-title{padding:0;background:var(--ink);}
+.s-title::before{display:none;}
+.s-title .slide-inner{max-width:none;justify-content:center;padding:var(--pad-t) clamp(56px,7vw,140px) var(--pad-b);}
+.s-title .slide-inner::before{content:"";position:absolute;inset:0;z-index:0;background:
+  radial-gradient(60vw 70vh at 18% 60%,rgba(44,63,107,.55),transparent 70%),
+  repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 44px);}
+.s-title .hd,.s-title .sub{position:relative;z-index:2;width:min(64%,1000px);}
+.s-title .hd{margin:0;padding:0!important;}
+.s-title .hd::after{display:none;}
+.s-title .kick{color:var(--gold);font-size:clamp(13px,2vh,18px);margin-bottom:clamp(14px,3vh,30px);}
+.s-title h1{display:flex;flex-direction:column;font-size:inherit;line-height:.92;}
+.s-title h1 span{display:block;color:#fff;font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:.01em;}
+.s-title h1 .l1{font-size:clamp(28px,min(3.7vw,6.6vh),72px);font-weight:500;letter-spacing:.08em;color:var(--gold-l);margin-bottom:.18em;}
+.s-title h1 .l2{font-size:clamp(54px,min(9vw,16vh),190px);}
+.s-title h1 .l3{font-size:clamp(54px,min(9vw,16vh),190px);color:var(--gold);-webkit-text-stroke:0;background:linear-gradient(180deg,transparent 80%,var(--scarlet2) 80% 90%,transparent 90%);align-self:flex-start;padding-right:.1em;}
+.s-title .sub{margin:clamp(22px,4.4vh,48px) 0 0;padding-top:clamp(14px,2.4vh,24px);font-size:clamp(18px,min(1.9vw,3.4vh),38px);font-weight:500;letter-spacing:.04em;color:#dbe3f4;border-top:3px solid var(--scarlet);width:min(52%,760px);}
+.deco{position:absolute;right:0;top:0;bottom:0;width:min(48%,860px);z-index:1;pointer-events:none;}
+.deco svg{position:absolute;}
+.deco .slabs{inset:0;width:100%;height:100%;}
+.deco .bars{left:0;right:0;bottom:clamp(60px,12vh,120px);height:66%;width:100%;}
+.deco .slab{fill:var(--scarlet);} .deco .stripe{fill:var(--gold);}
+.deco .bar{fill:var(--paper);transform-box:fill-box;transform-origin:50% 100%;animation:grow 1.1s var(--ease) backwards;}
+.deco .bar.g{fill:var(--gold);}
+.deco .bar:nth-of-type(1){animation-delay:.25s}.deco .bar:nth-of-type(2){animation-delay:.35s}.deco .bar:nth-of-type(3){animation-delay:.45s}
+.deco .bar:nth-of-type(4){animation-delay:.55s}.deco .bar:nth-of-type(5){animation-delay:.65s}.deco .bar:nth-of-type(6){animation-delay:.75s}.deco .bar:nth-of-type(7){animation-delay:.85s}
+@keyframes grow{from{transform:scaleY(0)}to{transform:none}}
+.deco .trend{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1200;animation:draw 1.4s var(--ease) .9s backwards;}
+.deco .trend-h{fill:var(--gold);animation:fadein .5s 2s backwards;}
+@keyframes draw{from{stroke-dashoffset:1200}to{stroke-dashoffset:0}}
+@keyframes fadein{from{opacity:0}}
+/* cover: case-study variant */
+.s-title.case{background:var(--scarlet-d);}
+.s-title.case .slide-inner::before{background:radial-gradient(60vw 70vh at 20% 60%,rgba(197,40,63,.5),transparent 70%),repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 44px);}
+.s-title.case .hd h2{display:flex;flex-direction:column;color:#fff;font-size:clamp(40px,min(5.5vw,10vh),120px);line-height:.95;}
+.s-title.case .hd{width:min(58%,960px);}
+.s-title.case .slab{fill:var(--ink);}
+.deco .squares{left:22%;top:20%;bottom:auto;width:70%;height:56%;}
+.deco .sq{fill:var(--gold);animation:fadein .4s backwards;} .deco .sq.o{fill:none;stroke:var(--gold);stroke-width:4;stroke-dasharray:10 8;}
+.s-title.case .sub{border-top-color:var(--gold);font-size:clamp(20px,min(1.9vw,3.4vh),38px);width:min(46%,700px);color:#fff;}
+.s-title.case .sub .amt{display:block;font-family:var(--font-display);font-weight:700;color:var(--gold);font-size:2.6em;line-height:1;margin-bottom:.12em;letter-spacing:.01em;text-transform:uppercase;}
+.s-title.case .src{position:relative;z-index:2;margin-top:clamp(16px,3vh,32px);color:#f1c9d0;} .s-title.case .src::before{background:var(--gold);}
+.s-title .hd h2 .w{display:block;}
+
+/* ---------- section dividers (jersey numerals) ---------- */
+.s-section:not(.sub):not(.playbook){padding:0;background:var(--ink);}
+.s-section:not(.sub):not(.playbook)::before{display:none;}
+.s-section:not(.sub):not(.playbook) .slide-inner{max-width:none;justify-content:center;padding:var(--pad-t) clamp(56px,8vw,160px) var(--pad-b);}
+.s-section:not(.sub):not(.playbook) .slide-inner::before{content:"";position:absolute;inset:0;background:
+  repeating-linear-gradient(0deg,rgba(255,255,255,.045) 0 1px,transparent 1px 56px),
+  radial-gradient(55vw 80vh at 85% 50%,rgba(166,25,46,.38),transparent 70%);}
+.s-section:not(.sub):not(.playbook) .slide-inner::after{content:var(--num);position:absolute;right:clamp(16px,3.2vw,64px);top:50%;transform:translateY(-52%);
+  font-family:var(--font-display);font-weight:700;font-size:clamp(200px,min(33vw,60vh),700px);line-height:.8;letter-spacing:-.02em;color:var(--scarlet);
+  text-shadow:.03em .03em 0 var(--gold);opacity:.96;pointer-events:none;animation:numin .9s var(--ease) backwards;}
+@keyframes numin{from{opacity:0;transform:translate(60px,-52%)}}
+.s-section:not(.sub):not(.playbook) .hd{position:relative;z-index:2;margin:0;padding:0;max-width:min(62%,980px);}
+.s-section:not(.sub):not(.playbook) .hd::after{display:none;}
+.s-section:not(.sub):not(.playbook) .hd::before{content:"";display:block;width:clamp(80px,9vw,150px);height:10px;background:var(--gold);margin-bottom:clamp(18px,3.4vh,36px);position:static;clip-path:none;box-shadow:none;padding:0;}
+.s-section:not(.sub):not(.playbook) .hd h2{font-size:clamp(46px,min(7.4vw,13vh),170px);line-height:.95;color:#fff;text-wrap:balance;}
+.s-section .flow{position:absolute;z-index:1;bottom:clamp(54px,11vh,120px);height:clamp(26px,5vh,48px);width:48%;opacity:.9;}
+.s-section .flow{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='40' viewBox='0 0 56 40'><path d='M10 4 L30 20 L10 36' fill='none' stroke='%23e3a72f' stroke-width='7' stroke-linejoin='miter'/></svg>");background-size:auto 100%;background-repeat:repeat-x;animation:flow 2.4s linear infinite;}
+.s-section .flow.in{left:0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 40%);mask-image:linear-gradient(90deg,transparent,#000 40%);}
+.s-section .flow.out{left:clamp(56px,8vw,160px);-webkit-mask-image:linear-gradient(90deg,#000 60%,transparent);mask-image:linear-gradient(90deg,#000 60%,transparent);}
+@keyframes flow{to{background-position-x:56px}}
+.s-section .pennants{position:absolute;z-index:1;left:0;right:0;bottom:clamp(54px,10vh,110px);height:clamp(30px,6vh,56px);opacity:.9;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='48' viewBox='0 0 72 48'><path d='M4 4 L68 4 L36 44 Z' fill='%23e3a72f'/></svg>") 0 0/auto 100% repeat-x;
+  -webkit-mask-image:linear-gradient(90deg,#000 20%,transparent 60%);mask-image:linear-gradient(90deg,#000 20%,transparent 60%);}
+
+/* sub-dividers (paper) */
+.s-section.sub .slide-inner{justify-content:center;}
+.s-section.sub .hd{margin:0 0 clamp(18px,4vh,44px);}
+.s-section.sub .body{flex:none;}
+.s-section.sub .body p{margin:0;display:inline-block;font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:clamp(60px,min(11vw,19vh),250px);line-height:1;color:var(--scarlet);padding-bottom:.06em;border-bottom:.12em solid var(--gold);letter-spacing:.01em;}
+.s-section.sub.solo .hd{padding:0;margin:0;}
+.s-section.sub.solo .hd::after{display:none;}
+.s-section.sub.solo .hd h2{font-size:clamp(40px,min(6.8vw,12vh),150px);line-height:1;max-width:14ch;color:var(--scarlet);padding-bottom:.18em;border-bottom:.12em solid var(--gold);display:inline-block;max-width:100%;}
+.s-section.sub.solo .hd{padding-right:0;min-height:0;}
+
+/* ---------- playbook (Implications) ---------- */
+.playbook{padding:0;background:var(--paper);}
+.playbook::before{display:none;}
+.playbook .slide-inner{max-width:none;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.5fr);grid-template-rows:minmax(0,1fr);overflow:hidden;}
+.playbook .slide-inner>.hd{margin:0;padding:var(--pad-t) clamp(32px,3.6vw,72px) var(--pad-b) clamp(56px,6vw,120px);background:var(--ink);display:flex;flex-direction:column;justify-content:center;position:relative;min-height:0;}
+.playbook .hd::after{display:none;}
+.playbook .hd::before{content:var(--num);position:static;display:block;width:auto;height:auto;padding:0;clip-path:none;box-shadow:none;background:none;
+  font-family:var(--font-display);font-weight:700;font-size:clamp(120px,min(18vw,30vh),340px);line-height:.8;color:var(--scarlet);text-shadow:.04em .04em 0 var(--gold);margin-bottom:.12em;letter-spacing:-.02em;}
+.playbook .hd h2{color:#fff;font-size:clamp(34px,min(3.9vw,7vh),96px);line-height:.98;overflow-wrap:anywhere;}
+.playbook .slide-inner>.body{padding:var(--pad-t) var(--pad-x) var(--pad-b) clamp(32px,4.4vw,88px);justify-content:center;}
+.playbook .grid3{display:flex;flex-direction:column;gap:clamp(12px,2.4vh,26px);flex:none;}
+.playbook .grid3>*{align-self:stretch!important;}
+.playbook .card{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:clamp(16px,2vw,34px);align-items:center;border-top:0;border-left:8px solid var(--scarlet);padding:clamp(14px,2.6vh,30px) clamp(18px,2vw,34px);}
+.playbook .card h3{margin:0;width:clamp(56px,5.4vw,96px);height:clamp(62px,6.2vw,108px);padding-top:.4em;display:flex;align-items:center;justify-content:center;font-size:clamp(30px,3vw,56px);letter-spacing:0;color:#fff;
+  background:var(--scarlet);clip-path:polygon(0 15%,24% 0,38% 15%,62% 15%,76% 0,100% 15%,100% 100%,0 100%);box-shadow:inset 0 0 0 3px var(--gold);}
+.playbook ul.pts>li{padding-left:0;border:0;font-size:calc(var(--fs-lead)*1.1);font-weight:600;padding-top:.15em;padding-bottom:.15em;}
+.playbook ul.pts>li::before{display:none;}
+
+/* ---------- quote ---------- */
+.s-quote{padding:0;background:var(--ink);}
+.s-quote::before{display:none;}
+.s-quote .slide-inner{max-width:none;justify-content:center;padding:var(--pad-t) clamp(60px,9vw,190px) var(--pad-b);}
+.s-quote .slide-inner::before{content:"";flex:none;width:clamp(80px,8vw,150px);aspect-ratio:100/80;margin-bottom:clamp(14px,3vh,34px);
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 80'><path fill='%23a6192e' d='M0 80V46C0 20 14 4 38 0l4 11C28 16 22 24 22 36h20v44zM54 80V46C54 20 68 4 92 0l4 11C82 16 76 24 76 36h20v44z'/></svg>") center/contain no-repeat;}
+.s-quote .slide-inner::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:linear-gradient(90deg,var(--scarlet) 0 38%,var(--gold) 38% 46%,transparent 46%);}
+.s-quote blockquote{position:relative;z-index:1;margin:0;max-width:1300px;}
+.s-quote blockquote p{margin:0;font-family:var(--font-display);font-weight:500;font-size:clamp(30px,min(3.7vw,6.6vh),78px);line-height:1.16;color:#fff;letter-spacing:.005em;text-wrap:pretty;}
+.s-quote cite{display:inline-block;margin-top:clamp(20px,4vh,44px);padding-left:16px;border-left:6px solid var(--gold);font-style:normal;font-family:var(--font-mono);font-weight:700;font-size:clamp(14px,2.1vh,22px);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-l);}
+
+/* ---------- discuss ---------- */
+.s-discuss.dark{padding:0;}
+.s-discuss.dark .slide-inner{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.5fr);align-items:center;column-gap:clamp(30px,4vw,80px);padding:var(--pad-t) var(--pad-x) var(--pad-b) clamp(56px,7vw,140px);}
+.s-discuss.dark .slide-inner::before{content:"";position:absolute;left:0;top:0;bottom:0;width:38%;background:linear-gradient(180deg,var(--scarlet-d),var(--scarlet));clip-path:polygon(0 0,100% 0,82% 100%,0 100%);z-index:0;}
+.s-discuss.dark .hd{position:relative;z-index:1;margin:0;padding:0!important;}
+.s-discuss.dark .hd::after{display:none;}
+.s-discuss.dark .hd h2{font-size:clamp(40px,min(5.2vw,9.4vh),120px);}
+.s-discuss.dark .body{flex:none;position:relative;z-index:1;justify-content:center;}
+.s-discuss.dark ul.pts{counter-reset:q;display:flex;flex-direction:column;gap:clamp(12px,2.2vh,24px);}
+.s-discuss.dark ul.pts>li{counter-increment:q;border:0;padding:clamp(14px,2.4vh,26px) clamp(18px,2vw,32px) clamp(14px,2.4vh,26px) clamp(70px,6vw,110px);background:rgba(255,255,255,.07);border-left:6px solid var(--gold);color:#fff;font-size:var(--fs-lead);font-weight:500;}
+.s-discuss.dark ul.pts>li::before{content:counter(q);position:absolute;left:clamp(14px,1.6vw,26px);top:50%;width:auto;height:auto;background:none;transform:translateY(-50%);font-family:var(--font-display);font-weight:700;font-size:2.4em;line-height:1;color:var(--gold);}
+
+/* slide 2 conversation starter */
+.split-navy{padding:0;}
+.split-navy::before{display:none;}
+.split-navy .slide-inner{max-width:none;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);grid-template-rows:minmax(0,1fr) auto auto minmax(0,1fr);overflow:hidden;}
+.split-navy .slide-inner::before{content:"";grid-column:1;grid-row:1/-1;background:var(--ink);background-image:linear-gradient(180deg,rgba(166,25,46,.0),rgba(166,25,46,.0)),repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 56px);clip-path:polygon(0 0,100% 0,92% 100%,0 100%);z-index:0;}
+.split-navy .hd{grid-column:1;grid-row:2;position:relative;z-index:1;margin:0;padding:0 clamp(40px,4vw,80px) 0 clamp(56px,6vw,120px)!important;align-self:end;}
+.split-navy .hd::after{display:none;}
+.split-navy .hd h2{color:#fff;font-size:clamp(40px,min(4.6vw,8.4vh),104px);line-height:1;}
+.split-navy .body{display:contents;}
+.split-navy .body>p{grid-column:1;grid-row:3;position:relative;z-index:1;margin:clamp(16px,3vh,32px) 0 0;padding:clamp(14px,2.2vh,24px) clamp(40px,4vw,80px) 0 clamp(56px,6vw,120px);font-family:var(--font-display);font-weight:500;font-size:clamp(24px,min(2.5vw,4.6vh),56px);line-height:1.15;letter-spacing:.03em;text-transform:uppercase;color:var(--gold);align-self:start;}
+.split-navy .pair{grid-column:2;grid-row:1/-1;display:flex;flex-direction:column;padding:var(--pad-t) clamp(40px,5vw,100px) var(--pad-b) clamp(10px,1vw,20px);min-height:0;gap:clamp(8px,2vh,24px);}
+.split-navy .pair .fig:first-child{flex:1;}
+.split-navy .pair .fig:last-child{flex:none;height:clamp(90px,19vh,200px);align-items:flex-end;}
+.split-navy .pair .fig:last-child img{flex:none;height:100%;width:auto;max-width:100%;}
+.split-navy .pair .fig:last-child{align-self:flex-end;}
+
+/* ---------- worksheet (slide 30) ---------- */
+.worksheet .body{justify-content:center;}
+.worksheet ul.pts{position:relative;background:var(--card);border:1px solid var(--rule2);box-shadow:var(--shadow);padding:clamp(6px,1.2vh,14px) clamp(18px,2vw,36px) clamp(6px,1.2vh,14px) clamp(64px,6vw,104px);
+  background-image:linear-gradient(90deg,transparent calc(clamp(64px,6vw,104px) - 14px),rgba(166,25,46,.6) calc(clamp(64px,6vw,104px) - 14px) calc(clamp(64px,6vw,104px) - 12px),transparent calc(clamp(64px,6vw,104px) - 12px));}
+.worksheet ul.pts::before{content:"";position:absolute;left:clamp(14px,1.6vw,26px);top:10%;bottom:10%;width:18px;background:radial-gradient(circle,var(--paper) 0 7px,rgba(14,27,54,.25) 7.5px 9px,transparent 9.5px) 0 0/18px 33.33%;}
+.worksheet ul.pts>li{font-size:calc(var(--fs-body)*1.1);line-height:1.45;padding:clamp(4px,1.1vh,14px) 0;border-bottom:1px solid #b9c8e3;font-family:var(--font-body);font-weight:500;color:var(--ink);}
+.worksheet ul.pts>li::before{display:none;}
+.worksheet ul.pts>li:last-child{border-bottom:0;}
+.worksheet .hd h2{font-size:calc(var(--fs-h)*.7);}
+
+/* ---------- misc slide-specific ---------- */
+/* cover of facts: slide 3 captions as stat labels */
+.triple .grid3{align-items:center;}
+.triple .body{justify-content:center;}
+.triple .grid3{flex:none;}
+.triple .grid3>.step{padding:0 clamp(8px,1vw,18px);border-left:2px solid var(--rule2);}
+.triple .grid3>.step:first-child{border-left:0;padding-left:0;}
+.triple .fig{justify-content:flex-start;}
+.triple .fig img{flex:none;height:auto;max-height:44vh;width:100%;object-fit:contain;}
+.triple .fig figcaption{margin-top:auto;font-size:calc(var(--fs-body)*1.05);}
+.triple .fig{gap:clamp(10px,2vh,24px);}
+.triple .fig:has(figcaption) img{margin-bottom:0;}
+.triple .fig figcaption{margin-top:0;}
+.triple .grid3>.step:nth-child(3) .fig{justify-content:center;}
+
+/* hero layout: title left, big image right */
+.hero .slide-inner{display:grid;grid-template-columns:minmax(0,.62fr) minmax(0,1.5fr);grid-template-rows:auto minmax(0,1fr) auto;column-gap:clamp(24px,3vw,56px);}
+.hero .slide-inner>.hd{grid-column:1;grid-row:1;padding-right:0;min-height:0;}
+.hero .slide-inner>.body{display:contents;}
+.hero .body>.fig,.hero .body>.step{grid-column:2;grid-row:1/-1;min-height:0;display:flex;}
+.hero .body>.step>.fig{flex:1;}
+.hero .body>.src{grid-column:1;grid-row:3;align-self:end;}
+.hero .hd::before{display:none!important;}
+.hero .slide-inner>.hd{margin-bottom:0;}
+.hero .slide-inner::after{content:var(--num);grid-column:1;grid-row:2;align-self:end;justify-self:start;font-family:var(--font-display);font-weight:700;font-size:clamp(120px,min(15vw,26vh),300px);line-height:.8;height:.8em;overflow:hidden;color:transparent;-webkit-text-stroke:3px var(--scarlet);opacity:.85;margin-bottom:.1em;letter-spacing:-.02em;}
+.hero .hd h2{font-size:calc(var(--fs-h)*.92);}
+
+/* new revenue equation (slide 10) */
+.grid2>.card.plain{align-self:stretch;}
+.eq{display:grid!important;grid-template-columns:1fr 1fr;justify-items:center;align-items:center;gap:clamp(34px,5.6vh,60px) clamp(34px,3.4vw,64px);padding:0;}
+.eq>li{position:relative;border:0!important;padding:.6em!important;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:.04em;line-height:1.08;border-radius:50%;aspect-ratio:1;}
+.eq>li::before{display:none!important;}
+.eq>li:nth-child(1),.eq>li:nth-child(2){width:clamp(130px,min(13vw,23vh),230px);font-size:calc(var(--fs-body)*1.05);background:var(--ink);color:var(--gold-l);box-shadow:inset 0 0 0 5px var(--ink),inset 0 0 0 8px var(--gold);}
+.eq>li:nth-child(2){background:var(--scarlet);color:#fff;box-shadow:inset 0 0 0 5px var(--scarlet),inset 0 0 0 8px var(--gold);}
+.eq>li:nth-child(3){grid-column:1/-1;width:clamp(170px,min(17vw,30vh),300px);font-size:calc(var(--fs-body)*1.4);background:var(--gold);color:var(--ink);box-shadow:0 0 0 6px var(--paper),0 0 0 9px var(--ink);}
+.eq>li:nth-child(1)::after{content:"";position:absolute;top:50%;right:calc(clamp(34px,3.4vw,64px)/-2 - 14px);width:28px;height:28px;transform:translateY(-50%);
+  background:linear-gradient(var(--gold-d),var(--gold-d)) center/100% 26% no-repeat,linear-gradient(var(--gold-d),var(--gold-d)) center/26% 100% no-repeat;}
+.eq>li:nth-child(3)::before{content:""!important;display:block!important;position:absolute;left:50%;top:calc(clamp(34px,5.6vh,60px)/-2 - 18px);transform:translateX(-50%);width:0;height:0;border-left:20px solid transparent;border-right:20px solid transparent;border-top:24px solid var(--gold-d);background:none;}
+/* slide 12 */
+.cards2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2.4vw,44px);align-items:stretch;flex:none;min-height:46vh;}
+.cards2>li{border:0!important;background:var(--card);border-top:8px solid var(--scarlet)!important;box-shadow:var(--shadow);padding:clamp(20px,4vh,48px) clamp(20px,2.4vw,44px)!important;font-size:calc(var(--fs-lead)*1.3);line-height:1.36;font-weight:500;display:flex;align-items:center;}
+.cards2>li::before{display:none!important;}
+.cards2>li:nth-child(2){border-top-color:var(--gold)!important;}
+.slide-inner>.body:has(.cards2){justify-content:center;}
+
+/* slide 14 */
+.roster{font-family:var(--font-display);font-weight:500;text-transform:uppercase;letter-spacing:.05em;line-height:1.5;font-size:calc(var(--fs-body)*1.2);color:var(--ink);}
+.case .card.incl{border-top-color:var(--ink);}
+.case .card.excl{border-top-color:var(--scarlet);background:transparent;}
+.case .card h3{display:inline-block;padding:.2em .7em;margin-bottom:.7em;background:var(--ink);color:var(--gold-l);font-size:calc(var(--fs-body)*1.1);}
+.case .card.excl h3{background:var(--scarlet);color:#fff;}
+.case .grid2:has(.incl){--cols:minmax(0,1.5fr) minmax(0,1fr);align-items:start;}
+.case .grid2:has(.incl)>.card{align-self:start;}
+.case .card p{font-size:var(--fs-lead);}
+.case .card p.roster{font-size:calc(var(--fs-body)*1.2);}
+.case .body:has(.grid2){justify-content:center;}
+.case .body>.grid2:has(.incl){flex:none;}
+
+/* slide 15 */
+.s-content .stats+p,.s-content p+.stats{margin-top:clamp(12px,2vh,22px);}
+.case .body>p:not(.src){font-weight:500;}
+.case .body>p.src{font-size:clamp(12px,1.5vh,15px);}
+.case .body>.stats{margin-bottom:clamp(8px,1.4vh,16px);}
+.case .stat{padding:clamp(18px,3.6vh,40px) clamp(16px,1.8vw,32px);}
+.case .stat .num{font-size:clamp(60px,min(6.6vw,12vh),130px);}
+.case .stat .lbl{font-size:var(--fs-lead);}
+.case .body blockquote.q p{font-size:calc(var(--fs-lead)*1.12);}
+.case .body>p:not(.src){font-size:var(--fs-lead);}
+.case .body{gap:clamp(6px,1.6vh,18px);}
+.case table.dt{font-size:calc(var(--fs-body)*1.06);margin:auto 0;}
+.case table.dt td{padding:.5em .9em;}
+
+.case .body:has(.stats){justify-content:center;}
+.case .body blockquote.q{margin-top:clamp(10px,2vh,24px);}
+
+/* ---------- case-study system (slides 13-18) ---------- */
+.case:not(.s-title):not(.s-quote):not(.dark){background:var(--paper2);}
+.case:not(.s-title):not(.s-quote):not(.dark)::before{left:0;width:clamp(14px,1.5vw,26px);opacity:1;
+  background:linear-gradient(90deg,var(--ink) 0 100%);
+  box-shadow:inset -3px 0 0 var(--gold);}
+.case:not(.s-title):not(.s-quote):not(.dark)::after{content:"";position:absolute;left:clamp(4px,.55vw,10px);top:0;bottom:0;width:3px;background:repeating-linear-gradient(180deg,var(--gold) 0 14px,transparent 14px 28px);opacity:.75;}
+.case .kick{align-self:flex-start;padding:.38em .9em .38em .8em;background:var(--gold);color:var(--ink);letter-spacing:.14em;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 100%,0 100%);margin-bottom:.8em;}
+.case .kick::before{background:var(--scarlet);width:.6em;height:.6em;}
+.case.s-title .kick{background:none;clip-path:none;padding:0;color:var(--gold-l);}
+
+/* ---------- stats slide (32) ---------- */
+.s-stats .body{flex-direction:row;align-items:center;gap:clamp(24px,4vw,80px);}
+.s-stats .body>p{flex:1.2;margin:0;font-family:var(--font-display);font-weight:600;font-size:clamp(28px,min(3.2vw,5.8vh),70px);line-height:1.12;text-transform:none;letter-spacing:.01em;color:var(--ink);text-wrap:balance;}
+.s-stats .stats{flex:1;display:block;}
+.s-stats .stat{flex-direction:column;align-items:flex-start;gap:clamp(10px,2vh,22px);padding:clamp(20px,4vh,44px) clamp(22px,2.4vw,44px);border-bottom:10px solid var(--gold);}
+.s-stats .stat .num{font-size:clamp(90px,min(11vw,21vh),300px);color:var(--gold);line-height:.85;}
+.s-stats .dots{display:grid;grid-template-columns:repeat(10,1fr);gap:clamp(4px,.6vw,9px);width:min(100%,38vh);}
+.s-stats .dots i{aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.14);}
+.s-stats .dots i.on{background:var(--gold);box-shadow:0 0 12px rgba(227,167,47,.6);}
+
+/* scoreboard rows (slide 19) */
+.board{display:flex;flex-direction:column;gap:clamp(10px,2vh,22px);}
+.board>li{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:clamp(16px,2vw,40px);border:0!important;padding:clamp(16px,3.2vh,36px) clamp(20px,2.4vw,44px)!important;color:#fff;border-bottom:6px solid var(--gold)!important;
+  background:radial-gradient(rgba(255,255,255,.07) 1.1px,transparent 1.6px) 0 0/7px 7px,var(--ink);}
+.board>li::before{display:none!important;}
+.board .lb{font-family:var(--font-display);font-weight:500;text-transform:uppercase;letter-spacing:.06em;font-size:calc(var(--fs-lead)*1.08);color:#dbe3f4;}
+.board .vl{font-family:var(--font-display);font-weight:700;color:var(--gold);font-size:calc(var(--fs-lead)*.95);letter-spacing:.02em;text-align:right;text-shadow:0 0 18px rgba(227,167,47,.35);}
+.board .vl b{font-size:2.5em;line-height:1;margin-right:.18em;font-weight:700;}
+.board>li:first-child .vl{font-size:calc(var(--fs-lead)*2.4);line-height:1;}
+
+body:has(.board) .x{}
+.body:has(.board){justify-content:stretch;}
+.board{flex:1;}
+.board>li{flex:1;}
+.board .lb{font-size:calc(var(--fs-lead)*1.25);}
+.board>li:first-child .vl{font-size:calc(var(--fs-lead)*2.8);}
+.board .vl{font-size:calc(var(--fs-lead)*1.1);}
+.board .vl b{font-size:2.8em;}
+/* slide 25 callout */
+.callout{flex:none!important;margin-top:clamp(18px,3.6vh,40px);border:0;border-left:12px solid var(--gold);background:var(--scarlet);color:#fff;box-shadow:var(--shadow);padding:clamp(22px,4.6vh,56px) clamp(24px,3vw,56px);}
+.callout h3{margin:0;font-size:calc(var(--fs-h)*.9);line-height:1.05;color:#fff;letter-spacing:.03em;}
+.body:has(.callout){justify-content:center;}
+.body:has(.callout) ul.pts>li{font-size:calc(var(--fs-lead)*1.12);border:0;}
+
+/* slide 27 solo */
+.pts.solo>li{font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:calc(var(--fs-h)*1.1);color:var(--scarlet);padding:0;border:0;line-height:1;}
+.pts.solo>li::before{display:none;}
+/* slide 9: lead line */
+.grid2 p.lead{margin:0 0 .5em;font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:calc(var(--fs-h)*.8);color:var(--scarlet);line-height:1.05;}
+.grid2 p.lead+ul.pts{margin-top:.4em;}
+.hero+.x{}
+
+/* checklist (slide 29) */
+.check>li{padding-left:2.3em;font-size:calc(var(--fs-lead)*1.12)!important;padding-top:.7em;padding-bottom:.7em;}
+.body:has(.check){justify-content:center;}
+.check>li::before{width:.9em!important;height:.9em!important;transform:none!important;background:var(--card)!important;border:3px solid var(--ink);top:.62em!important;left:.1em!important;box-shadow:.14em .14em 0 var(--gold);}
+
+/* roster (slide 31) */
+.card.roster{margin-top:clamp(14px,2.4vh,26px);border:0;border-left:10px solid var(--gold);background:var(--ink);color:var(--gold-l);padding:clamp(14px,2.4vh,26px) clamp(18px,2vw,32px);}
+.card.roster p{font-family:var(--font-display);font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:calc(var(--fs-body)*1.12);line-height:1.3;}
+.card.roster p::before{content:"";display:block;width:2.4em;height:4px;background:var(--scarlet2);margin-bottom:.6em;}
+.slide-inner>.body>.grid2 .body{display:flex;flex-direction:column;}
+/* slides 31, 43 text-heavy splits */
+.grid2>.body{min-width:0;}
+.grid2>div:not(.card) ul.pts>li{font-size:calc(var(--fs-lead)*.94);}
+.grid2>div:not(.card)>ul.pts{width:100%;}
+.q-big ul.pts>li{font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:calc(var(--fs-h)*.5);line-height:1.12;letter-spacing:.015em;padding-left:1.2em;}
+.q-big ul.pts>li::before{top:.6em;}
+.q-big ul.pts>li:nth-child(2){color:var(--scarlet);}
+
+/* slide 27: header inside left col */
+.grid2>div>.hd{margin-bottom:clamp(14px,2.4vh,26px);}
+.grid2>div>.hd::before{display:none!important;}
+.grid2>div>.hd{padding-right:0!important;}
+
+/* ---------- closing ---------- */
+.s-closing{padding:0;background:var(--scarlet);}
+.s-closing::before{display:none;}
+.s-closing .slide-inner{max-width:none;justify-content:center;align-items:flex-start;padding:var(--pad-t) clamp(56px,8vw,160px) var(--pad-b);}
+.s-closing .slide-inner::before{content:"";position:absolute;inset:0;background:
+  repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 1px,transparent 1px 56px),
+  linear-gradient(115deg,transparent 58%,var(--ink) 58% 100%);}
+.s-closing .slide-inner::after{content:"";position:absolute;left:clamp(56px,8vw,160px);bottom:clamp(60px,12vh,130px);width:clamp(180px,22vw,420px);height:14px;background:var(--gold);}
+.s-closing .hd{position:relative;z-index:2;margin:0;padding:0!important;}
+.s-closing .hd::after{display:none;}
+.s-closing .hd h2{font-size:clamp(70px,min(10.4vw,19vh),280px);line-height:.9;color:#fff;text-shadow:.04em .04em 0 var(--scarlet-d);}
+.s-closing .deco{width:min(40%,700px);}
+.s-closing .deco .slabs{display:none;}
+
+/* ---------- small screens ---------- */
+@media (max-width:820px){
+  .slide{padding:96px 18px 84px;}
+  .slide-inner{overflow:auto;}
+  .grid2,.grid3,.stats,.cards2{grid-template-columns:1fr!important;grid-auto-flow:row;}
+  .grid2,.grid3{grid-template-rows:none;}
+  .brand,.section-label,.zoom-controls{display:none;}
+  .s-title .deco,.s-closing .deco{opacity:.25;}
+  .hero .slide-inner,.playbook .slide-inner,.split-navy .slide-inner,.s-discuss.dark .slide-inner{display:flex;flex-direction:column;}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;}}
+</style>
+<style id="w12-extra">
+/* part1 */
+.w12-sec-sub{margin:0;max-width:min(62%,900px);color:#e8edf8;font-size:calc(var(--fs-lead)*1.1);line-height:1.35;position:relative;z-index:2;margin-top:clamp(14px,2.6vh,28px);}
+.w12-tl{list-style:none;margin:clamp(14px,2.4vh,26px) 0;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(8px,1vw,18px);position:relative;}
+.w12-tl::before{content:"";position:absolute;left:0;right:0;top:.55em;height:3px;background:var(--gold);}
+.w12-tl li{position:relative;padding-top:1.6em;font-size:calc(var(--fs-body)*.78);line-height:1.3;}
+.w12-tl .dot{position:absolute;left:0;top:0;width:1.1em;height:1.1em;background:var(--scarlet);border:3px solid var(--gold);border-radius:50%;}
+.w12-tl h4{margin:0 0 .4em;font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--scarlet);font-size:calc(var(--fs-body)*.95);}
+.w12-tl p{margin:0 0 .5em;}
+
+/* part2 */
+.w12-g6{align-items:stretch}
+.w12-chart{display:flex;flex-direction:column;justify-content:space-between;gap:clamp(4px,1vh,10px);min-width:0}
+.w12-ct{margin:0;font-family:var(--font-mono);font-size:clamp(12px,1.6vh,15px);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.w12-row{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr) 3.6em;align-items:center;gap:.7em;font-size:clamp(13px,2vh,22px)}
+.w12-nm{text-align:right;font-weight:600;color:var(--ink);line-height:1.15}
+.w12-trk{display:block;height:clamp(16px,3.4vh,34px);background:rgba(14,27,54,.06)}
+.w12-trk i{display:block;height:100%;background:var(--ink)}
+.w12-row:first-of-type .w12-trk i,.w12-ct+.w12-row .w12-trk i{background:var(--scarlet)}
+.w12-v{font-family:var(--font-display);color:var(--scarlet)}
+.w12-side{display:flex;flex-direction:column;gap:clamp(12px,2vh,22px);min-width:0}
+.w12-side .card h3{text-transform:none;letter-spacing:.01em;font-size:calc(var(--fs-body)*1.15)}
+.w12-side .card p{font-size:var(--fs-body)}
+.w12-cards3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,1.6vw,28px);margin-top:clamp(10px,2vh,22px)}
+.w12-cards3 .card h3{font-size:calc(var(--fs-body)*1.05);display:block;background:none;color:var(--ink);padding:0}
+.w12-cards3 .card p{font-size:var(--fs-body)}
+.w12-st4{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:row}
+.w12-st4 .stat{flex-direction:column;align-items:flex-start;gap:.4em}
+.w12-st4 .stat .num{font-size:clamp(40px,min(4.6vw,8vh),90px)}
+.w12-st4 .stat .lbl{font-size:var(--fs-body)}
+.w12-callout{margin-top:clamp(10px,2vh,20px);border-top-color:var(--gold)}
+.w12-callout p{font-weight:600;font-size:var(--fs-lead)}
+@media(max-width:900px){.w12-cards3,.w12-st4{grid-template-columns:1fr}.w12-row{grid-template-columns:1fr 3.6em}.w12-nm{grid-column:1/-1;text-align:left}}
+/* part3 */
+.s-section:not(.sub) .hd .kick{color:var(--gold);margin:0 0 1em;}.s-section:not(.sub) .hd .sec-sub{position:relative;z-index:2;margin:clamp(18px,3.4vh,36px) 0 0;max-width:34em;font-size:calc(var(--fs-lead)*1.1);line-height:1.4;color:#d6deef;font-weight:500;}
+/* part4 */
+.p4a .lead4{font-size:var(--fs-lead);font-weight:500;line-height:1.38;margin:0 0 clamp(10px,2vh,22px)}
+.p4a .grid3,.p4d .grid3{flex:none}
+.p4a .card p,.p4d .card p{font-size:var(--fs-body)}
+.stats.s4 .stat{flex-direction:column;align-items:flex-start;gap:clamp(6px,1.2vh,14px)}
+.stats.s4 .stat .num{font-size:clamp(40px,min(4.6vw,9vh),96px)}
+.stats.s4 .stat .lbl b{display:block;font-family:var(--font-display);text-transform:uppercase;letter-spacing:.06em;color:var(--gold-l);margin-bottom:.3em}
+.stats.s4 .stat .lbl .tx{display:block;font-weight:500;font-size:calc(var(--fs-body)*.92)}
+.p4b .notebar{margin:clamp(10px,2vh,22px) 0 0;padding:.8em 1.1em;border-left:8px solid var(--scarlet);background:var(--card);box-shadow:var(--shadow);font-size:var(--fs-body);line-height:1.38}
+
+/* part5 */
+.cardgrid .cg{grid-template-rows:repeat(2,minmax(0,1fr));align-items:stretch}.cardgrid .cg>.card{align-self:stretch;display:flex;flex-direction:column;justify-content:center}.cardgrid .card.dk{background:var(--ink);border-color:var(--ink)}.cardgrid .card.dk h3{color:var(--gold-l)}.cardgrid .card.dk p{color:#fff}
+
+/* ===== QA2 layout fixes (fit 1920x1080 and 1280x720) ===== */
+/* centered bodies must never push content up under the header */
+.body:has(.callout),.case .body:has(.stats),.case .body:has(.grid2){justify-content:safe center}
+
+/* s1 cover: course line set apart from the subtitle */
+.slide[data-index="0"] .s-title h1 .l2,.slide[data-index="0"] h1 .l2,.slide[data-index="0"] h1 .l3{font-size:clamp(48px,min(8.2vw,13.6vh),170px)}
+.slide[data-index="0"] .sub{margin-top:clamp(16px,3vh,36px)}
+.slide[data-index="0"] .sub .course{display:block;margin-top:clamp(14px,2.6vh,30px);padding-top:clamp(10px,1.8vh,18px);border-top:1px solid rgba(255,255,255,.22);font-family:var(--font-mono);font-size:clamp(12px,1.75vh,18px);font-weight:700;letter-spacing:.12em;color:var(--gold-l)}
+
+/* s4 timeline */
+.slide[data-index="3"] .body{justify-content:flex-start}
+.slide[data-index="3"] .body>p:first-child{font-size:var(--fs-body);margin:0 0 .2em}
+.slide[data-index="3"] .w12-tl{margin:clamp(10px,2vh,22px) 0 clamp(6px,1.2vh,14px);gap:clamp(10px,1.2vw,22px)}
+.slide[data-index="3"] .w12-tl li{font-size:calc(var(--fs-body)*.74);padding-top:1.9em}
+.slide[data-index="3"] .w12-tl h4{font-size:calc(var(--fs-body)*.82);margin-bottom:.35em}
+.slide[data-index="3"] .w12-tl p{font-size:inherit;line-height:1.32;margin:0 0 .45em}
+.slide[data-index="3"] .callout{margin-top:auto;padding:clamp(10px,2vh,22px) clamp(18px,2vw,34px)}
+.slide[data-index="3"] .callout p{margin:0;font-size:var(--fs-body);line-height:1.35}
+
+/* s5 infographic: span the slide and fill the height */
+.slide[data-index="4"] .slide-inner::after{display:none}
+.slide[data-index="4"] .body>.fig{grid-column:1/-1;grid-row:1/-1;align-items:center;justify-content:center}
+.slide[data-index="4"] .fig img{flex:none;max-width:100%!important;width:auto;height:100%;max-height:100%}
+
+/* s7 market size: stacked stat cards, labels under the numbers */
+.slide[data-index="6"] .hd h2{font-size:calc(var(--fs-h)*.74);line-height:1.08}
+.slide[data-index="6"] .stats .stat{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:clamp(6px,1.2vh,14px);padding:clamp(12px,2.2vh,26px) clamp(16px,1.6vw,28px)}
+.slide[data-index="6"] .stats .stat .num{font-size:clamp(36px,min(4.4vw,7.6vh),84px)}
+.slide[data-index="6"] .stats .stat .lbl{font-size:calc(var(--fs-body)*.82)}
+.slide[data-index="6"] .w12-cards3{margin-top:clamp(12px,2.2vh,26px)}
+.slide[data-index="6"] .w12-cards3 .card{padding:clamp(12px,2vh,24px) clamp(16px,1.6vw,28px)}
+.slide[data-index="6"] .w12-cards3 .card h3{font-size:calc(var(--fs-body)*.92)}
+.slide[data-index="6"] .w12-cards3 .card p{font-size:calc(var(--fs-body)*.8);margin:0}
+
+/* s8 settlement table */
+.slide[data-index="7"] table.dt{font-size:calc(var(--fs-body)*.78)}
+.slide[data-index="7"] table.dt td{padding:.42em .9em}
+.slide[data-index="7"] .w12-callout{padding:clamp(10px,1.8vh,20px) clamp(16px,1.8vw,30px);margin-top:clamp(10px,1.8vh,20px)}
+.slide[data-index="7"] .w12-callout p{margin:0;font-size:calc(var(--fs-body)*.9)}
+
+/* s9 enforcement */
+.slide[data-index="8"] .w12-cards3{margin-top:0}
+.slide[data-index="8"] .w12-cards3 .card{padding:clamp(10px,1.8vh,22px) clamp(14px,1.4vw,26px)}
+.slide[data-index="8"] .w12-cards3 .card h3{font-size:calc(var(--fs-body)*.85);margin-bottom:.45em}
+.slide[data-index="8"] .w12-cards3 .card p{font-size:calc(var(--fs-body)*.74);margin:0;line-height:1.36}
+.slide[data-index="8"] .w12-st4{margin-top:clamp(10px,1.8vh,20px)}
+.slide[data-index="8"] .w12-st4 .stat{padding:clamp(10px,1.7vh,20px) clamp(14px,1.4vw,24px);gap:.5em}
+.slide[data-index="8"] .w12-st4 .stat .num{font-size:clamp(30px,min(3.4vw,6vh),66px)}
+.slide[data-index="8"] .w12-st4 .stat .lbl{font-size:calc(var(--fs-body)*.74)}
+.slide[data-index="8"] .body>p:not(.src){font-size:calc(var(--fs-body)*.8);margin:clamp(10px,1.8vh,20px) 0 0;line-height:1.38}
+
+/* s12 photos: give the photo column real height */
+.slide[data-index="11"] .grid2>div:last-child{align-self:stretch!important;height:100%}
+.slide[data-index="11"] .grid2>div:last-child>.fig{flex:1 1 0;min-height:0;align-items:center}
+.slide[data-index="11"] .grid2>div:last-child>.fig:first-child{flex-grow:1}
+.slide[data-index="11"] .grid2>div:last-child>.fig:last-child{flex-grow:1.05}
+.slide[data-index="11"] .grid2{margin-bottom:clamp(4px,1vh,12px)}
+.slide[data-index="11"] .fig img{flex:none;width:auto;height:100%;max-width:100%!important;max-height:100%}
+
+/* s13 rules: aligned card tops, tighter lists */
+.slide[data-index="12"] .grid3{flex:none;align-items:stretch}
+.slide[data-index="12"] .grid3>.card{align-self:stretch;padding:clamp(12px,2vh,24px) clamp(16px,1.6vw,28px)}
+.slide[data-index="12"] .grid3 .card h3{font-size:calc(var(--fs-body)*1.05);margin-bottom:.3em}
+.slide[data-index="12"] .grid3 ul.pts>li{font-size:calc(var(--fs-body)*.94);padding:.42em 0 .42em 1.7em;line-height:1.3}
+.slide[data-index="12"] .body>.card:not(.grid3 .card){margin-top:clamp(12px,2.2vh,26px)!important;padding:clamp(10px,1.8vh,20px) clamp(16px,1.6vw,28px)}
+.slide[data-index="12"] .body>.card p{margin:0;font-size:calc(var(--fs-body)*.9)}
+
+/* s15 / s16 / s20: small source-line overflows */
+.slide[data-index="14"] .p4a .lead4,.slide[data-index="14"] .lead4{font-size:var(--fs-body)}
+.slide[data-index="14"] .grid3 .card p{font-size:calc(var(--fs-body)*.88)}
+.slide[data-index="15"] .stats.s4 .stat{padding:clamp(12px,2.4vh,30px) clamp(14px,1.6vw,28px)}
+.slide[data-index="15"] .stats.s4 .stat .num{font-size:clamp(36px,min(4.2vw,8vh),86px)}
+.slide[data-index="19"] table.dt{font-size:calc(var(--fs-body)*.9)}
+
+/* s17 cap table */
+.slide[data-index="16"] table.dt{font-size:calc(var(--fs-body)*.84)}
+.slide[data-index="16"] table.dt td{padding:.4em .9em}
+
+.slide[data-index="0"] .sub{font-size:clamp(17px,min(1.7vw,3vh),34px);width:min(54%,860px)}
+.s-section .body>p.w12-sec-sub{margin-top:clamp(18px,3.4vh,36px)}
+.slide[data-index="0"] .kick{margin-bottom:clamp(10px,2.2vh,24px)}
+.slide[data-index="7"] table.dt{font-size:calc(var(--fs-body)*.76)}
+.slide[data-index="15"] .stats.s4 .stat .lbl .tx{font-size:calc(var(--fs-body)*.84)}
+.slide[data-index="15"] .notebar{font-size:calc(var(--fs-body)*.9);padding:.65em 1em;margin-top:clamp(10px,1.8vh,20px)}
+.slide[data-index="18"] .card{padding-top:clamp(12px,2vh,24px);padding-bottom:clamp(12px,2vh,24px)}
+.slide[data-index="18"] .card p{font-size:calc(var(--fs-body)*.92);margin-bottom:0}
+/* s21 who-wins cards: text fits inside each card */
+.slide[data-index="20"] .grid3.cg{gap:clamp(12px,1.6vw,28px)}
+.slide[data-index="20"] .cg>.card{justify-content:flex-start;padding:clamp(12px,2vh,24px) clamp(16px,1.6vw,28px)}
+.slide[data-index="20"] .cg .card h3{font-size:calc(var(--fs-body)*1.02);margin-bottom:.4em}
+.slide[data-index="20"] .cg .card p{font-size:calc(var(--fs-body)*.9);margin:0;line-height:1.38}
+</style>
+</head>
+<body>
+<div class="bg-paper"></div>
+
+<div class="chrome-top">
+  <a class="textlink home-btn" href="../" title="Back to course home">&larr; Home</a>
+  <div class="brand"><b>SPM 261</b> &middot; NIL &amp; College Sports Act &middot; Week 12-1</div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="section-label" id="sectionLabel"></div>
+  <div class="counter" id="counter"></div>
+  <a class="textlink home-btn" id="pdfDownload" href="SPM261_Week12-1_Slides.pdf" download title="Download this deck as a PDF">Download PDF</a>
+  <button class="textlink" id="notesToggle" title="Toggle speaker notes (N)">Notes &middot; N</button>
+  <div class="zoom-controls" role="group" aria-label="Zoom controls">
+    <button class="zoom-btn" id="zoomOutBtn" title="Zoom out (&minus;)" aria-label="Zoom out">&minus;</button>
+    <button class="zoom-btn zoom-reset" id="zoomResetBtn" title="Reset zoom (0)" aria-label="Reset zoom">100%</button>
+    <button class="zoom-btn" id="zoomInBtn" title="Zoom in (+)" aria-label="Zoom in">+</button>
+  </div>
+</div>
+
+<main class="deck" id="deck"></main>
+<div class="page-num" id="pageNum"></div>
+
+<div class="chrome-bottom">
+  <button class="navbtn" id="prevBtn" aria-label="Previous slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="navbtn" id="nextBtn" aria-label="Next slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<div class="hint" id="hint">Click, scroll wheel, or press &rarr; to continue &middot; N for notes</div>
+
+<aside class="notes-panel" id="notesPanel">
+  <button class="close-notes" id="closeNotes" aria-label="Close notes">&times;</button>
+  <div id="notesBody"><h3>Speaker Notes</h3><p class="notes-empty">No speaker notes for this slide.</p></div>
+</aside>
+
+<button class="ask-btn" id="askBtn" title="Ask a question about this slide" aria-label="Ask a question about this slide">Question?</button>
+<div class="ask-backdrop" id="askBackdrop">
+  <div class="ask-panel">
+    <p class="ask-title">Ask a question or leave a comment</p>
+    <p class="ask-context" id="askContext"></p>
+    <textarea id="askText" placeholder="What's on your mind about this slide?" maxlength="4000"></textarea>
+    <input type="text" id="askName" placeholder="Your name" maxlength="120">
+    <div class="ask-row">
+      <span class="ask-hint">Goes straight to Dr. Kim.</span>
+      <div class="ask-actions"><button class="ask-btn-cancel" id="askCancel">Cancel</button><button class="ask-btn-send" id="askSend">Send</button></div>
+    </div>
+    <div class="ask-status" id="askStatus"></div>
+  </div>
+</div>
+
+<script src="../questions/config.js?v=3"></script>
+<script type="application/json" id="slide-data">[{"title": "NIL and the Protect College Sports Act", "sec": "Opening", "cls": "s-title dark", "html": "<header class=\"hd\"><p class=\"kick\">College Sports Policy Briefing · November 2026<\/p><h1><span class=\"l1\">NIL and the<\/span> <span class=\"l2\">Protect College<\/span> <span class=\"l3\">Sports Act<\/span><\/h1><\/header><p class=\"sub\">How athlete pay works after the House settlement, what the Senate-passed bill would write into federal law, and who pushed it.<span class=\"course\">SPM261 Introduction to Sport Management<\/span><\/p><div aria-hidden=\"true\" class=\"deco\"><svg aria-hidden=\"true\" class=\"slabs\" preserveaspectratio=\"none\" viewbox=\"0 0 100 100\"><polygon class=\"slab\" points=\"34,0 100,0 100,100 0,100\"><\/polygon><polygon class=\"stripe\" points=\"28,0 31,0 0,91.2 0,82.4\"><\/polygon><\/svg><svg aria-hidden=\"true\" class=\"bars\" preserveaspectratio=\"xMidYMax meet\" viewbox=\"0 0 520 640\"><rect class=\"bar\" height=\"130\" width=\"52\" x=\"18\" y=\"510\"><\/rect><rect class=\"bar\" height=\"190\" width=\"52\" x=\"90\" y=\"450\"><\/rect><rect class=\"bar\" height=\"240\" width=\"52\" x=\"162\" y=\"400\"><\/rect><rect class=\"bar\" height=\"320\" width=\"52\" x=\"234\" y=\"320\"><\/rect><rect class=\"bar\" height=\"400\" width=\"52\" x=\"306\" y=\"240\"><\/rect><rect class=\"bar\" height=\"490\" width=\"52\" x=\"378\" y=\"150\"><\/rect><rect class=\"bar g\" height=\"600\" width=\"52\" x=\"450\" y=\"40\"><\/rect><polyline class=\"trend\" points=\"44,476 116,416 188,366 260,286 332,206 404,116 476,6\"><\/polyline><circle class=\"trend-h\" cx=\"476\" cy=\"6\" r=\"13\"><\/circle><\/svg><\/div>", "notes": "Merged deck: Part 1 updates the NIL lecture to the 2025-26 revenue-sharing era. Part 2 walks through the Protect College Sports Act (S. 4668) section by section, using the Senate-passed text. Part 3 covers the Front Office Sports reporting on the lobbying network behind the bill. Status is current as of mid-November 2026."}, {"title": "Three parts, one question: who sets the rules for paying college athletes?", "sec": "Opening", "cls": "s-split n2", "html": "<header class=\"hd long\"><p class=\"kick\">Roadmap<\/p><h2>Three parts, one question: who sets the rules for paying college athletes?<\/h2><\/header><div class=\"body\"><div class=\"grid2\"><div class=\"card\"><h3>Part 1 · NIL today<\/h3><ul class=\"pts\"><li>What NIL is and how it started (2021)<\/li><li>Who earns the most in 2026-27<\/li><li>Revenue sharing under the House settlement<\/li><li>The College Sports Commission and NIL Go<\/li><\/ul><\/div><div class=\"card\"><h3>Part 2 · Inside the bill<\/h3><ul class=\"pts\"><li>Status after the 77–22 Senate vote<\/li><li>Pay caps, NIL rules and agents<\/li><li>Eligibility, transfers, health and academics<\/li><li>Women&#39;s and Olympic sports<\/li><li>Legal shield, preemption and TV rights<\/li><\/ul><\/div><\/div><p class=\"src\">SPM261 · Lecture outline<\/p><\/div>", "notes": ""}, {"title": "NIL Today", "sec": "Part 1 · NIL today", "cls": "s-section dark n1", "html": "<header class=\"hd\"><p class=\"kick\">Part 1 · Name, Image and Likeness<\/p><h2>NIL Today<\/h2><\/header><div class=\"body\"><p class=\"w12-sec-sub\">Five years after NIL opened up, schools now pay athletes directly, and a new clearinghouse polices outside deals.<\/p><\/div><i aria-hidden=\"true\" class=\"flow in\"><\/i>", "notes": ""}, {"title": "From banned to paid directly in four years", "sec": "Part 1 · NIL today", "cls": "s-content n1", "html": "<header class=\"hd long\"><p class=\"kick\">The basics<\/p><h2>From banned to paid directly in four years<\/h2><\/header><div class=\"body\"><p>NIL is a person&#39;s right to control and profit from the commercial use of their name, image and likeness. Until July 2021, NCAA rules barred college athletes from doing so.<\/p><ol class=\"w12-tl\"><li><i class=\"dot\"><\/i><h4>June 21, 2021<\/h4><p>NCAA v. Alston: the Supreme Court rules NCAA limits on education-related benefits violate federal antitrust law.<\/p><p>Still not paying for playing but offering up to $6,000 per year (alongside laptops, study-abroad funding, paid internships)<\/p><\/li><li><i class=\"dot\"><\/i><h4>July 1, 2021<\/h4><p>NCAA interim NIL policy: athletes may sign NIL deals under their state&#39;s law and may use agents for NIL.<\/p><\/li><li><i class=\"dot\"><\/i><h4>May 23, 2024<\/h4><p>NCAA and Power Five agree to settle House, Hubbard and Carter v. NCAA.<\/p><p>House v. NCAA: NIL damages + revenue sharing from TV rights<\/p><p>Professionalization of College Sports<\/p><\/li><li><i class=\"dot\"><\/i><h4>June 6, 2025<\/h4><p>Judge Claudia Wilken approves the House settlement.<\/p><\/li><li><i class=\"dot\"><\/i><h4>July 1, 2025<\/h4><p>Revenue sharing begins. The College Sports Commission and NIL Go start reviewing deals.<\/p><\/li><li><i class=\"dot\"><\/i><h4>Sept. 28, 2026<\/h4><p>The Senate passes the Protect College Sports Act, 77–22.<\/p><\/li><\/ol><div class=\"card callout\"><p>There is still no federal NIL law. The rules come from state laws, NCAA bylaws and the House settlement, which is why Congress is now involved.<\/p><\/div><p class=\"src\">Sources: NCAA; U.S. Supreme Court, NCAA v. Alston (2021); In re College Athlete NIL Litigation, N.D. Cal. (2025); Congress.gov S.4668<\/p><\/div>", "notes": "The old deck's 'Key Takeaways' and 'What are the rules' slides are condensed here. Bylaw 12.3.1 still bars 'contract agents' who market an athlete to pro teams, but NIL agents are allowed. Some states still restrict categories such as alcohol, tobacco, gambling and adult products."}, {"title": "How schools share revenue with student-athletes", "sec": "Part 1 · NIL today", "cls": "s-image n1 hero", "html": "<div class=\"body\"><figure class=\"fig\"><img alt=\"Infographic: How schools share revenue with student-athletes. $21.3M+ annual cap per school; campus-specific allocation with up to 90% to major revenue-generating sports; individual athlete distribution by position and playing time, market value and NIL, seniority and roster role; eligibility and academic covenants including minimum GPA, credit-hour loads, good standing, and a clause to pause payments if ineligible.\" height=\"572\" src=\"assets/p05-revenue-share-infographic.png\" style=\"max-width:1024px\" width=\"1024\"/><\/figure><\/div>", "notes": ""}, {"title": "Highest NIL valuations, 2026-27", "sec": "Part 1 · NIL today", "cls": "s-content n1 case", "html": "<header class=\"hd\"><p class=\"kick\">WHO EARNS THE MOST<\/p><h2>Highest NIL valuations, 2026-27<\/h2><\/header><div class=\"body\"><div class=\"grid2 w12-g6\" style=\"--cols:minmax(0,1.5fr) minmax(0,1fr)\"><div class=\"w12-chart\" role=\"img\" aria-label=\"Horizontal bar chart of On3 NIL valuations in millions of dollars\"><p class=\"w12-ct\">On3 NIL valuation ($M)<\/p><div class=\"w12-row\"><span class=\"w12-nm\">Darian Mensah · Miami QB<\/span><span class=\"w12-trk\"><i style=\"width:100.00%\"><\/i><\/span><b class=\"w12-v\">$6.5M<\/b><\/div><div class=\"w12-row\"><span class=\"w12-nm\">Milan Momcilovic · Kentucky F<\/span><span class=\"w12-trk\"><i style=\"width:92.31%\"><\/i><\/span><b class=\"w12-v\">$6.0M<\/b><\/div><div class=\"w12-row\"><span class=\"w12-nm\">Flory Bidunga · Louisville C<\/span><span class=\"w12-trk\"><i style=\"width:92.31%\"><\/i><\/span><b class=\"w12-v\">$6.0M<\/b><\/div><div class=\"w12-row\"><span class=\"w12-nm\">Dante Moore · Oregon QB<\/span><span class=\"w12-trk\"><i style=\"width:76.92%\"><\/i><\/span><b class=\"w12-v\">$5.0M<\/b><\/div><div class=\"w12-row\"><span class=\"w12-nm\">Jeremiah Smith · Ohio State WR<\/span><span class=\"w12-trk\"><i style=\"width:76.92%\"><\/i><\/span><b class=\"w12-v\">$5.0M<\/b><\/div><div class=\"w12-row\"><span class=\"w12-nm\">Tounde Yessoufou · St. John&#x27;s<\/span><span class=\"w12-trk\"><i style=\"width:76.92%\"><\/i><\/span><b class=\"w12-v\">$5.0M<\/b><\/div><div class=\"w12-row\"><span class=\"w12-nm\">Thomas Haugh · Florida F<\/span><span class=\"w12-trk\"><i style=\"width:76.92%\"><\/i><\/span><b class=\"w12-v\">$5.0M<\/b><\/div><div class=\"w12-row\"><span class=\"w12-nm\">Trinidad Chambliss · Ole Miss QB<\/span><span class=\"w12-trk\"><i style=\"width:76.92%\"><\/i><\/span><b class=\"w12-v\">$5.0M<\/b><\/div><div class=\"w12-row\"><span class=\"w12-nm\">Massamba Diop · Gonzaga C<\/span><span class=\"w12-trk\"><i style=\"width:76.92%\"><\/i><\/span><b class=\"w12-v\">$5.0M<\/b><\/div><div class=\"w12-row\"><span class=\"w12-nm\">Tyran Stokes · Kansas F<\/span><span class=\"w12-trk\"><i style=\"width:76.92%\"><\/i><\/span><b class=\"w12-v\">$5.0M<\/b><\/div><\/div><div class=\"w12-side\"><div class=\"card \"><h3>Basketball is up, QBs share the top<\/h3><p>Five of the top ten are men&#x27;s basketball players. In 2025 the list was almost all football: Arch Manning led at about $6.8M, and nine of ten were football players.<\/p><\/div><div class=\"card excl\"><h3>A new way to measure<\/h3><p>On July 1, 2026, On3 switched from an algorithm to a deal-based valuation that reflects current contract value. Compare years with care.<\/p><\/div><\/div><\/div><p class=\"src\"><a href=\"https://www.on3.com/nil/rankings/player/nil-valuations/\" rel=\"noopener\" target=\"_blank\">Source: https://www.on3.com/nil/rankings/player/nil-valuations/<\/a><\/p><\/div>", "notes": "Figures are On3 estimates, not verified contract amounts. Jeremiah Smith told On3 he had an offer over $10 million to enter the transfer portal, so valuations can sit well below market offers. Check On3 the week of the lecture; the list updates often."}, {"title": "NIL money grew, then moved inside the athletic department", "sec": "Part 1 · NIL today", "cls": "s-content n1 case", "html": "<header class=\"hd\"><p class=\"kick\">THE SIZE OF THE MARKET<\/p><h2>NIL money grew, then moved inside the athletic department<\/h2><\/header><div class=\"body\"><div class=\"stats\"><div class=\"stat\"><span class=\"num\">$917M<\/span><span class=\"lbl\">Year 1 NIL market (2021-22)<\/span><\/div><div class=\"stat\"><span class=\"num\">$1.67B<\/span><span class=\"lbl\">Projected NIL market, 2024-25 (last year before revenue sharing)<\/span><\/div><div class=\"stat\"><span class=\"num\">$4B+<\/span><span class=\"lbl\">Opendorse&#x27;s 2026 estimate of total athlete pay, including school revenue sharing<\/span><\/div><\/div><div class=\"w12-cards3\"><div class=\"card \"><h3>Collectives are shrinking<\/h3><p>Booster collectives paid more than $1.3B in 2024-25. Opendorse projected that would fall to about $227M in 2025-26 as schools pay athletes directly.<\/p><\/div><div class=\"card excl\"><h3>Football still dominates<\/h3><p>Football takes most revenue-sharing money. Basketball is close to 30%, and women&#x27;s sports are expected to get 8–12% of revenue-sharing dollars.<\/p><\/div><div class=\"card \"><h3>Deals above the cap<\/h3><p>The average Power 4 school offered about $13.5M in third-party NIL deals on top of the $20.5M revenue-sharing cap.<\/p><\/div><\/div><p class=\"src\">Sources: Opendorse NIL at 3 (2024) and annual reports; FootballScoop (June 25, 2026); CBS Sports; Front Office Sports (Sept. 10, 2026). Estimates from different years use different definitions.<\/p><\/div>", "notes": "The old deck's market chart stopped at a projected $2.55B for year 5. The newer Opendorse estimate counts school revenue sharing too, which is why it jumps above $4B. Treat these as industry estimates, not audited totals."}, {"title": "Schools can now pay athletes directly, up to a cap", "sec": "Part 1 · NIL today", "cls": "s-content n1 case", "html": "<header class=\"hd\"><p class=\"kick\">THE HOUSE SETTLEMENT<\/p><h2>Schools can now pay athletes directly, up to a cap<\/h2><\/header><div class=\"body\"><table class=\"dt\"><thead><tr><th>Piece<\/th><th>What the settlement does<\/th><\/tr><\/thead><tbody><tr><td>Back pay<\/td><td>$2.576B in damages (House) plus $200M (Hubbard) for athletes who competed under the old rules, paid over 10 years<\/td><\/tr><tr><td>Revenue sharing<\/td><td>Opt-in Division I schools may share up to 22% of average Power 4 athletic revenue with athletes<\/td><\/tr><tr><td>The cap<\/td><td>$20.5M per school in 2025-26, rising 4% a year (about $21.3M in 2026-27), reset every three years; projected near $33M by 2034-35<\/td><\/tr><tr><td>Rosters<\/td><td>Roster limits replace scholarship limits (for example, 105 in football), so schools may offer more scholarships<\/td><\/tr><tr><td>Outside NIL<\/td><td>Third-party deals of $600 or more must be reported and cleared for a valid business purpose and fair pay<\/td><\/tr><\/tbody><\/table><div class=\"card w12-callout\"><p>Revenue-sharing payments are for NIL rights, not pay for play. Athletes are still not employees, and that question is the biggest fight in Congress.<\/p><\/div><p class=\"src\">Sources: In re College Athlete NIL Litigation, final approval June 6, 2025 (Judge Claudia Wilken); NCAA; Front Office Sports. 2026-27 figure = $20.5M × 1.04.<\/p><\/div>", "notes": "Replaces the three old 'Revenue-Sharing Model' slides. The settlement covers three cases: House v. NCAA, Hubbard v. NCAA and Carter v. NCAA. Defendants are the NCAA and the Power Five conferences (ACC, Big Ten, Big 12, Pac-12 and SEC at the time of filing)."}, {"title": "The College Sports Commission and NIL Go", "sec": "Part 1 · NIL today", "cls": "s-content n1 case", "html": "<header class=\"hd\"><p class=\"kick\">ENFORCEMENT<\/p><h2>The College Sports Commission and NIL Go<\/h2><\/header><div class=\"body\"><div class=\"w12-cards3\"><div class=\"card \"><h3>What it is<\/h3><p>The College Sports Commission (CSC) enforces the settlement for the power conferences. An independent regulatory and enforcement body. Its NIL Go portal, built by Deloitte, reviews outside NIL deals of $600 or more.<\/p><\/div><div class=\"card incl\"><h3>What it checks<\/h3><p>Does the deal have a valid business purpose? Does it actually use the athlete&#x27;s NIL now, rather than “warehousing” it? Is the pay in line with the market?<\/p><\/div><div class=\"card excl\"><h3>Its weak spot<\/h3><p>The CSC&#x27;s power comes from a contract that schools signed, not from law. Rejected deals can go to arbitration, and collectives say the system is slow.<\/p><\/div><\/div><div class=\"stats w12-st4\"><div class=\"stat\"><span class=\"num\">$355M+<\/span><span class=\"lbl\">approved in the first year<\/span><\/div><div class=\"stat\"><span class=\"num\">~$90M<\/span><span class=\"lbl\">rejected in the first year<\/span><\/div><div class=\"stat\"><span class=\"num\">7,639<\/span><span class=\"lbl\">deals cleared, May–June 2026 ($112.9M)<\/span><\/div><div class=\"stat\"><span class=\"num\">659<\/span><span class=\"lbl\">deals not cleared, May–June 2026 ($33.7M)<\/span><\/div><\/div><p>One collective group said only 25 of 384 deals it submitted were approved. That frustration is one reason the bill gives the NCAA a legal shield to enforce these rules When athletes are unhappy with its decisions, they can sue. But it’s hard to challenge<\/p><p class=\"src\">Sources: ESPN; AP via Athletic Business (Jan. 2026); College Sports Commission data report (June 30, 2026); Front Office Sports (Sept. 10, 2026).<\/p><\/div>", "notes": "The CSC corrected its early numbers (from $79.8M cleared to $35.4M) after a data error it blamed on Deloitte. The CEO is Bryan Seeley, a former MLB enforcement executive."}, {"title": "College Sports Commission website", "sec": "Part 1 · NIL today", "cls": "s-image n1", "html": "<div class=\"body\"><figure class=\"fig\"><img alt=\"Homepage of the College Sports Commission website\" height=\"736\" src=\"assets/p10-csc-site.png\" style=\"max-width:1235px\" width=\"1235\"/><\/figure><\/div><p class=\"src\"><a href=\"https://www.collegesportscommission.org/\" rel=\"noopener\" target=\"_blank\">https://www.collegesportscommission.org/<\/a><\/p>", "notes": "The CSC corrected its early numbers (from $79.8M cleared to $35.4M) after a data error it blamed on Deloitte. The CEO is Bryan Seeley, a former MLB enforcement executive."}, {"title": "NIL in Division II and Division III", "sec": "Part 1 · NIL today", "cls": "s-content n1", "html": "<header class=\"hd\"><p class=\"kick\">BEYOND THE POWER CONFERENCES<\/p><h2>NIL in Division II and Division III<\/h2><\/header><div class=\"body\"><div class=\"grid3\"><div class=\"card\"><h3>Smaller amounts<\/h3><p>Opendorse data from 2021 to 2023 put average NIL pay at about $204 per Division II athlete and $309 per Division III athlete.<\/p><\/div><div class=\"card\"><h3>No revenue sharing<\/h3><p>The House settlement's revenue sharing applies only to Division I schools that opt in. D-II and D-III athletes rely on outside NIL deals.<\/p><\/div><div class=\"card\"><h3>Social media is the business<\/h3><p>Small-college athletes earn mainly through posts and local brands. Amherst's Jack Betts (35+ deals) and Claremont McKenna's Connor Printz (80+ deals) showed what a following can do.<\/p><\/div><\/div><div class=\"card\" style=\"margin-top:clamp(14px,2.4vh,28px)\"><p><span class=\"hl\">Why it matters here:<\/span> Arcadia is Division III. NIL is open to our athletes, but the money, rules and enforcement discussed in this deck are mostly a Division I story.<\/p><\/div><p class=\"src\">Sources: Opendorse; Small College Athletics; NCAA. D-II and D-III averages are the most recent published; newer division-level figures were not available.<\/p><\/div>", "notes": "Original slide data kept but labeled with its date, since no newer Division II/III averages were found. Opendorse has reported that men's sports earn roughly three-quarters of all NIL pay across divisions."}, {"title": "NIL In D-II and D-III", "sec": "Part 1 · NIL today", "cls": "s-split n1", "html": "<header class=\"hd\"><h2>NIL In D-II and D-III<\/h2><\/header><div class=\"body\"><div class=\"grid2\" style=\"--cols:minmax(0,1.05fr) minmax(0,1fr)\"><div><ul class=\"pts\"><li>Opendorse data shows that on average, 73.5% of total NIL compensation across Division I, II, and III comes from men’s sports, and 26.5% of total compensation comes from women’s sports<\/li><li>Jack Betts- football team at Amherst College; 35 NIL deals (Allbirds, Bodyarmour, etc.); made over $10,000<\/li><li>Connor Printz- basketball player at Claremont McKenna College; over 80 NIL deals (Reebok, Powerade, CVS). <\/li><\/ul><\/div><div style=\"display:flex;flex-direction:column;gap:clamp(10px,2vh,22px);min-height:0;min-width:0\"><figure class=\"fig\"><img alt=\"Instagram paid-partnership post by Bre Socker, St. John Fisher College field hockey, for Dunkin Donuts\" height=\"492\" src=\"assets/p12-nil-photo-top.png\" style=\"max-width:616px\" width=\"616\"/><\/figure><figure class=\"fig\"><img alt=\"Three D-II and D-III athlete portraits including an Amherst football player\" height=\"810\" src=\"assets/p12-nil-photo-bottom.png\" style=\"max-width:1440px\" width=\"1440\"/><\/figure><\/div><\/div><p class=\"src\"><a href=\"https://www.smallcollegeathletics.com/nil-is-for-everyone-how-small-college-athletes-are-dipping-into-the-nil-game\" rel=\"noopener\" target=\"_blank\">https://www.smallcollegeathletics.com/nil-is-for-everyone-how-small-college-athletes-are-dipping-into-the-nil-game<\/a><\/p><\/div>", "notes": "https://www.smallcollegeathletics.com/nil-is-for-everyone-how-small-college-athletes-are-dipping-into-the-nil-game "}, {"title": "What athletes can and cannot do today", "sec": "Part 1 · NIL today", "cls": "s-content n1", "html": "<header class=\"hd\"><p class=\"kick\">RULES AND AGENTS<\/p><h2>What athletes can and cannot do today<\/h2><\/header><div class=\"body\"><div class=\"grid3\"><div class=\"card\"><h3>Allowed<\/h3><ul class=\"pts\"><li>NIL deals under state law and NCAA rules<\/li><li>Using an agent or adviser for NIL deals<\/li><li>Revenue-sharing contracts with their school (opt-in D-I)<\/li><\/ul><\/div><div class=\"card\"><h3>Still restricted<\/h3><ul class=\"pts\"><li>Pay for play or recruiting inducements<\/li><li>“Contract agents” who market the athlete to pro teams (NCAA Bylaw 12.3.1)<\/li><li>Some product categories under state laws (e.g., alcohol, gambling)<\/li><\/ul><\/div><div class=\"card\"><h3>Reporting<\/h3><ul class=\"pts\"><li>Deals of $600 or more go through NIL Go<\/li><li>Schools must disclose NIL activity under many state laws<\/li><li>Deals without a valid business purpose can be blocked<\/li><\/ul><\/div><\/div><div class=\"card\" style=\"margin-top:clamp(14px,2.4vh,28px)\"><p>Open question for schools: bring NIL in-house (hire the collective's staff) or hire an outside NIL agency and shift risk to a third party? Most power schools have now folded collectives into the athletic department.<\/p><\/div><p class=\"src\">Sources: NCAA interim NIL policy and Bylaw 12.3.1; House settlement terms; Front Office Sports (Nov. 2026).<\/p><\/div>", "notes": ""}, {"title": "INSIDE THE PROTECT COLLEGE SPORTS ACT", "sec": "Part 2 · The bill", "cls": "s-section dark n2", "html": "<header class=\"hd\"><p class=\"kick\">PART 2 · THE BILL<\/p><h2>INSIDE THE PROTECT COLLEGE SPORTS ACT<\/h2><p class=\"sec-sub\">S. 4668, as passed by the Senate on September 28, 2026. Three titles, 29 sections on athletes, plus TV rights and HBCU media grants.<\/p><\/header>", "notes": ""}, {"title": "What is the Protect College Sports Act?", "sec": "Part 2 · The bill", "cls": "s-content case p4a", "html": "<header class=\"hd\"><p class=\"kick\">THE BASICS<\/p><h2>What is the Protect College Sports Act?<\/h2><\/header><div class=\"body\"><p class=\"lead4\">A federal law that would set one national set of rules for paying college athletes, plus who can play and transfer. In return, the NCAA, conferences and schools would get legal protection for enforcing those rules.<\/p><div class=\"grid3\"><div class=\"card\"><h3>Why now<\/h3><p>Athletes can now be paid through NIL deals and school revenue sharing. The rules come from a patchwork of state laws and the House v. NCAA settlement, which the CSC (college sports commission) enforces only by contract.<\/p><\/div><div class=\"card\"><h3>What it does<\/h3><p>It writes the settlement's cap and NCAA-style limits into federal law and adds athlete protections: medical care, scholarships, agents, &amp; health and safety.<\/p><\/div><div class=\"card\"><h3>Who is behind it<\/h3><p>Senate Commerce leaders Ted Cruz (R-Texas) and Maria Cantwell (D-Wash.), with backing from the NCAA, major conferences and Saving College Sports.<\/p><\/div><\/div><p class=\"src\">Sources: Congress.gov S.4668; Front Office Sports; Washington Post; PBS NewsHour<\/p><\/div>", "notes": "In one sentence: the bill trades national, uniform limits on athletes for antitrust protection for the people who run college sports, and adds new athlete protections to win votes."}, {"title": "Through the Senate, waiting on the House", "sec": "Part 2 · The bill", "cls": "s-content case p4b", "html": "<header class=\"hd\"><p class=\"kick\">WHERE IT STANDS<\/p><h2>Through the Senate, waiting on the House<\/h2><\/header><div class=\"body\"><div class=\"stats s4\"><div class=\"stat\"><span class=\"num\">77–22<\/span><span class=\"lbl\"><b>Senate vote, Sept. 28<\/b><span class=\"tx\">Passed after nearly six hours of debate and seven floor amendments.<\/span><\/span><\/div><div class=\"stat\"><span class=\"num\">Pending<\/span><span class=\"lbl\"><b>House, lame duck<\/b><span class=\"tx\">Speaker Johnson listed the bill among lame-duck items after the Nov. 3 midterms. No House vote has been scheduled.<\/span><\/span><\/div><div class=\"stat\"><span class=\"num\">Jan. 3<\/span><span class=\"lbl\"><b>Deadline<\/b><span class=\"tx\">If the House does not act before the 119th Congress ends, the bill dies and must start over in the new Congress.<\/span><\/span><\/div><div class=\"stat\"><span class=\"num\">Yes<\/span><span class=\"lbl\"><b>White House<\/b><span class=\"tx\">President Trump has urged Congress to pass the bill and said he would sign it.<\/span><\/span><\/div><\/div><p class=\"notebar\">Backers launched a lame-duck lobbying push. Obstacles: the employee-status question, ACC objections to the conference-size cap in Section 205, and opposition from labor and the Congressional Black Caucus.<\/p><p class=\"src\">Sources: Congress.gov S.4668 actions; ESPN; Axios (Sept. 30, 2026); Roll Call (Oct. 5, 2026); Rivals/rg.org (lame-duck push). Status as of mid-November 2026.<\/p><\/div>", "notes": ""}, {"title": "The settlement's cap becomes federal law", "sec": "Part 2 · The bill", "cls": "s-content case p4c", "html": "<header class=\"hd\"><p class=\"kick\">PAY AND THE CAP · SECS. 114–115<\/p><h2>The settlement's cap becomes federal law<\/h2><\/header><div class=\"body\"><table class=\"dt\"><thead><tr><th>Rule<\/th><th>What the Senate text says<\/th><\/tr><\/thead><tbody><tr><td>Revenue-share cap<\/td><td>Schools may not give athletes benefits above the settlement's cap ($20.5M in 2025-26). No getting around it through boosters or other “associated entities”<\/td><\/tr><tr><td>How the cap grows<\/td><td>+4% a year for two years, then reset to 22% of average shared revenue every three years, with 4% raises in between<\/td><\/tr><tr><td>Retention fund<\/td><td>A school may exceed the cap by up to $22.5M a year to keep athletes, plus $5M more for non-revenue sports. Tied to academic benchmarks; expires after 9 years<\/td><\/tr><tr><td>Outside NIL deals<\/td><td>Must have a valid business purpose and market-level pay. No pay before enrollment (open camps excepted). Sponsors must certify the school is not the source of the money<\/td><\/tr><tr><td>Coach pay<\/td><td>At schools with $80M+ in athletic revenue, no more than $500K in coach pay from outside sources<\/td><\/tr><tr><td>If the settlement ends<\/td><td>Congress gets a 30-day fast-track vote on any new cap<\/td><\/tr><\/tbody><\/table><p class=\"src\">Source: S. 4668 (Engrossed in Senate), Secs. 100, 114, 115. An “associated entity” includes anyone who has given more than $50,000 to a school or booster group.<\/p><\/div>", "notes": "Press reports described 'total athlete spending capped at about $50M'. That roughly equals the cap plus the retention fund ($20.5M + $22.5M + $5M). The bill text does not use a single $50M figure."}, {"title": "NIL, agents, eligibility and transfers", "sec": "Part 2 · The bill", "cls": "s-content case p4d", "html": "<header class=\"hd\"><p class=\"kick\">RULES FOR ATHLETES · SECS. 101–104, 112–113, 117<\/p><h2>NIL, agents, eligibility and transfers<\/h2><\/header><div class=\"body\"><div class=\"grid3\" style=\"--cols:repeat(4,minmax(0,1fr))\"><div class=\"card\"><h3>NIL rights<\/h3><p>Schools cannot restrict NIL deals or cut scholarships over them. Athletes report deals over $600. Foreign-government money must be disclosed.<\/p><\/div><div class=\"card\"><h3>Agents<\/h3><p>Fees on endorsement deals capped at 5%. Agents must register, and the NCAA keeps a public registry. Athletes can void a non-compliant contract.<\/p><\/div><div class=\"card\"><h3>Five years to play<\/h3><p>Eligibility lasts five calendar years, with pauses for pregnancy, military duty, religious missions and medical absences.<\/p><\/div><div class=\"card\"><h3>One free transfer<\/h3><p>A second transfer costs a year, with exceptions such as a coach leaving or a sport being cut. Transfer windows run 2 to 5 weeks after the last game.<\/p><\/div><\/div><p class=\"src\">Source: S. 4668 (Engrossed in Senate), Secs. 101–104, 112, 113, 117, 129<\/p><\/div>", "notes": "Reporting: deals over $600 within 5 days, payments within 30 days; the threshold rises with inflation. Recruiting (117): athletes must opt in before other schools can contact them, a direct answer to tampering. Athletes can lose eligibility for performance-enhancing drugs and sports betting."}, {"title": "What athletes and non-revenue sports would gain", "sec": "Part 2 · The bill", "cls": "s-content n2 cardgrid", "html": "<header class=\"hd long\"><p class=\"kick\">PROTECTIONS · SECS. 105–109, 125–127<\/p><h2>What athletes and non-revenue sports would gain<\/h2><\/header><div class=\"body\"><div class=\"grid3 cg\"><div class=\"card\"><h3>Scholarships (105)<\/h3><p>A scholarship cannot be cut for performance, injury or roster decisions.<\/p><\/div><div class=\"card dk\"><h3>Medical care (106)<\/h3><p>Schools cover injury costs, with coverage continuing 5 years after eligibility. An NCAA medical fund of $60M–$100M a year.<\/p><\/div><div class=\"card\"><h3>Health and ombudsman (107–108)<\/h3><p>Medical staff decide return-to-play. A free, private office where athletes can report problems without punishment.<\/p><\/div><div class=\"card\"><h3>Fair treatment (109)<\/h3><p>Comparable medical care, lodging, meals, travel and promotion for men's and women's teams.<\/p><\/div><div class=\"card\"><h3>Olympic sports (125)<\/h3><p>Schools with $80M+ revenue must keep non-revenue scholarships and rosters at 2024-25 levels for 9 years.<\/p><\/div><div class=\"card\"><h3>Title IX and para athletes (127)<\/h3><p>Title IX is not overridden. Para athletes (adapted sports) can join as walk-ons outside roster caps.<\/p><\/div><\/div><p class=\"src\">Source: S. 4668 (Engrossed in Senate), Secs. 105–109, 125–127<\/p><\/div>", "notes": "Catastrophic coverage applies above $90,000. Former D-I athletes who left in the last 10 years without a degree can return with aid. Mid-sized programs ($50M–$80M) get the Olympic-sport protection for 4 years. Revenue sharing pushes spending toward football and basketball; these sections are designed to stop cuts to Olympic sports, which train most U.S. Olympians."}, {"title": "The trade: protections for athletes, a shield for the NCAA", "sec": "Part 2 · The bill", "cls": "s-content n2", "html": "<header class=\"hd long\"><p class=\"kick\">THE LEGAL SHIELD AND TV RIGHTS · SECS. 111, 118–122, TITLE II<\/p><h2>The trade: protections for athletes, a shield for the NCAA<\/h2><\/header><div class=\"body\"><table class=\"dt\"><thead><tr><th>Section<\/th><th>What it does<\/th><\/tr><\/thead><tbody><tr><td>Antitrust safe harbor (118)<\/td><td>Enforcing the bill's rules on NIL, transfers, eligibility, pay and recruiting “is not unlawful” under antitrust law<\/td><\/tr><tr><td>Preemption (121)<\/td><td>States may not pass NIL, transfer or eligibility rules that conflict with the law<\/td><\/tr><tr><td>Employee status (122)<\/td><td>The bill is neutral and “does nothing to alter” whether athletes are employees<\/td><\/tr><tr><td>Athlete voice (111, 119)<\/td><td>One-third of NCAA governing-board votes go to athletes. Athletes can sue in federal or state court<\/td><\/tr><tr><td>TV rights (Title II)<\/td><td>Schools may pool and sell football and basketball TV rights together. Every game needs a free local broadcast option<\/td><\/tr><tr><td>Conference limits (205)<\/td><td>Large conferences cannot grow past 20 schools or merge if FBS membership drops below 75%<\/td><\/tr><\/tbody><\/table><p class=\"src\">Source: S. 4668 (Engrossed in Senate), Secs. 111, 116, 118–122, 201–207. ACC schools object to the Sec. 205 conference cap.<\/p><\/div>", "notes": "Sec. 116 creates a 24-member Commission on the Future of College Athletics. Title II amends the Sports Broadcasting Act of 1961, which gave pro leagues an antitrust exemption to sell TV rights as a league. Title III funds HBCU sports media and broadband grants."}, {"title": "What would change, and for whom", "sec": "Part 2 · The bill", "cls": "s-content n2 cardgrid", "html": "<header class=\"hd long\"><p class=\"kick\">IF IT BECOMES LAW<\/p><h2>What would change, and for whom<\/h2><\/header><div class=\"body\"><div class=\"grid3 cg\"><div class=\"card\"><h3>Athletes<\/h3><p>Pay has a ceiling. One free transfer, then a sit-out. Five years to play. In return: protected scholarships, medical care for five years after, an ombudsman and one-third of governing votes.<\/p><\/div><div class=\"card\"><h3>Schools &amp; ADs<\/h3><p>Spending on athletes is capped (cap plus a retention fund), which makes budgets predictable. Big schools must keep Olympic-sport rosters and carry new medical costs.<\/p><\/div><div class=\"card\"><h3>NCAA &amp; conferences<\/h3><p>Their rules gain federal backing and an antitrust shield. One national standard replaces state NIL laws, and schools can pool TV rights.<\/p><\/div><div class=\"card\"><h3>Boosters &amp; collectives<\/h3><p>“Associated entity” deals count against the cap, so boosters can no longer simply outbid other schools.<\/p><\/div><div class=\"card\"><h3>Agents<\/h3><p>Fees capped at 5% of endorsement deals; state registration and a public registry.<\/p><\/div><div class=\"card\"><h3>Still unsettled<\/h3><p>Whether athletes are employees who can unionize. The bill stays neutral, so expect that fight in the House, the courts and labor boards.<\/p><\/div><\/div><p class=\"src\">Based on the Senate-passed text; the House may amend it. Sources: S. 4668; Washington Post; Forbes; Yahoo Sports; Cozen O'Connor; Roll Call<\/p><\/div>", "notes": ""}, {"title": "NIL player salary by position", "sec": "Part 2 · The bill", "cls": "s-split n2", "html": "<div class=\"body\"><div class=\"grid2 figs\"><figure class=\"fig\"><img alt=\"What college football players earn: average compensation by position, Power Four\" height=\"875\" src=\"assets/p22-nil-a.png\" style=\"max-width:626px\" width=\"626\"/><\/figure><figure class=\"fig\"><img alt=\"What college football players earn: average compensation by position, second chart\" height=\"879\" src=\"assets/p22-nil-b.png\" style=\"max-width:624px\" width=\"624\"/><\/figure><\/div><\/div><p class=\"src\"><a href=\"https://www.foxsports.com/stories/college-football/nil-players-salary-money-position-quarterback\" rel=\"noopener\" target=\"_blank\">Source: foxsports.com<\/a><\/p>", "notes": "https://www.smallcollegeathletics.com/nil-is-for-everyone-how-small-college-athletes-are-dipping-into-the-nil-game "}]</script>
+<script>
+(function(){
+  const SLIDES = JSON.parse(document.getElementById('slide-data').textContent);
+  const deck = document.getElementById('deck');
+  const els = SLIDES.map((s,i)=>{
+    const sec = document.createElement('section');
+    sec.className = 'slide ' + (s.cls||'');
+    sec.dataset.index = i;
+    sec.setAttribute('aria-label', s.title||'');
+    sec.innerHTML = '<div class="slide-inner">' + s.html + '</div>';
+    deck.appendChild(sec);
+    return sec;
+  });
+  let current = 0, step = 0, notesOpen = false, zoom = 1;
+  const stepsOf = el => Array.from(el.querySelectorAll('.step'));
+  const maxStep = el => stepsOf(el).reduce((m,e)=>Math.max(m, +e.dataset.step||0), 0);
+  function paint(){
+    stepsOf(els[current]).forEach(e=>e.classList.toggle('on', (+e.dataset.step||0) <= step));
+  }
+  function activate(i, atEnd){
+    i = Math.max(0, Math.min(SLIDES.length-1, i));
+    els[current].classList.remove('active');
+    current = i;
+    els[i].classList.add('active');
+    step = atEnd ? maxStep(els[i]) : 0;
+    paint();
+    const s = SLIDES[i];
+    document.getElementById('progressFill').style.width = ((i+1)/SLIDES.length*100) + '%';
+    document.getElementById('counter').textContent = String(i+1).padStart(2,'0') + ' / ' + SLIDES.length;
+    document.getElementById('pageNum').textContent = (i+1) + ' / ' + SLIDES.length;
+    document.getElementById('sectionLabel').textContent = s.sec || '';
+    const nb = document.getElementById('notesBody');
+    nb.innerHTML = '<h3>Speaker Notes</h3>' + (s.notes ? s.notes.split('\n').filter(x=>x.trim()).map(p=>'<p>'+p.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])).replace(/(https?:\/\/\S+)/g,'<a href="$1" target="_blank" rel="noopener" style="color:#38c6ff">$1</a>')+'</p>').join('') : '<p class="notes-empty">No speaker notes for this slide.</p>');
+    history.replaceState(null, '', '#s' + (i+1));
+  }
+  function next(){ if(step < maxStep(els[current])){ step++; paint(); } else if(current < SLIDES.length-1) activate(current+1); }
+  function prev(){ if(step > 0){ step--; paint(); } else if(current > 0) activate(current-1, true); }
+  window.SB_revealAll = function(){ step = maxStep(els[current]); paint(); };
+  window.SB_go = function(n){ activate(n-1); };
+
+  document.getElementById('nextBtn').addEventListener('click', e=>{ e.stopPropagation(); next(); });
+  document.getElementById('prevBtn').addEventListener('click', e=>{ e.stopPropagation(); prev(); });
+  deck.addEventListener('click', e=>{
+    if(e.target.closest('a,button,iframe,input,textarea,.zq-btn') ) return;
+    if(e.target.tagName === 'IMG' && !e.target.dataset.nozoom) return;
+    if(window.getSelection && String(window.getSelection()).length) return;
+    next(); hideHint();
+  });
+  deck.addEventListener('click', e=>{
+    const g = e.target.closest('[data-go]');
+    if(g){ e.stopPropagation(); activate(+g.dataset.go - 1); }
+  });
+  let wheelLock = 0;
+  window.addEventListener('wheel', e=>{
+    if(document.getElementById('askBackdrop').classList.contains('open') || e.target.closest('.notes-panel')) return;
+    const now = Date.now(); if(now - wheelLock < 650 || Math.abs(e.deltaY) < 18) return;
+    wheelLock = now; e.deltaY > 0 ? next() : prev(); hideHint();
+  }, {passive:true});
+  document.addEventListener('keydown', e=>{
+    if(e.target.closest && e.target.closest('input,textarea')) return;
+    if(document.getElementById('askBackdrop').classList.contains('open')) return;
+    const k = e.key;
+    if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].includes(k)){ e.preventDefault(); next(); hideHint(); }
+    else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(k)){ e.preventDefault(); prev(); }
+    else if(k==='Home') activate(0); else if(k==='End') activate(SLIDES.length-1);
+    else if(k==='n'||k==='N') toggleNotes();
+    else if(k==='+'||k==='=') zoomIn(); else if(k==='-'||k==='_') zoomOut(); else if(k==='0') zoomReset();
+  });
+  let tx = null;
+  deck.addEventListener('touchstart', e=>{ tx = e.touches[0].clientX; }, {passive:true});
+  deck.addEventListener('touchend', e=>{ if(tx===null) return; const dx = e.changedTouches[0].clientX - tx; if(Math.abs(dx) > 50){ dx < 0 ? next() : prev(); } tx = null; });
+
+  function applyZoom(){ document.documentElement.style.setProperty('--z', zoom); document.getElementById('zoomResetBtn').textContent = Math.round(zoom*100)+'%'; }
+  function zoomIn(){ zoom = Math.min(1.6, +(zoom+0.1).toFixed(2)); applyZoom(); }
+  function zoomOut(){ zoom = Math.max(0.6, +(zoom-0.1).toFixed(2)); applyZoom(); }
+  function zoomReset(){ zoom = 1; applyZoom(); }
+  document.getElementById('zoomInBtn').addEventListener('click', e=>{ e.stopPropagation(); zoomIn(); });
+  document.getElementById('zoomOutBtn').addEventListener('click', e=>{ e.stopPropagation(); zoomOut(); });
+  document.getElementById('zoomResetBtn').addEventListener('click', e=>{ e.stopPropagation(); zoomReset(); });
+  applyZoom();
+
+  const notesPanel = document.getElementById('notesPanel');
+  function toggleNotes(){ notesOpen = !notesOpen; notesPanel.classList.toggle('open', notesOpen); }
+  document.getElementById('notesToggle').addEventListener('click', toggleNotes);
+  document.getElementById('closeNotes').addEventListener('click', toggleNotes);
+  const hint = document.getElementById('hint');
+  function hideHint(){ hint.classList.add('hide'); }
+  setTimeout(hideHint, 5000);
+
+  // ask a question / leave a comment
+  (function(){
+    const askBtn = document.getElementById('askBtn'), backdrop = document.getElementById('askBackdrop'),
+      context = document.getElementById('askContext'), textEl = document.getElementById('askText'),
+      nameEl = document.getElementById('askName'), sendBtn = document.getElementById('askSend'),
+      cancelBtn = document.getElementById('askCancel'), statusEl = document.getElementById('askStatus');
+    const DECK = 'SPM261 Week 12-1 — NIL and the Protect College Sports Act';
+    function open(){
+      const slide = SLIDES[current] || {};
+      context.textContent = 'Slide ' + (current+1) + ' of ' + SLIDES.length + ' — ' + (slide.title || '(untitled)');
+      statusEl.textContent = ''; statusEl.className = 'ask-status';
+      sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      backdrop.classList.add('open'); setTimeout(()=> textEl.focus(), 50);
+    }
+    function close(){ backdrop.classList.remove('open'); textEl.value=''; nameEl.value=''; }
+    async function send(){
+      const question = textEl.value.trim(), name = nameEl.value.trim();
+      if(!name){ statusEl.textContent = 'Please enter your name.'; statusEl.className = 'ask-status err'; nameEl.focus(); return; }
+      if(!question){ statusEl.textContent = 'Please enter a question or comment.'; statusEl.className = 'ask-status err'; textEl.focus(); return; }
+      if(!window.QUESTIONS_API){ statusEl.textContent = "This form isn't connected yet — let your professor know."; statusEl.className = 'ask-status err'; return; }
+      sendBtn.disabled = true; sendBtn.textContent = 'Sending…';
+      const slide = SLIDES[current] || {};
+      try{
+        await fetch(window.QUESTIONS_API, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify({deck: DECK, slideIndex: current+1, slideTitle: slide.title || '', question: question, name: name})});
+        statusEl.textContent = 'Sent — thanks!'; statusEl.className = 'ask-status ok'; setTimeout(close, 1100);
+      }catch(err){
+        statusEl.textContent = "Couldn't send — check your connection and try again."; statusEl.className = 'ask-status err';
+        sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      }
+    }
+    askBtn.addEventListener('click', open); cancelBtn.addEventListener('click', close); sendBtn.addEventListener('click', send);
+    backdrop.addEventListener('click', e=>{ if(e.target === backdrop) close(); });
+    document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && backdrop.classList.contains('open')) close(); });
+  })();
+
+  let startIdx = 0;
+  const m = location.hash.match(/s(\d+)/);
+  if(m){ const n = parseInt(m[1],10)-1; if(n>=0 && n<SLIDES.length) startIdx = n; }
+  els[0].classList.add('active');
+  activate(startIdx);
+})();
+</script>
+<script id="w91-zoomfloat-js">
+(function(){
+ var btn=document.createElement('button');btn.className='zq-btn';btn.type='button';btn.textContent='+';btn.title='Enlarge image';btn.setAttribute('aria-label','Enlarge image');
+ var lb=document.createElement('div');lb.className='zq-lb';var li=document.createElement('img');li.alt='';lb.appendChild(li);
+ document.body.appendChild(btn);document.body.appendChild(lb);
+ var cur=null;
+ function ok(im){return im&&im.tagName==='IMG'&&im.matches('#deck .slide.active img')&&!im.dataset.nozoom;}
+ document.addEventListener('mouseover',function(e){var im=e.target;if(ok(im)){cur=im;var r=im.getBoundingClientRect();btn.style.left=(r.right-46)+'px';btn.style.top=(r.top+8)+'px';btn.style.display='flex';}else if(e.target!==btn){btn.style.display='none';}});
+ function open(src){li.src=src;lb.classList.add('open');btn.style.display='none';}
+ document.addEventListener('click',function(e){
+  if(e.target===btn&&cur){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();open(cur.currentSrc||cur.src);return;}
+  if(ok(e.target)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();open(e.target.currentSrc||e.target.src);return;}
+  if(lb.classList.contains('open')&&lb.contains(e.target)){e.stopPropagation();e.stopImmediatePropagation();lb.classList.remove('open');}
+ },true);
+ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb.classList.contains('open')){lb.classList.remove('open');e.stopPropagation();}},true);
+})();
+</script>
+<script>window.SLIDE_POLLS = {};</script>
+<script src="../questions/widgets.js?v=3"></script>
+</body>
+</html>
