@@ -824,6 +824,12 @@ body:has(.board) .x{}
   .ng-deal{font-size:16px;}
   .ng-big{grid-template-columns:70px 1fr 40px;}
 }
+/* keep buttons visible: header + buttons never shrink, deal text gives way (auto-fit in JS) */
+.ng-th,.ng-act{flex-shrink:0;}
+.nilgo:not(.ng-show) .ng-deal{flex:1 1 0;min-height:0;overflow:hidden;}
+.nilgo .slide-inner{overflow-y:auto;}
+.ng-b{white-space:nowrap;padding-left:2px;padding-right:2px;}
+@media (max-width:1100px){ .nilgo:not(.ng-show) .ng-deal{flex:none;overflow:visible;} }
 
 </style>
 </head>
@@ -1195,6 +1201,27 @@ body:has(.board) .x{}
       if ([' ','Enter'].indexOf(e.key) > -1){ e.stopPropagation(); }
     }
   }, true);
+})();
+(function(){
+  var root = document.querySelector('.slide.nilgo');
+  if (!root) return;
+  function fit(){
+    var voting = !root.classList.contains('ng-show');
+    var ps = Array.prototype.slice.call(root.querySelectorAll('.ng-deal'));
+    ps.forEach(function(p){ p.style.fontSize = ''; });
+    if (!voting || !ps.length || !ps[0].clientHeight) return;
+    var fs = parseFloat(getComputedStyle(ps[0]).fontSize), guard = 0;
+    function over(){ return ps.some(function(p){ return p.scrollHeight > p.clientHeight + 1; }); }
+    while (over() && fs > 10 && guard++ < 40){ fs -= 0.5; ps.forEach(function(p){ p.style.fontSize = fs + 'px'; }); }
+  }
+  var raf = 0;
+  function queue(){ cancelAnimationFrame(raf); raf = requestAnimationFrame(fit); }
+  if (window.ResizeObserver) new ResizeObserver(queue).observe(root.querySelector('.ng-grid'));
+  window.addEventListener('resize', queue);
+  new MutationObserver(queue).observe(root, { attributes:true, attributeFilter:['class'] });
+  new MutationObserver(queue).observe(document.documentElement, { attributes:true, attributeFilter:['style'] });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(queue);
+  queue();
 })();
 
 </script>
