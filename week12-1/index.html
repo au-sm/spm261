@@ -831,6 +831,9 @@ body:has(.board) .x{}
 .ng-b{white-space:nowrap;padding-left:2px;padding-right:2px;}
 @media (max-width:1100px){ .nilgo:not(.ng-show) .ng-deal{flex:none;overflow:visible;} }
 
+.ng-t.saving .ng-no::after{content:"saving\2026";margin-left:8px;font:600 clamp(9px,1.2vh,11px) var(--font-mono);color:var(--muted2);letter-spacing:.06em;text-transform:none;}
+.ng-t.failed .ng-no::after{content:"not saved, tap again";margin-left:8px;font:700 clamp(9px,1.2vh,11px) var(--font-mono);color:var(--scarlet);letter-spacing:.04em;text-transform:none;}
+
 </style>
 </head>
 <body>
@@ -1063,7 +1066,7 @@ body:has(.board) .x{}
   var seeBtn = root.querySelector('.ng-see'), resetBtn = root.querySelector('.ng-reset');
   var sum = root.querySelector('.ng-sum'), progN = root.querySelector('.ng-prog-n');
   var meter = root.querySelectorAll('.ng-meter i');
-  var showing = false, timer = null;
+  var showing = false, timer = null, busy = false;
 
   function paintTicket(t){
     var q = +t.dataset.q, v = getMine(q);
@@ -1075,6 +1078,22 @@ body:has(.board) .x{}
     var n = 0; for (var q = 1; q <= N; q++) if (getMine(q) !== null) n++;
     progN.textContent = n;
     for (var i = 0; i < meter.length; i++) meter[i].classList.toggle('on', i < n);
+  }
+  // One vote in flight at a time per browser; retry if the backend is busy
+  // (it returns {ok:false,error:'busy'} when many students vote at once).
+  var queue = [], sending = false;
+  function enqueue(body, done){ queue.push({ body: body, done: done, tries: 0 }); pump(); }
+  function pump(){
+    if (sending || !queue.length) return;
+    sending = true;
+    var job = queue[0];
+    fetch(API, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(job.body) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ return d && d.ok; }, function(){ return false; })
+      .then(function(ok){
+        if (ok || ++job.tries >= 8){ queue.shift(); job.done(!!ok); sending = false; pump(); return; }
+        setTimeout(function(){ sending = false; pump(); }, 800 * job.tries + Math.random() * 1500);
+      });
   }
   tickets.forEach(paintTicket); paintProgress();
 
@@ -1091,11 +1110,14 @@ body:has(.board) .x{}
         setTimeout(function(){ t.classList.remove('thud'); }, 600);
         paintProgress();
         if (!API) return;
-        fetch(API, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-          body: JSON.stringify({ type:'poll_vote', pollId:pid(q), optionIndex:v, optionText:OPTS[v],
+        t.classList.add('saving');
+        enqueue({ type:'poll_vote', pollId:pid(q), optionIndex:v, optionText:OPTS[v],
             question:'NIL Go Deal ' + q + ': ' + t.querySelector('.ng-deal').textContent,
-            deck:DECK, slideIndex:+root.dataset.index + 1 }) })
-        .catch(function(){ clearMine(q); paintTicket(t); paintProgress(); alert('Could not send your vote for Deal ' + q + '. Check your connection and try again.'); });
+            deck:DECK, slideIndex:+root.dataset.index + 1 }, function(ok){
+          t.classList.remove('saving');
+          if (!ok){ clearMine(q); paintTicket(t); paintProgress();
+            t.classList.add('failed'); setTimeout(function(){ t.classList.remove('failed'); }, 4000); }
+        });
       });
     });
   });
@@ -1171,7 +1193,8 @@ body:has(.board) .x{}
     seeBtn.textContent = on ? 'Back to voting' : 'See results';
     clearInterval(timer);
     if (on){ refresh(); timer = setInterval(function(){
-      if (!root.classList.contains('active')) return; refresh(); }, 4000); }
+      if (busy || document.hidden || !root.classList.contains('active')) return;
+      busy = true; refresh().then(function(){ busy = false; }, function(){ busy = false; }); }, 6000 + Math.random() * 3000); }
     else { sum.hidden = true; tickets.forEach(function(t){ t.classList.remove('mine-c','mine-x','tough'); var y = t.querySelector('.ng-you'); if (y) y.remove(); }); }
   }
   seeBtn.addEventListener('click', function(e){ e.stopPropagation(); show(!showing); });
